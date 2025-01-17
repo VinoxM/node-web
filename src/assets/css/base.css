@@ -1,0 +1,281 @@
+:root {
+    /* variable define */
+    --vh: 100vh;
+    --main-gap: 10px;
+    --box-gap: 6px;
+    --text-height: 20px;
+    --item-border-radius: 6px;
+    --color-black-0: #18191c;
+    --color-white-0: #F1F2F3;
+    --color-white-1: #d5d5d5;
+    --color-gray-0: #9499a0;
+    --color-blue-0: #00a1d6;
+    --color-blue-1: #5553d5;
+    --color-red-0: #FF0000;
+    --color-red-1: #6A0808;
+    --color-red-2: #f06;
+    --color-pink-0: #ff6699;
+    --color-green-0: #0E6655;
+    --color-yellow-0: #c4840e;
+    --font-size-large: 18px;
+    --font-size-normal: 16px;
+    --font-size-small: 14px;
+    --font-size-mini: 12px;
+    /* row transform */
+    --row-transform-step: 0;
+    --row-max-count: 7;
+    /* item */
+    --cover-width: 120px;
+    --cover-height: calc(var(--cover-width) / 0.8);
+    --ani-info-width: calc(var(--cover-width) / 0.8);
+    --item-width: calc(var(--cover-width) + var(--cover-width) / 0.8 + var(--box-gap));
+    /* timeline */
+    --time-line-box-width: 50px;
+    --time-line-gap: 5px;
+    --time-line-color: var(--color-black-0);
+    --time-line-color-normal: var(--color-gray-0);
+    --time-line-color-published: var(--color-gray-0);
+    --time-line-color-active: var(--color-pink-0);
+    /* footer */
+    --footer-height: 38px;
+    /* calendar background */
+    --arrow-box-display: none;
+    --calendar-bg-image: '';
+    --calendar-bg-size: 247px 663px;
+    --calendar-bg-width-active: 50px;
+    --calendar-bg-height-active: 48px;
+    --calendar-bg-width: 38px;
+    --calendar-bg-height: 36px;
+    --calendar-bg-arrow-width: 14px;
+    --calendar-bg-arrow-height: 26px;
+    --calendar-bg-position-x: -146px;
+    --calendar-bg-position-x-active: -56px;
+    --calendar-bg-position-y: -36px;
+    --calendar-bg-position-y-setp: -72px;
+    --calendar-bg-arrow-position-x-left: -77px;
+    --calendar-bg-arrow-position-x-right: -158px;
+    --calendar-bg-arrow-position-y: -542px;
+    /* indicator */
+    --indicator-width: 60%;
+    --indicator-height: 3px;
+    --indicator-color: var(--color-white-0);
+    --indicator-height-active: 6px;
+    --indicator-color-active: var(--color-pink-0);
+    /* ani day */
+    --ani-day-height: calc(var(--calendar-bg-height-active) + var(--indicator-height-active));
+    /* container */
+    --container-padding: calc(var(--text-height)* 0.5 + var(--box-gap));
+    /* timer */
+    --timer-size: 16px;
+    --timer-position-x: -75px;
+    --timer-position-y: -606px;
+    /* search */
+    --search-height: 32px;
+    --search-width: 328px;
+    --search-btn-width: 54px;
+    /* season btn */
+    --season-year-width: 180px;
+    --season-year-height: 26px;
+    --season-btn-bg-image: '';
+    --season-btn-bg-size: 250px 640px;
+    --season-btn-bg-position-x: -35px;
+    --season-btn-height: 50px;
+    --season-btn-box-gap: 0px;
+    /* input style */
+    --input-border-color: var(--color-gray-0);
+    --input-focus-border-color: var(--color-blue-0);
+    --input-height: calc(var(--text-height) + 4px);
+    --input-radius: calc(var(--input-height)/2 - 2px);
+    --input-padding: calc(var(--input-height)/2 - 2px);
+    /* dialog */
+    --dialog-width: 500px;
+    --subs-cover-width: 120px;
+    --subs-header-height: 54px;
+    --subs-header-height-1: 30px;
+    --subs-gap: 4px;
+    /* header */
+    --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height));
+}
+
+body {
+    /* other */
+    --container-box-width: calc(var(--item-width) + var(--time-line-box-width) + var(--time-line-gap) + 1px);
+    --row-max-width: calc((var(--container-box-width) + var(--box-gap)) * var(--row-max-count));
+    --subs-header-height-2: calc(var(--subs-header-height) - var(--subs-header-height-1));
+    --box-min-height: calc(var(--cover-height) + var(--box-gap));
+    --transition-delay: 0.5s;
+    background-color: #eee;
+}
+
+input {
+    border: 1px solid var(--input-border-color);
+    height: var(--input-height);
+    line-height: var(--text-height);
+    padding: 1px var(--input-padding);
+    border-radius: var(--input-radius);
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: 1px solid var(--input-focus-border-color);
+    border-color: var(--input-focus-border-color);
+    box-shadow: none;
+}
+
+@media screen and (max-width: 2366px) {
+    :root {
+        --arrow-box-display: flex;
+        --row-max-count: 6;
+    }
+}
+
+@media screen and (max-width: 2028px) {
+    :root {
+        --row-max-count: 5;
+    }
+}
+
+@media screen and (max-width: 1690px) {
+    :root {
+        --row-max-count: 4;
+    }
+}
+
+@media screen and (max-width: 1352px) {
+    :root {
+        --row-max-count: 3;
+    }
+}
+
+@media screen and (max-width: 1014px) {
+    :root {
+        --row-max-count: 2;
+        --season-btn-box-gap: 3px;
+        --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height) * 2 + var(--season-btn-box-gap));
+    }
+
+    div.season-btn-container {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    div.season-btn-container div.season-btn-01 {
+        border-bottom-left-radius: 0;
+    }
+
+    div.season-btn-container div.season-btn-04 {
+        border-top-right-radius: 14px;
+    }
+
+    div.season-btn-container div.season-btn-07 {
+        border-bottom-left-radius: 14px;
+    }
+
+    div.season-btn-container div.season-btn-10 {
+        border-top-right-radius: 0;
+    }
+}
+
+@media screen and (max-width: 676px) {
+    :root {
+        --row-max-count: 1;
+        --cover-width: 140px;
+        --dialog-width: 360px;
+        --subs-cover-width: 100px;
+        --subs-header-height: 46px;
+        --subs-header-height-1: 26px;
+        --season-btn-box-gap: 3px;
+        --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height) * 2 + var(--season-btn-box-gap));
+    }
+
+    div.season-btn-container {
+        flex-direction: column;
+    }
+
+    div.season-btn-container div.season-btn-01 {
+        border-bottom-left-radius: 0;
+    }
+
+    div.season-btn-container div.season-btn-04 {
+        border-top-right-radius: 14px;
+    }
+
+    div.season-btn-container div.season-btn-07 {
+        border-bottom-left-radius: 14px;
+    }
+
+    div.season-btn-container div.season-btn-10 {
+        border-top-right-radius: 0;
+    }
+}
+
+:root,
+body,
+#app {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+#app {
+    min-height: var(--vh);
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    background: rgba(0, 0, 0, .1);
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    background: rgba(0, 0, 0, .4);
+}
+
+::-webkit-scrollbar {
+    width: 0 !important;
+}
+
+.skeleton-loading {
+    background-image: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+    background-size: 400% 100%;
+    background-position: 100% 50%;
+    animation: skeleton-loading 1.5s ease infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+.card-panel {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12),
+        0 3px 1px -2px rgba(0, 0, 0, 0.06),
+        0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.main-mask {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: var(--vh);
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0);
+    transition: all var(--transition-delay);
+}
+
+.main-mask.model {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.over-hidden {
+    overflow: hidden !important;
+}

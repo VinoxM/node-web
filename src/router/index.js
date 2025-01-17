@@ -14,11 +14,11 @@ const router = createRouter({
     },
     {
       path: '/calendar',
-      component: () => import('../components/AnimeCalender.vue')
+      component: () => import('../components/AnimeCalendar.vue')
     },
     {
       path: '/404',
-      component: () => import('../components/404NotFound.vue')
+      component: () => import('../components/NotFound.vue')
     },
     {
       path: '/*',

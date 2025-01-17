@@ -1,0 +1,862 @@
+@import './base.css';
+@import './button.css';
+
+.ani-main {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: var(--main-gap);
+  position: relative;
+  min-height: calc(var(--vh) - var(--footer-height) - var(--main-gap) * 3);
+}
+
+/* Calendar Season Header */
+div.ani-header {
+  --arrow-icon-width: 26px;
+  width: var(--row-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0 auto;
+  padding: calc(var(--main-gap) + (var(--search-height) - var(--season-year-height)) / 2) 0 var(--main-gap) 0;
+  border-radius: 0 0 8px 8px;
+  transition: all 0.4s;
+  position: relative;
+  min-height: var(--header-min-height);
+}
+
+.ani-header.searching {
+  padding-top: calc(var(--main-gap) * 2 + var(--search-height));
+}
+
+.season-search-box {
+  --search-box-radius: 10px;
+  --search-box-width: var(--search-height);
+  position: absolute;
+  left: calc(50% - 164px);
+  top: var(--main-gap);
+  height: var(--search-height);
+  line-height: var(--search-height);
+  width: var(--search-box-width);
+  overflow: hidden;
+  font-size: var(--font-size-small);
+  transition: width var(--transition-delay);
+  display: flex;
+}
+
+.ani-header.searching .season-search-box {
+  width: var(--search-width);
+  border-radius: var(--search-box-radius);
+  box-shadow: 0 0 2px 0 var(--color-gray-0);
+  transition: all var(--transition-delay);
+}
+
+.ani-header:not(.searching) .season-search-box.has-results {
+  color: var(--color-red-2);
+  text-decoration: underline;
+  width: calc((var(--search-height) - 16px) / 2 + 16px + var(--search-result-width));
+}
+
+.season-search-box .search-result {
+  user-select: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: block;
+}
+
+div.season-search-box i {
+  height: var(--search-height);
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  flex-shrink: 0;
+  margin-left: calc((var(--search-height) - 16px) / 2);
+}
+
+.ani-header.searching div.season-search-box i,
+.ani-header:not(.searching) div.season-search-box:not(.has-results) i {
+  width: var(--search-height);
+  margin: 0;
+}
+
+div.season-search-box i::before {
+  margin: 0 auto;
+  width: 16px;
+  line-height: var(--search-height);
+}
+
+div.season-search-box i:has(~.search-input:focus),
+.ani-header:not(.searching) div.season-search-box:hover {
+  color: var(--color-blue-0);
+}
+
+.season-search-box:has(.search-input:focus) {
+  box-shadow: 0 0 2px 1px var(--color-blue-0);
+}
+
+.season-search-box input.search-input {
+  border-radius: 0;
+  border: none;
+  text-align: left;
+  font-size: var(--font-size-small);
+  height: var(--search-height);
+  line-height: var(--search-height);
+  width: calc(var(--search-width) - var(--search-height) - var(--search-btn-width) * 2);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.season-search-box .ani-btn {
+  border-radius: 0;
+  height: var(--search-height);
+  line-height: var(--search-height);
+  border: none;
+  width: var(--search-btn-width);
+  flex-shrink: 0;
+}
+
+.season-search-box .ani-btn:last-of-type {
+  border-radius: 0 var(--search-box-radius) var(--search-box-radius) 0;
+}
+
+.season-year-box {
+  position: relative;
+  width: var(--season-year-width);
+  margin: 0 auto;
+}
+
+div.ani-header div.ani-arrow-box {
+  display: flex;
+  --arrow-height: var(--season-year-height);
+  width: calc(var(--arrow-icon-width)*2 + var(--season-year-width) + 20px);
+  transform: translateX(calc(var(--arrow-icon-width) * -1 - 10px));
+}
+
+.ani-header .ani-arrow-box i {
+  display: block;
+  width: var(--arrow-icon-width);
+  text-align: center;
+}
+
+.season-year {
+  height: var(--season-year-height);
+  line-height: var(--season-year-height);
+  vertical-align: middle;
+  font-size: var(--font-size-normal);
+  text-align: center;
+  font-family: "Microsoft soft";
+  position: relative;
+  z-index: 4;
+}
+
+.search-input,
+.season-input {
+  --input-boder-color: var(--color-gray-0);
+  display: block;
+  width: var(--season-year-width);
+  height: var(--seson-year-height);
+  line-height: calc(var(--season-year-height) - 2px);
+  font-size: var(--font-size-normal);
+  padding: 0;
+  text-align: center;
+  margin: 0 auto;
+  font-family: "Microsoft soft";
+  position: relative;
+  z-index: 1;
+}
+
+.search-input:focus,
+.season-input:focus {
+  outline: none;
+}
+
+/* Anime Season Button */
+.season-btn-container {
+  display: flex;
+  flex-direction: row;
+  gap: var(--season-btn-box-gap);
+  justify-content: center;
+}
+
+.season-btn-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0;
+}
+
+.season-btn {
+  width: 180px;
+  height: var(--season-btn-height);
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+}
+
+.season-btn {
+  --season-text-color: #e9e9e9;
+  --season-text-shadow-color: #8a8a8a;
+  --season-box-shadow-color: #cccccc;
+  color: var(--season-text-color);
+  box-shadow: 0px 4px 0px 0px var(--season-box-shadow-color);
+  transition: all .5s;
+}
+
+.season-btn .season-bg {
+  width: 100%;
+  height: 100%;
+  background-image: var(--season-btn-bg-image);
+  background-size: var(--season-btn-bg-size);
+  background-repeat: no-repeat;
+  background-position-x: var(--season-btn-bg-position-x);
+  background-position-y: var(--season-btn-bg-position-y);
+  transition: all .5s;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  filter: grayscale(1);
+}
+
+.season-btn span.label {
+  user-select: none;
+  display: block;
+  height: 20px;
+  line-height: 20px;
+  position: absolute;
+  font-size: var(--font-size-large);
+  letter-spacing: 2px;
+  bottom: 2px;
+  left: var(--season-span-left);
+  text-shadow: -2px 2px 2px var(--season-text-shadow-color),
+    -2px 2px 2px var(--season-text-shadow-color),
+    -2px 2px 2px var(--season-text-shadow-color),
+    -2px 2px 2px var(--season-text-shadow-color),
+    -2px 2px 2px var(--season-text-shadow-color),
+    -2px 2px 2px var(--season-text-shadow-color);
+  z-index: 1;
+}
+
+.season-btn span.count {
+  display: inline-block;
+  position: absolute;
+  left: 6px;
+  top: 0;
+  font-size: var(--font-size-small);
+  height: 18px;
+  line-height: 18px;
+  border-radius: 0 0 6px 0;
+  color: var(--color-black-0);
+  z-index: 1;
+}
+
+div.season-btn:hover span.count,
+div.season-btn.active span.count {
+  color: var(--season-count-color);
+}
+
+div.season-btn:hover {
+  background-color: var(--season-bg-color);
+}
+
+.season-btn.active {
+  transform: translate(0, 3px);
+  background-color: var(--season-bg-color);
+  box-shadow: none;
+}
+
+div.season-btn:hover .season-bg,
+.season-btn.active .season-bg {
+  filter: none;
+}
+
+.season-btn-01 {
+  --season-bg-color: #6094c9;
+  --season-text-color: #88ABD2;
+  --season-text-shadow-color: #0856A2;
+  --season-box-shadow-color: #3A78B6;
+  --season-btn-bg-position-y: -490px;
+  --season-span-left: 20px;
+  --season-count-color: #F7E587;
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+}
+
+.season-btn-04 {
+  --season-bg-color: #FF93B5;
+  --season-text-color: #FFD3D9;
+  --season-text-shadow-color: #FF8BAF;
+  --season-box-shadow-color: #ff568c;
+  --season-btn-bg-position-y: -35px;
+  --season-span-left: 80px;
+  --season-count-color: #0856A2;
+}
+
+.season-btn-07 {
+  z-index: 1;
+  --season-bg-color: #5ad6d0;
+  --season-text-color: #A9D7B9;
+  --season-text-shadow-color: #009E96;
+  --season-box-shadow-color: #7696D2;
+  --season-btn-bg-position-y: -190px;
+  --season-span-left: 20px;
+  --season-count-color: #ff568c;
+}
+
+.season-btn-10 {
+  z-index: 1;
+  --season-bg-color: #F7E587;
+  --season-text-color: #ffe2c5;
+  --season-text-shadow-color: #e76b3e;
+  --season-box-shadow-color: #f39c12;
+  --season-btn-bg-position-y: -335px;
+  --season-span-left: 36px;
+  --season-count-color: #009E96;
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+}
+
+/* Anime calendar */
+.ani-weekly-box {
+  width: var(--row-max-width);
+  margin: 0 auto;
+}
+
+.ani-row-box {
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: var(--row-max-width);
+  scrollbar-width: none;
+  margin: 0 auto;
+}
+
+div.ani-row-box.sticky {
+  position: sticky;
+  top: -1px;
+  z-index: 99;
+}
+
+.ani-day-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--box-gap);
+}
+
+.ani-container-row {
+  --container-row-height: auto;
+  height: calc(var(--container-row-height) + var(--container-padding));
+  width: calc(var(--container-box-width) * 7 + var(--box-gap) * 6);
+  overflow: hidden;
+  padding-top: var(--container-padding);
+}
+
+.ani-container-row,
+.ani-day-row {
+  transform: translateX(calc(var(--row-transform-step) * (var(--container-box-width) + var(--box-gap)) * -1));
+  transition: 0.6s;
+}
+
+/* Anime Calendar Header */
+.ani-row-box.day-box {
+  height: var(--ani-day-height);
+  position: relative;
+}
+
+.ani-background {
+  background-image: var(--calendar-bg-image);
+  background-size: var(--calendar-bg-size);
+  background-repeat: no-repeat;
+}
+
+.ani-day-header {
+  color: #9499a0;
+  height: var(--ani-day-height);
+  width: var(--container-box-width);
+  line-height: var(--text-height);
+  display: flex;
+  flex-flow: column-reverse;
+  flex-shrink: 0;
+  border-radius: 8px 8px 0 0;
+  background-color: #fff;
+}
+
+.ani-day-box {
+  text-align: center;
+}
+
+.ani-day-indicator {
+  width: var(--indicator-width);
+  height: var(--indicator-height);
+  background-color: var(--indicator-color);
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.ani-day-header.is-today .ani-day-indicator {
+  height: var(--indicator-height-active);
+  background-color: var(--indicator-color-active);
+}
+
+.ani-day {
+  width: var(--calendar-bg-width);
+  height: var(--calendar-bg-height);
+  background-position-x: var(--calendar-bg-position-x);
+  vertical-align: bottom;
+  display: inline-block;
+}
+
+.ani-day-header.is-today .ani-day {
+  width: var(--calendar-bg-width-active);
+  height: var(--calendar-bg-height-active);
+  background-position-x: var(--calendar-bg-position-x-active);
+}
+
+.ani-day.day-0 {
+  background-position-y: calc(var(--calendar-bg-position-y) + var(--calendar-bg-position-y-setp) * 6);
+}
+
+.ani-day.day-1 {
+  background-position-y: calc(var(--calendar-bg-position-y) + var(--calendar-bg-position-y-setp) * 0);
+}
+
+.ani-day.day-2 {
+  background-position-y: calc(var(--calendar-bg-position-y) + var(--calendar-bg-position-y-setp) * 1);
+}
+
+.ani-day.day-3 {
+  background-position-y: calc(var(--calendar-bg-position-y) + var(--calendar-bg-position-y-setp) * 2);
+}
+
+.ani-day.day-4 {
+  background-position-y: calc(var(--calendar-bg-position-y) + var(--calendar-bg-position-y-setp) * 3);
+}
+
+.ani-day.day-5 {
+  background-position-y: calc(var(--calendar-bg-position-y) + var(--calendar-bg-position-y-setp) * 4);
+}
+
+.ani-day.day-6 {
+  background-position-y: calc(var(--calendar-bg-position-y) + var(--calendar-bg-position-y-setp) * 5);
+}
+
+.ani-day-header span {
+  padding: 0 5px;
+  user-select: none;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.ani-day-header.is-today span {
+  color: var(--color-black-0);
+  font-weight: bold;
+}
+
+/* Anime Arrow Box */
+.ani-arrow-box {
+  --arrow-height: var(--calendar-bg-arrow-height);
+  display: var(--arrow-box-display);
+  width: var(--row-max-width);
+  height: var(--arrow-height);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  flex-direction: row;
+  justify-content: space-between;
+  z-index: 3;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.ani-arrow-box i:before {
+  height: var(--arrow-height);
+  line-height: var(--arrow-height);
+}
+
+.ani-arrow-box i {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.ani-arrow-box i:hover {
+  color: var(--color-blue-0);
+}
+
+.ani-arrow {
+  width: var(--calendar-bg-arrow-width);
+  height: var(--calendar-bg-arrow-height);
+  background-position-y: var(--calendar-bg-arrow-position-y);
+  cursor: pointer;
+}
+
+.ani-arrow.arrow-left {
+  background-position-x: var(--calendar-bg-arrow-position-x-left);
+}
+
+.ani-arrow.arrow-right {
+  background-position-x: var(--calendar-bg-arrow-position-x-right);
+}
+
+/* Anime Calendar Container */
+.ani-container {
+  display: inline-block;
+  width: var(--container-box-width);
+  vertical-align: top;
+}
+
+.ani-container:not(:last-of-type) {
+  margin-right: var(--box-gap);
+}
+
+.ani-day-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--box-gap);
+}
+
+.ani-day-empty {
+  display: inline-block;
+  text-align: center;
+  line-height: var(--box-min-height);
+  color: var(--color-gray-0);
+  height: var(--box-min-height);
+}
+
+/* Anime Calendar Box */
+.ani-box {
+  display: flex;
+  flex-direction: row;
+  gap: var(--time-line-gap);
+}
+
+.ani-timeline {
+  display: block;
+  flex-shrink: 0;
+  width: var(--time-line-box-width);
+  text-align: right;
+  position: relative;
+  user-select: none;
+  border-right: 1px dashed var(--time-line-color-normal);
+}
+
+.ani-container.is-today .ani-timeline {
+  border-color: var(--time-line-color-active);
+}
+
+.ani-box.is-published .ani-timeline {
+  border-right: 1px solid var(--time-line-color-active);
+}
+
+.ani-timeline span {
+  display: block;
+  transform: translateY(calc(-50% - var(--box-gap) / 2));
+  height: var(--text-height);
+  line-height: var(--text-height);
+  color: var(--time-line-color);
+  font-size: var(--font-size-mini);
+  padding-right: calc(var(--timer-size) / 2 + 2px);
+}
+
+.ani-box.is-published .ani-timeline span {
+  color: var(--time-line-color-published);
+}
+
+.ani-box.is-timer span {
+  color: var(--time-line-color-active);
+}
+
+.ani-box .ani-timeline::before {
+  content: " ";
+  height: 3px;
+  width: 3px;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translate(3px, -100%);
+}
+
+.ani-container:not(.is-today) .ani-timeline::before {
+  border: 1px solid var(--time-line-color-normal);
+}
+
+.ani-container.is-today .ani-timeline::before {
+  height: 5px;
+  width: 5px;
+  border: none;
+  background-color: var(--time-line-color-active);
+}
+
+.ani-container.is-today .ani-box:not(.is-published, .is-timer) div.ani-timeline::before {
+  height: 3px;
+  width: 3px;
+  border: 1px solid var(--time-line-color-active);
+  background: none;
+}
+
+.ani-box.is-timer .ani-timeline::before {
+  content: " ";
+  border: none;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: -3px;
+  height: var(--timer-size);
+  width: var(--timer-size);
+  background-position-x: var(--timer-position-x);
+  background-position-y: var(--timer-position-y);
+  background-image: var(--calendar-bg-image);
+  background-size: var(--calendar-bg-size);
+  transform: translate(50%, -50%);
+}
+
+.ani-item-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--box-gap);
+}
+
+.ani-item-timer {
+  display: inline-block;
+  height: var(--text-height);
+  line-height: var(--text-height);
+}
+
+/* Anime Calendar Item */
+.ani-item {
+  display: flex;
+  flex-direction: row;
+  gap: var(--box-gap);
+  width: var(--item-width);
+  border-radius: var(--item-border-radius);
+  cursor: pointer;
+  --item-hover-transition: 0.2s;
+}
+
+
+.ani-item-cover {
+  display: block;
+  height: var(--cover-height);
+  width: var(--cover-width);
+  box-shadow: inset 0 0 2px 1px gray;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: var(--item-border-radius);
+  overflow: hidden;
+}
+
+.ani-item-cover-img {
+  height: var(--cover-height);
+  width: var(--cover-width);
+  border-radius: var(--item-border-radius);
+  overflow: hidden;
+}
+
+.ani-item-cover-img img {
+  transition: all var(--item-hover-transition);
+  height: var(--cover-height);
+  width: var(--cover-width);
+}
+
+.ani-item:hover .ani-item-cover-img img {
+  transform: scale(1.1);
+}
+
+.ani-item-new {
+  --new-width: 36px;
+  --new-height: 16px;
+  --new-color-size: 10%;
+  --new-color-start: calc(50% - var(--new-color-size)/2);
+  --new-color-end: calc(50% + var(--new-color-size)/2);
+  width: var(--new-width);
+  height: var(--new-height);
+  border-radius: 2px;
+  text-align: center;
+  font-size: var(--font-size-mini);
+  user-select: none;
+}
+
+.new-shine {
+  --new-color: #fff;
+  display: inline-block;
+  background: var(--color-red-0) linear-gradient(-135deg,
+      transparent var(--new-color-start),
+      var(--new-color) var(--new-color-start),
+      var(--new-color) var(--new-color-end),
+      transparent var(--new-color-end));
+  background-size: calc(var(--new-width) * 2) var(--new-height);
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: scratchy 2s linear infinite;
+}
+
+@keyframes scratchy {
+  0% {
+    background-position: calc(200% - var(--new-color-size)) 0;
+  }
+
+  100% {
+    background-position: calc(-100% - var(--new-color-size)) 0;
+  }
+}
+
+.ani-item-info {
+  --item-title-height: 20px;
+  --item-title-width: var(--cover-height);
+  display: grid;
+  height: var(--cover-height);
+  grid-template-rows: 1fr auto auto;
+  padding: 2px 0;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ani-item-title {
+  --limited-box-height: var(--item-title-height);
+  height: calc(var(--item-title-height) * 2);
+  user-select: none;
+  font-size: var(--font-size-small);
+}
+
+.ani-item-title span {
+  width: var(--item-title-width);
+  display: inline-block;
+}
+
+.ani-item-title span.skeleton-loading {
+  height: var(--item-title-height);
+}
+
+.ani-item-title .title-cn::highlight(search-results) {
+  background-color: var(--color-red-2);
+  color: white;
+}
+
+.ani-item-title .title-jp {
+  font-size: var(--font-size-mini);
+  color: gray;
+}
+
+span.limited-box {
+  word-break: break-all;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-height: var(--limited-box-height);
+  transition: all var(--item-hover-transition);
+}
+
+.ani-item:hover .ani-item-title .limited-box:not(.title-jp) {
+  color: var(--color-blue-0);
+  text-decoration: underline;
+}
+
+span.limited-box.one-line {
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+}
+
+span.limited-box.two-line {
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+}
+
+.ani-item-noodle {
+  font-size: var(--font-size-mini);
+  user-select: none;
+  height: var(--item-title-height);
+  display: flex;
+}
+
+.ani-item-noodle .noodle-svg {
+  height: var(--item-title-height);
+  width: var(--item-title-height);
+  display: inline-block;
+}
+
+.ani-item-noodle span {
+  line-height: var(--item-title-height);
+  color: var(--color-yellow-0);
+  height: var(--item-title-height);
+  display: inline-block;
+}
+
+.ani-item-start-date {
+  font-size: var(--font-size-mini);
+  user-select: none;
+  line-height: var(--item-title-height);
+  height: var(--item-title-height);
+  width: var(--item-title-width);
+  color: var(--color-green-0);
+}
+
+.ani-item-episode {
+  font-size: var(--font-size-mini);
+  user-select: none;
+  line-height: var(--item-title-height);
+  height: var(--item-title-height);
+  width: var(--item-title-width);
+}
+
+.ani-item-episode-span span {
+  font-weight: bold;
+  padding: 0 3px;
+}
+
+.ep-color-fin {
+  color: var(--color-red-1);
+}
+
+.ep-color-none {
+  color: var(--color-gray-0);
+}
+
+.ep-color-normal {
+  color: var(--color-blue-0);
+}
+
+/* Anime Web Box */
+.ani-web-box {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: calc(var(--time-line-gap) + 1px);
+  width: var(--row-max-width);
+  margin: 0 auto;
+  padding: 5px 0;
+}
+
+.ani-web-header {
+  width: 24px;
+  margin: 0 13px;
+  display: flex;
+  justify-content: center;
+  background-color: var(--color-green-0);
+}
+
+.ani-web-header span {
+  user-select: none;
+  font-size: var(--font-size-normal);
+  word-wrap: break-word;
+  text-align: center;
+  color: var(--color-white-0);
+  display: block;
+  width: 24px;
+  margin: auto 0;
+  line-height: 20px;
+}
+
+.ani-web-container {
+  display: flex;
+  flex-flow: wrap;
+  column-gap: calc(var(--box-gap) + var(--time-line-gap) + var(--time-line-box-width) + 1px);
+  row-gap: var(--box-gap);
+}

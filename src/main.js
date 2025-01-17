@@ -2,15 +2,16 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import api from './api'
-import Dialog from './components/other/Dialog.vue'
 
-import './assets/main.css'
+import './assets/css/main.css'
+import './assets/icon-fonts/css/fontello.css'
+import Image from './components/common/Image.vue'
+import './message/message.css'
 
 const app = createApp(App)
 
 app.use(router)
 app.use(api)
-
-app.component('t-dialog', Dialog);
+app.component('ani-image', Image)
 
 app.mount('#app')

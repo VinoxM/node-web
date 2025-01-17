@@ -1,24 +1,18 @@
+import { getNowDay } from '@/utils/dateUtils';
+
 const initDataDict = (nowDay) => {
     if (!nowDay) {
         nowDay = getNowDay();
     }
     return [
-        { dayStr: '周一', timeline: [], isToday: nowDay === 1, day: 1 },
-        { dayStr: '周二', timeline: [], isToday: nowDay === 2, day: 2 },
-        { dayStr: '周三', timeline: [], isToday: nowDay === 3, day: 3 },
-        { dayStr: '周四', timeline: [], isToday: nowDay === 4, day: 4 },
-        { dayStr: '周五', timeline: [], isToday: nowDay === 5, day: 5 },
-        { dayStr: '周六', timeline: [], isToday: nowDay === 6, day: 6 },
-        { dayStr: '周日', timeline: [], isToday: nowDay === 0, day: 0 }
+        { timeline: [], isToday: nowDay === 1 },
+        { timeline: [], isToday: nowDay === 2 },
+        { timeline: [], isToday: nowDay === 3 },
+        { timeline: [], isToday: nowDay === 4 },
+        { timeline: [], isToday: nowDay === 5 },
+        { timeline: [], isToday: nowDay === 6 },
+        { timeline: [], isToday: nowDay === 0 }
     ];
-}
-
-const getNowDay = () => {
-    let now = new Date();
-    if (now.getHours() < 6) {
-        now.setDate(now.getDate() - 1);
-    }
-    return now.getDay();
 }
 
 export default {
@@ -30,63 +24,60 @@ export default {
         handle: (data) => {
             // prepare to handle data.
             let list = Array.from(data);
+            const resultCount = list.length;
             const nowDay = getNowDay();
             let dayDictArray = initDataDict(nowDay);
             let webArray = [];
             const protocol = document.location.protocol;
+            const now = new Date();
             // group by day.
             for (const obj of list) {
-                const { startTime, animeType } = obj;
-                if (animeType !== 1) {
-                    webArray.push(obj);
+                let cover = String(obj.C);
+                const protocolIndex = cover.indexOf('://');
+                if (protocolIndex > -1) {
+                    cover = protocol + cover.substring(protocolIndex + 1);
+                }
+                const d = obj.D + '';
+                const startDate = [d.substring(0, 4), d.substring(4, 6), d.substring(6, 8)];
+                const updateTime = [d.substring(8, 10), d.substring(10, 12)];
+                let day = Number(d.substring(12, 13));
+                const val = {
+                    titleCN: obj.Z,
+                    titleJP: obj.J,
+                    startDate: startDate.join('/'),
+                    cover,
+                    type: obj.T,
+                    status: obj.S,
+                    latestEp: obj.E,
+                    hasNew: obj.N,
+                    unique: obj.U,
+                    epCount: obj.R
+                }
+                if (val.type.split("")[1] === '1') {
+                    webArray.push(val);
                     continue;
-                }
-                let date = new Date(startTime);
-                let hours = date.getHours();
-                let minutes = date.getMinutes();
-                if (hours >= 0 && hours < 6) {
-                    date.setDate(date.getDate() - 1);
-                    hours += 24;
-                }
-                let day = date.getDay() - 1;
+                }                
+                day = day - 1;
                 if (day < 0) day = 6;
-                const newObj = { ...obj, updateTime: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}` };
-                dayDictArray[day].timeline.push(newObj);
+                dayDictArray[day].timeline.push({...val, updateTime: updateTime.join(":")});
             }
             // sort day dict.
             for (const dayDict of dayDictArray) {
                 const arr = dayDict.timeline;
                 const timeline = {};
                 for (const val of arr) {
-                    let cover = String(val.cover);
-                    const protocolIndex = cover.indexOf('://');
-                    if (protocolIndex > -1) {
-                        cover = protocol + cover.substring(protocolIndex + 1);
-                    }
-                    const newVal = {
-                        cover,
-                        titleCN: val.name,
-                        titleJP: val.nameJP,
-                        epCounts: val.count,
-                        latestEp: val.latestEp,
-                        lastPub: val.lastPub,
-                        hasNew: val.hasNew === 1,
-                        isFin: val.fin === 'Y',
-                        isShort: val.isShort === 1,
-                        unique: val.unique
-                    }
                     if (val.updateTime in timeline) {
-                        timeline[val.updateTime].push(newVal);
+                        timeline[val.updateTime].push(val);
                     } else {
-                        timeline[val.updateTime] = [newVal];
+                        timeline[val.updateTime] = [val];
                     }
                 }
                 dayDict.timeline = Object.keys(timeline).map(key => ({
                     time: key,
                     list: timeline[key]
                 })).sort((a, b) => a.time.localeCompare(b.time));
+                // handle published and timer.
                 if (dayDict.isToday) {
-                    const now = new Date();
                     let hours = now.getHours();
                     if (hours < 6) {
                         hours += 24;
@@ -117,8 +108,10 @@ export default {
                     }
                 }
             }
+            // sort web array.
+            webArray = webArray.sort((a, b) => a.startDate.localeCompare(b.startDate));
             // setup data.
-            return {dayDictArray, webArray, nowDay};
+            return { dayDictArray, webArray, nowDay, resultCount };
         }
     },
     getResults: {

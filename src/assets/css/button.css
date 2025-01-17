@@ -1,0 +1,133 @@
+:root {
+    --ani-btn-height: 26px;
+    --ani-btn-bg-color: #fff;
+    --ani-btn-border-color: #dcdfe5;
+    --ani-btn-text-color: #606266;
+}
+
+button.ani-btn {
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid var(--ani-btn-border-color);
+    background-color: var(--ani-btn-bg-color);
+    color: var(--ani-btn-text-color);
+    font-size: var(--font-size-small);
+    border-radius: 4px;
+    height: var(--ani-btn-height);
+    line-height: calc(var(--ani-btn-height) - 2px);
+    font-family: "Microsoft soft";
+}
+
+button.ani-btn:hover {
+    --ani-btn-bg-color: rgb(235.9, 245.3, 255);
+    --ani-btn-border-color: rgb(197.7, 225.9, 255);
+    --ani-btn-text-color: #409eff;
+}
+
+button.ani-btn.primary.plain:hover,
+button.ani-btn.primary {
+    --ani-btn-bg-color: #409eff;
+    --ani-btn-border-color: #409eff;
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.primary:hover {
+    --ani-btn-bg-color: rgb(121.3, 187.1, 255);
+    --ani-btn-border-color: rgb(121.3, 187.1, 255);
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.success.plain:hover,
+button.ani-btn.success {
+    --ani-btn-bg-color: #67c23a;
+    --ani-btn-border-color: #67c23a;
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.success:hover {
+    --ani-btn-bg-color: rgb(148.6, 212.3, 117.1);
+    --ani-btn-border-color: rgb(148.6, 212.3, 117.1);
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.info.plain:hover,
+button.ani-btn.info {
+    --ani-btn-bg-color: #909399;
+    --ani-btn-border-color: #909399;
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.info:hover {
+    --ani-btn-bg-color: rgb(177.3, 179.4, 183.6);
+    --ani-btn-border-color: rgb(177.3, 179.4, 183.6);
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.warning.plain:hover,
+button.ani-btn.warning {
+    --ani-btn-bg-color: #e6a23c;
+    --ani-btn-border-color: #e6a23c;
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.warning:hover {
+    --ani-btn-bg-color: rgb(237.5, 189.9, 118.5);
+    --ani-btn-border-color: rgb(237.5, 189.9, 118.5);
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.danger.plain:hover,
+button.ani-btn.danger {
+    --ani-btn-bg-color: #f56c6c;
+    --ani-btn-border-color: #f56c6c;
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.danger:hover {
+    --ani-btn-bg-color: rgb(248, 152.1, 152.1);
+    --ani-btn-border-color: rgb(248, 152.1, 152.1);
+    --ani-btn-text-color: #fff;
+}
+
+button.ani-btn.plain {
+    --ani-btn-bg-color: #fff;
+    --ani-btn-border-color: #dcdfe6;
+    --ani-btn-text-color: #606266;
+}
+
+button.ani-btn.plain:hover {
+    --ani-btn-bg-color: #fff;
+    --ani-btn-border-color: #409eff;
+    --ani-btn-text-color: #409eff;
+}
+
+button.ani-btn.plain.primary {
+    --ani-btn-bg-color: rgb(235.9, 245.3, 255);
+    --ani-btn-border-color: rgb(159.5, 206.5, 255);
+    --ani-btn-text-color: #409eff;
+}
+
+button.ani-btn.plain.success {
+    --ani-btn-bg-color: rgb(239.8, 248.9, 235.3);
+    --ani-btn-border-color: rgb(179, 224.5, 156.5);
+    --ani-btn-text-color: #67c23a;
+}
+
+button.ani-btn.plain.info {
+    --ani-btn-bg-color: rgb(243.9, 244.2, 244.8);
+    --ani-btn-border-color: rgb(199.5, 201, 204);
+    --ani-btn-text-color: #909399;
+}
+
+button.ani-btn.plain.warning {
+    --ani-btn-bg-color: rgb(252.5, 245.7, 235.5);
+    --ani-btn-border-color: rgb(242.5, 208.5, 157.5);
+    --ani-btn-text-color: #e6a23c;
+}
+
+button.ani-btn.plain.danger {
+    --ani-btn-bg-color: rgb(254, 240.3, 240.3);
+    --ani-btn-border-color: rgb(250, 181.5, 181.5);
+    --ani-btn-text-color: #f56c6c;
+}
