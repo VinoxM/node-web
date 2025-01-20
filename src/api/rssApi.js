@@ -56,20 +56,21 @@ export default {
                 if (val.type.split("")[1] === '1') {
                     webArray.push(val);
                     continue;
-                }                
+                }
                 day = day - 1;
                 if (day < 0) day = 6;
-                dayDictArray[day].timeline.push({...val, updateTime: updateTime.join(":")});
+                dayDictArray[day].timeline.push({ ...val, updateTime: updateTime.join(":") });
             }
             // sort day dict.
             for (const dayDict of dayDictArray) {
                 const arr = dayDict.timeline;
                 const timeline = {};
                 for (const val of arr) {
-                    if (val.updateTime in timeline) {
-                        timeline[val.updateTime].push(val);
+                    const { updateTime, ...newVal } = val;
+                    if (updateTime in timeline) {
+                        timeline[updateTime].push(newVal);
                     } else {
-                        timeline[val.updateTime] = [val];
+                        timeline[updateTime] = [newVal];
                     }
                 }
                 dayDict.timeline = Object.keys(timeline).map(key => ({
