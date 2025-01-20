@@ -8,6 +8,9 @@
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
+            <div class="ani-item-edit-box">
+                
+            </div>
             <div class="ani-item-noodle" v-if="isShort">
                 <Noodle class="noodle-svg"></Noodle>
                 <span>泡面番</span>
@@ -49,7 +52,8 @@ const props = defineProps({
     },
     hasNew: Number,
     unique: Number,
-    epCount: Number
+    epCount: Number,
+    checked: Boolean
 });
 
 const episode = computed(() => {

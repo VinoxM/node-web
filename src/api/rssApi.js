@@ -24,6 +24,7 @@ export default {
         handle: (data) => {
             // prepare to handle data.
             let list = Array.from(data);
+            const listRef = [];
             const resultCount = list.length;
             const nowDay = getNowDay();
             let dayDictArray = initDataDict(nowDay);
@@ -51,26 +52,30 @@ export default {
                     latestEp: obj.E,
                     hasNew: obj.N,
                     unique: obj.U,
-                    epCount: obj.R
+                    epCount: obj.R,
+                    checked: false
                 }
                 if (val.type.split("")[1] === '1') {
                     webArray.push(val);
+                    listRef.push(val);
                     continue;
-                }                
+                }
                 day = day - 1;
                 if (day < 0) day = 6;
-                dayDictArray[day].timeline.push({...val, updateTime: updateTime.join(":")});
+                dayDictArray[day].timeline.push({ ...val, updateTime: updateTime.join(":") });
             }
             // sort day dict.
             for (const dayDict of dayDictArray) {
                 const arr = dayDict.timeline;
                 const timeline = {};
                 for (const val of arr) {
-                    if (val.updateTime in timeline) {
-                        timeline[val.updateTime].push(val);
+                    const { updateTime, ...newVal } = val;
+                    if (updateTime in timeline) {
+                        timeline[updateTime].push(newVal);
                     } else {
-                        timeline[val.updateTime] = [val];
+                        timeline[updateTime] = [newVal];
                     }
+                    listRef.push(newVal);
                 }
                 dayDict.timeline = Object.keys(timeline).map(key => ({
                     time: key,
@@ -111,7 +116,7 @@ export default {
             // sort web array.
             webArray = webArray.sort((a, b) => a.startDate.localeCompare(b.startDate));
             // setup data.
-            return { dayDictArray, webArray, nowDay, resultCount };
+            return { dayDictArray, webArray, nowDay, resultCount, listRef };
         }
     },
     getResults: {

@@ -86,6 +86,16 @@ let lastData = {
     }
 }
 
+let checkedArr = [];
+const editMode = ref(false);
+
+const checked = {
+    arr: [],
+    resetChecked() {
+        this.arr = [];
+    }
+}
+
 /* api func */
 const getSearch = ({ season, search }, callback) => {
     cancel(lastSearch);
@@ -103,6 +113,8 @@ const getSearch = ({ season, search }, callback) => {
         webArr.value = webArray;
         loading.value = false;
         setupTransforStep();
+        console.log(dataDict.value);
+        
         nextTick(()=>{
             setupHighlight(search);
         })
@@ -113,6 +125,7 @@ const getSearch = ({ season, search }, callback) => {
     });
 }
 
+/* search highlight */
 const setupHighlight = (str) => {
     if (!str || typeof str !== 'string' || str.trim().length === 0) {
         return;
@@ -164,6 +177,7 @@ const setupStepForClick = (incr) => {
     setupDictFront(newStep, maxCount);
 }
 
+/* ani transform */
 const setupTransforStep = () => {
     const maxCount = Number(getComputedStyle(document.documentElement).getPropertyValue('--row-max-count'));
     const middleCount = Math.ceil(maxCount / 2);
@@ -178,6 +192,7 @@ const setupTransforStep = () => {
     setupDictFront(step, maxCount);
 }
 
+/* front view max height */
 const setupDictFront = (step, maxCount) => {
     if (dataDict.value === null) {
         return
