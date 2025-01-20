@@ -1,3 +1,90 @@
+/* header edit box */
+.ani-header-edit-box {
+    --header-edit-width: var(--search-height);
+    --header-edit-text-width: 58px;
+    display: block;
+    position: absolute;
+    top: var(--main-gap);
+    left: calc(50% + var(--search-width)/2 - var(--search-height)/2);
+    height: var(--search-height);
+    line-height: var(--search-height);
+    cursor: pointer;
+    width: var(--header-edit-width);
+    overflow: hidden;
+    transition: all 0.4s;
+}
+
+.ani-header.searching .ani-header-edit-box {
+    top: calc(var(--main-gap) + var(--search-height));
+}
+
+.ani-header-edit-box:hover,
+.ani-main.edit-mode .ani-header-edit-box {
+    --header-edit-width: calc(var(--search-height) + var(--header-edit-text-width));
+    color: var(--color-blue-0);
+}
+
+.ani-header-edit-box i {
+    display: block;
+}
+.ani-header-edit-box i::before {
+    width: var(--search-height);
+    height: var(--search-height);
+    line-height: var(--search-height);
+    text-align: center;
+    margin: 0;
+}
+
+.ani-header-edit-box span {
+    user-select: none;
+    display: inline-block;
+    position: absolute;
+    left: var(--search-height);
+    top: 0;
+    width: var(--header-edit-text-width);
+    height: var(--search-height);
+    line-height: var(--search-height);
+    font-size: var(--font-size-small);
+    text-align: center;
+}
+
+/* item edit box */
 .ani-item-edit-box {
     display: block;
+}
+
+/* item check box */
+.ani-item {
+    position: relative;
+}
+
+.ani-item.checked {
+    box-shadow: 0 0 2px 1px var(--color-blue-0);
+}
+
+.ani-item-check-box {
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.ani-main.edit-mode .ani-item-check-box {
+    --checkbox-size: 32px;
+    display: block;
+}
+
+.ani-item-check-box i,
+.ani-item-check-box i:before {
+    display: block;
+    height: var(--checkbox-size);
+    line-height: var(--checkbox-size);
+    width: var(--checkbox-size);
+    text-align: center;
+    margin: 0;
+}
+
+.ani-item:not(.checked):hover .ani-item-check-box,
+.ani-item.checked .ani-item-check-box {
+    color: var(--color-blue-0);
 }

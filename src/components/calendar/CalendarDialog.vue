@@ -34,7 +34,7 @@
                     <div class="subs-copyright-box">
                         <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank"
                             rel="noopener">
-                            <ani-image :src="val.image" fit="fill"></ani-image>
+                            <ani-image :src="val.image"></ani-image>
                             <p>{{ val.area }}</p>
                         </a>
                     </div>

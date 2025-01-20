@@ -24,13 +24,13 @@ export default {
         handle: (data) => {
             // prepare to handle data.
             let list = Array.from(data);
-            const listRef = [];
+            const listRef = {};
             const resultCount = list.length;
             const nowDay = getNowDay();
             let dayDictArray = initDataDict(nowDay);
             let webArray = [];
             const protocol = document.location.protocol;
-            const now = new Date();
+            const now = new Date('2025/01/20 22:00:00');
             // group by day.
             for (const obj of list) {
                 let cover = String(obj.C);
@@ -57,11 +57,18 @@ export default {
                 }
                 if (val.type.split("")[1] === '1') {
                     webArray.push(val);
-                    listRef.push(val);
+                    listRef[val.unique] = {
+                        isWeb: true
+                    }
                     continue;
                 }
                 day = day - 1;
                 if (day < 0) day = 6;
+                listRef[val.unique] = {
+                    isWeb:false,
+                    day,
+                    updateTime: updateTime.join(':')
+                }
                 dayDictArray[day].timeline.push({ ...val, updateTime: updateTime.join(":") });
             }
             // sort day dict.
@@ -75,7 +82,6 @@ export default {
                     } else {
                         timeline[updateTime] = [newVal];
                     }
-                    listRef.push(newVal);
                 }
                 dayDict.timeline = Object.keys(timeline).map(key => ({
                     time: key,

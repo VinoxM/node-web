@@ -1,7 +1,7 @@
 <template>
     <div class="image-box" :class="{ 'skeleton-loading': loading }">
         <img v-show="!loading && !error" class="image" ref="img" :src="src"/>
-        <span v-if="error" class="error">加载失败</span>
+        <span v-if="error" class="error">图片加载失败</span>
     </div>
 </template>
 
@@ -35,20 +35,17 @@ onMounted(() => {
 <style scoped>
 .image-box {
     position: relative;
+    display: flex;
 }
-
-/* .image {
-    width: 100%;
-    height: 100%;
-} */
 
 .error {
     display: inline-block;
     height: 20px;
     line-height: 20px;
     font-size: var(--font-size-mini);
-    color: var(--color-white-0);
+    color: var(--color-gray-0);
     width: 100%;
-    margin: 0 auto;
+    margin: auto 0;
+    text-align: center;
 }
 </style>

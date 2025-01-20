@@ -1,6 +1,6 @@
 <template>
-    <div class="ani-main">
-        <CalendarHeader @search="getSearch"></CalendarHeader>
+    <div class="ani-main" :class="{'edit-mode': editMode}">
+        <CalendarHeader @search="getSearch" v-model:edit-mode="editMode"></CalendarHeader>
         <div class="ani-weekly-box card-panel">
             <div class="ani-row-box day-box sticky">
                 <div class="ani-day-row">
@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import CalendarContainer from './calendar/CalendarContainer.vue';
 import { getApi, cancel } from '@/api';
 import CalendarDialog from './calendar/CalendarDialog.vue';
@@ -86,15 +86,59 @@ let lastData = {
     }
 }
 
-let checkedArr = [];
 const editMode = ref(false);
-
-const checked = {
+const edit = {
     arr: [],
-    resetChecked() {
+    ref: {},
+    init(listRef) {
+        this.ref = listRef;
         this.arr = [];
+    },
+    reset() {
+        this.arr.forEach(unique => {
+            this.select(unique, false);
+        })
+        this.arr = [];
+    },
+    select(unique, del = true) {
+        const index = this.arr.indexOf(unique);
+        if (index > -1) {
+            if (del) this.arr.splice(index, 1);
+        } else {
+            this.arr.push(unique);
+        }
+        const doSome = (arr) => {
+            arr.some(o => {
+                if (o.unique === unique) {
+                    o.checked = index === -1;
+                    return true;
+                }
+                return false;
+            })
+        }
+        if (unique in this.ref) {
+            const { isWeb, day, updateTime } = this.ref[unique];
+            if (isWeb) {
+                doSome(webArr.value);
+            } else {
+                dataDict.value[day].timeline.some(o => {
+                    if (o.time === updateTime) {
+                        doSome(o.list);
+                        return true;
+                    }
+                    return false;
+                });
+            }
+        }
     }
 }
+
+/* edit mode */
+watch(editMode, (val) => {
+    if (!val) {
+        edit.reset();
+    }
+})
 
 /* api func */
 const getSearch = ({ season, search }, callback) => {
@@ -105,17 +149,16 @@ const getSearch = ({ season, search }, callback) => {
     loading.value = true;
     lastSearch = getApi().getSearch({ season, name: search }, data => {
         lastSearch = null;
-        const { dayDictArray, webArray, nowDay: nowDay_, resultCount } = data;
-        callback({step: 0, season: season?.split("-") || ['', '']}, search ? resultCount : 0);
+        const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef } = data;
+        callback({ step: 0, season: season?.split("-") || ['', ''] }, search ? resultCount : 0);
         nowDay = nowDay_;
         resetWeekDays();
         dataDict.value = dayDictArray;
         webArr.value = webArray;
         loading.value = false;
         setupTransforStep();
-        console.log(dataDict.value);
-        
-        nextTick(()=>{
+        edit.init(listRef);
+        nextTick(() => {
             setupHighlight(search);
         })
     }, () => {
@@ -160,7 +203,11 @@ const setupHighlight = (str) => {
 
 /* dialog */
 const itemClick = (unique_) => {
-    unique.value = unique_;
+    if (editMode.value) {
+        edit.select(unique_);
+    } else {
+        unique.value = unique_;
+    }
 }
 
 /* calendar step */

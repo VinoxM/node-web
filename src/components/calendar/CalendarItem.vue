@@ -1,5 +1,5 @@
 <template>
-    <div class="ani-item" @click="$emit('itemClick', props.unique)">
+    <div class="ani-item" :class="{checked: props.checked}" @click="$emit('itemClick', props.unique)">
         <div class="ani-item-cover">
             <ani-image class="ani-item-cover-img" :src="props.cover"></ani-image>
         </div>
@@ -7,9 +7,6 @@
             <div class="ani-item-title">
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
-            </div>
-            <div class="ani-item-edit-box">
-                
             </div>
             <div class="ani-item-noodle" v-if="isShort">
                 <Noodle class="noodle-svg"></Noodle>
@@ -22,6 +19,9 @@
                 <span :class="'ep-color-' + episodeColor" class="ani-item-episode-span" v-html="episode"></span>
                 <span class="ani-item-new new-shine" v-if="props.hasNew">New</span>
             </div>
+        </div>
+        <div class="ani-item-check-box">
+            <i :class="checkboxClass"></i>
         </div>
     </div>
 </template>
@@ -65,6 +65,10 @@ const episode = computed(() => {
     }
     return props.latestEp === null ? '无更新' : `更新至<span>${props.latestEp}</span>`;
 });
+
+const checkboxClass = computed(()=>{
+    return props.checked ? 'icon-check' : 'icon-check-empty';
+})
 
 const episodeColor = computed(() => {
     if (props.status === 2) {

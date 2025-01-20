@@ -8,6 +8,10 @@
             <button v-show="isSearching" class="ani-btn" @click.stop="searchBtnClicked(false)">搜当季</button>
             <button v-show="isSearching" class="ani-btn" @click.stop="searchBtnClicked(true)">搜全部</button>
         </div>
+        <div class="ani-header-edit-box" @click="emitEdit">
+            <i class="icon-edit"></i>
+            <span>编辑模式</span>
+        </div>
         <div class="season-year-box">
             <div class="ani-arrow-box">
                 <i class="icon-angle-double-left" @click="setupSeasonYearStep(-1)"></i>
@@ -52,6 +56,11 @@ import { onMounted, ref, useTemplateRef, nextTick } from 'vue';
 import { getApi } from '@/api';
 import message from '@/message';
 
+// props
+const { editMode } = defineProps({
+    editMode: Boolean
+})
+
 // data
 const season = ref([]);
 const seasonVisible = ref(false);
@@ -87,7 +96,7 @@ const searchStore = {
 }
 
 // emit
-const emit = defineEmits(['search'])
+const emit = defineEmits(['search', 'update:editMode'])
 
 // methods
 const initCurSeason = () => {
@@ -117,10 +126,14 @@ const emitSearch = ({ season, search, searchAll }) => {
     emit('search', params, searchCallback);
 }
 
+const emitEdit = () => {
+    emit('update:editMode', !editMode);
+}
+
 const searchCallback = ({ step, season }, searchResultCount = 0) => {
     setupSeasonYearStep(step, season)
     searchCount.value = searchResultCount;
-    nextTick(()=> {
+    nextTick(() => {
         const resultNode = document.querySelector('.search-result');
         if (resultNode) {
             searchBox.value.style.setProperty('--search-result-width', resultNode.offsetWidth + 'px');

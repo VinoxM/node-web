@@ -34,7 +34,7 @@ div.ani-header {
   --search-box-radius: 10px;
   --search-box-width: var(--search-height);
   position: absolute;
-  left: calc(50% - 164px);
+  left: calc(50% - var(--search-width) / 2);
   top: var(--main-gap);
   height: var(--search-height);
   line-height: var(--search-height);
@@ -715,7 +715,7 @@ div.ani-row-box.sticky {
   --item-title-width: var(--cover-height);
   display: grid;
   height: var(--cover-height);
-  grid-template-rows: 1fr auto auto;
+  grid-template-rows: 1fr auto;
   padding: 2px 0;
   box-sizing: border-box;
   position: relative;
