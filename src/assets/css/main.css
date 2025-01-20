@@ -714,7 +714,7 @@ div.ani-row-box.sticky {
   --item-title-width: var(--cover-height);
   display: grid;
   height: var(--cover-height);
-  grid-template-rows: 1fr auto auto;
+  grid-template-rows: 1fr auto;
   padding: 2px 0;
   box-sizing: border-box;
   position: relative;
