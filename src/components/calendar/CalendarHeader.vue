@@ -174,6 +174,7 @@ const searchBtnClicked = (searchAll = false) => {
         message.warning('请输入番剧名搜索')
         return;
     }
+    initCurSeason();
     cancelSearching();
     emitSearch({ season: seasonYear.value + '-' + seasonMonth.value, search: search.value, searchAll });
 }

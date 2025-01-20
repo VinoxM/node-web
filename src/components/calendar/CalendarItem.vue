@@ -67,7 +67,7 @@ const episodeColor = computed(() => {
         return 'fin';
     }
     if (props.status === 0) {
-        return 'nome';
+        return 'none';
     }
     return 'normal';
 })

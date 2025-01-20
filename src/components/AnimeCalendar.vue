@@ -167,7 +167,8 @@ const setupStepForClick = (incr) => {
 const setupTransforStep = () => {
     const maxCount = Number(getComputedStyle(document.documentElement).getPropertyValue('--row-max-count'));
     const middleCount = Math.ceil(maxCount / 2);
-    let step = nowDay - middleCount;
+    let nowDay_ = nowDay === 0 ? 7 : nowDay;
+    let step = nowDay_ - middleCount;
     if (step < 0) {
         step = 0;
     } else {
