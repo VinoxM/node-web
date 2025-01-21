@@ -4,34 +4,6 @@
             <div class="dialog-close" @click="close">
                 <i class="icon-cancel"></i>
             </div>
-            <!-- <div class="subs-header">
-                <div class="subs-type">
-                    <span class="subs-origin-type skeleton-loading"></span>
-                    <span class="subs-type-tag skeleton-loading"></span>
-                </div>
-                <div class="subs-title">
-                    <span class="subs-title-cn skeleton-loading"></span>
-                    <span class="subs-title-jp skeleton-loading"></span>
-                </div>
-            </div>
-            <div class="subs-main">
-                <div class="subs-main-left">
-                    <ani-image class="subs-cover"></ani-image>
-                    <div class="subs-link-box skeleton-loading"></div>
-                    <div class="subs-broadcast">
-                        <span class="skeleton-loading"></span>
-                        <span class="skeleton-loading"></span>
-                    </div>
-                    <div class="subs-copyright-box skeleton-loading"></div>
-                </div>
-                <div class="subs-main-right">
-                    <div class="subs-info-box">
-                        <div class="subs-staff skeleton-loading"></div>
-                        <div class="subs-cast skeleton-loading"></div>
-                    </div>
-                    <div class="results-box skeleton-loading"></div>
-                </div>
-            </div> -->
         </div>
         <div class="dialog-container" v-else>
             <div class="dialog-close" @click="close">
@@ -502,46 +474,4 @@ dialog.dialog:focus-visible {
 .origin-type-o {
     --origin-type-color: #707070;
 }
-
-/* skeleton loading */
-/* .subs-type .subs-origin-type.skeleton-loading {
-    display: block;
-    height: var(--subs-header-height-1);
-    width: 100%;
-}
-
-.subs-type .subs-type-tag.skeleton-loading {
-    display: block;
-    height: var(--subs-header-height-2);
-    width: 100%;
-}
-
-.subs-title .subs-title-cn.skeleton-loading {
-    display: block;
-    height: var(--subs-header-height-1);
-    width: 100%;
-}
-
-.subs-title .subs-title-jp.skeleton-loading {
-    display: block;
-    height: var(--subs-header-height-2);
-    width: 100%;
-}
-
-.subs-link-box.skeleton-loading,
-.subs-copyright-box.skeleton-loading {
-    width: var(--subs-cover-width);
-    height: var(--subs-line-height);
-}
-
-.subs-staff.skeleton-loading {
-    flex-shrink: 0;
-    width: calc(var(--subs-cover-width) / 0.8);
-    height: 240px;
-}
-
-.subs-cast.skeleton-loading {
-    flex-grow: 1;
-    height: 240px;
-} */
 </style>
