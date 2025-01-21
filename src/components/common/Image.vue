@@ -47,5 +47,6 @@ onMounted(() => {
     width: 100%;
     margin: auto 0;
     text-align: center;
+    user-select: none;
 }
 </style>

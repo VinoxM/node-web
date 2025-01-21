@@ -133,7 +133,7 @@ const openTorrent = (res) => {
         input.select();
         document.execCommand('copy');
         dialog_.removeChild(input);
-        message.success('已复制种子链接到剪贴板.', 2000, dialog_)
+        message.success('已复制种子链接到剪贴板.', { duration: 2000, appendTo: dialog_ })
         return
     }
     const a = document.createElement("a")

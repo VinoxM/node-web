@@ -1,56 +1,110 @@
+:root {    
+    /* edit */
+    --edit-height: 32px;
+    --edit-width: 380px;
+}
+
 /* header edit box */
 .ani-header-edit-box {
-    --header-edit-width: var(--search-height);
+    --header-edit-icon-width: 20px;
+    --header-edit-width: var(--header-edit-icon-width);
     --header-edit-text-width: 58px;
-    display: block;
+    display: flex;
+    flex-direction: row-reverse;
     position: absolute;
     top: var(--main-gap);
-    left: calc(50% + var(--search-width)/2 - var(--search-height)/2);
-    height: var(--search-height);
-    line-height: var(--search-height);
-    cursor: pointer;
+    right: calc(50% - var(--edit-width)/2);
+    height: var(--edit-height);
+    line-height: var(--edit-height);
     width: var(--header-edit-width);
     overflow: hidden;
-    transition: all 0.4s;
+    transition: all var(--transition-delay);
 }
 
-.ani-header.searching .ani-header-edit-box {
-    top: calc(var(--main-gap) + var(--search-height));
+.ani-main.edit-mode .ani-header {
+    padding-top: calc(var(--main-gap) * 2 + var(--edit-height));
 }
 
-.ani-header-edit-box:hover,
+.ani-main.edit-mode .ani-header:not(.searching) .season-search-box {
+    top: calc(var(--main-gap) + var(--edit-height) + var(--search-height) - var(--season-year-height));
+}
+
+.ani-main.edit-mode .ani-header.searching .season-search-box {
+    top: calc(var(--main-gap)*2 + var(--edit-height));
+}
+
+.ani-main.edit-mode div.ani-header.searching {
+    padding-top: calc(var(--main-gap) * 3 + var(--edit-height) + var(--search-height));
+}
+
+.ani-main:not(.edit-mode) .ani-header.searching .ani-header-edit-box {
+    top: calc(var(--main-gap) + var(--edit-height) + var(--search-height) - var(--season-year-height));
+}
+
 .ani-main.edit-mode .ani-header-edit-box {
-    --header-edit-width: calc(var(--search-height) + var(--header-edit-text-width));
-    color: var(--color-blue-0);
+    --header-edit-width: var(--edit-width);
 }
 
-.ani-header-edit-box i {
-    display: block;
+.ani-main.edit-mode .ani-header-edit-box .ani-header-edit-icon,
+.ani-main:not(.edit-mode) .ani-header-edit-box:hover,
+.ani-main:not(.edit-mode) .ani-header-edit-box:hover .ani-header-edit-icon {
+    width: calc(var(--header-edit-icon-width) + var(--header-edit-text-width));
 }
-.ani-header-edit-box i::before {
-    width: var(--search-height);
-    height: var(--search-height);
-    line-height: var(--search-height);
+
+.ani-main.edit-mode .ani-header-edit-box .ani-header-edit-icon,
+.ani-main:not(.edit-mode) .ani-header-edit-box:hover .ani-header-edit-icon {
+    background-color: var(--color-blue-0);
+    border-radius: 4px;
+    color: var(--color-white-0);
+}
+
+.ani-main.edit-mode .ani-header-edit-box .ani-header-edit-icon:hover {
+    background-color: var(--color-red-0);
+    color: var(--color-white-0);
+}
+
+.ani-header-edit-box .ani-header-edit-icon {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row-reverse;
+    transition: all var(--transition-delay);
+    position: relative;
+    width: var(--header-edit-icon-width);
+    overflow: hidden;
+}
+
+.ani-header-edit-box .ani-header-edit-icon i::before {
+    width: var(--header-edit-icon-width);
+    height: var(--edit-height);
+    line-height: var(--edit-height);
     text-align: center;
     margin: 0;
 }
 
-.ani-header-edit-box span {
-    user-select: none;
-    display: inline-block;
+.ani-header-edit-box .ani-header-edit-icon span {
+    display: block;
     position: absolute;
-    left: var(--search-height);
-    top: 0;
     width: var(--header-edit-text-width);
-    height: var(--search-height);
-    line-height: var(--search-height);
+    top: 0;
+    right: var(--header-edit-icon-width);
+    text-align: right;
     font-size: var(--font-size-small);
-    text-align: center;
 }
 
-/* item edit box */
-.ani-item-edit-box {
-    display: block;
+.ani-header-edit-tools {
+    position: absolute;
+    right: calc(var(--header-edit-icon-width) + var(--header-edit-text-width));
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: calc(var(--edit-width) - var(--header-edit-icon-width) - var(--header-edit-text-width));
+    height: var(--edit-height);
+    line-height: var(--edit-height);
+}
+
+.ani-header-edit-tools button {
+    height: var(--edit-height);
+    line-height: calc(var(--edit-height) - 2px);
 }
 
 /* item check box */
@@ -66,11 +120,11 @@
     display: none;
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: 2px;
 }
 
 .ani-main.edit-mode .ani-item-check-box {
-    --checkbox-size: 32px;
+    --checkbox-size: 20px;
     display: block;
 }
 
@@ -87,4 +141,9 @@
 .ani-item:not(.checked):hover .ani-item-check-box,
 .ani-item.checked .ani-item-check-box {
     color: var(--color-blue-0);
+}
+
+/* item edit box */
+.ani-item-edit-box {
+    display: block;
 }

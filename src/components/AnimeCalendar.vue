@@ -1,6 +1,7 @@
 <template>
-    <div class="ani-main" :class="{'edit-mode': editMode}">
-        <CalendarHeader @search="getSearch" v-model:edit-mode="editMode"></CalendarHeader>
+    <div class="ani-main" :class="{ 'edit-mode': editMode }">
+        <CalendarHeader @search="getSearch" @update-checked="updateChecked" v-model:edit-mode="editMode"
+            :checked-count="checkedCount"></CalendarHeader>
         <div class="ani-weekly-box card-panel">
             <div class="ani-row-box day-box sticky">
                 <div class="ani-day-row">
@@ -11,7 +12,7 @@
                     <div class="ani-background ani-arrow arrow-right" @click="setupStepForClick(1)"></div>
                 </div>
             </div>
-            <div class="ani-row-box">
+            <div class="ani-row-box" v-loading="updating" loading-text="Updating...">
                 <div class="ani-container-row" :style="rowStyle">
                     <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading"
                         @item-click="itemClick">
@@ -19,7 +20,8 @@
                 </div>
             </div>
         </div>
-        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" @item-click="itemClick"></CalendarWebBox>
+        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
+            @item-click="itemClick"></CalendarWebBox>
         <CalendarDialog v-model="unique"></CalendarDialog>
     </div>
     <AnimeFooter></AnimeFooter>
@@ -35,6 +37,7 @@ import AnimeFooter from './AnimeFooter.vue';
 import { getNowDay } from '@/utils/dateUtils';
 import CalendarWebBox from './calendar/CalendarWebBox.vue';
 import CalendarHeader from './calendar/CalendarHeader.vue';
+import message from '@/message';
 
 let nowDay = getNowDay();
 
@@ -71,6 +74,7 @@ const webArr = ref([]);
 const unique = ref(0);
 const rowStyle = ref({});
 const loading = ref(false);
+const updating = ref(false);
 
 let lastSearch = null;
 let lastData = {
@@ -87,25 +91,32 @@ let lastData = {
 }
 
 const editMode = ref(false);
+const checkedCount = ref(0);
 const edit = {
     arr: [],
     ref: {},
     init(listRef) {
         this.ref = listRef;
         this.arr = [];
+        checkedCount.value = 0;
     },
     reset() {
         this.arr.forEach(unique => {
             this.select(unique, false);
         })
         this.arr = [];
+        checkedCount.value = 0;
     },
     select(unique, del = true) {
         const index = this.arr.indexOf(unique);
         if (index > -1) {
-            if (del) this.arr.splice(index, 1);
+            if (del) {
+                this.arr.splice(index, 1);
+                checkedCount.value = this.arr.length;
+            }
         } else {
             this.arr.push(unique);
+            checkedCount.value = this.arr.length;
         }
         const doSome = (arr) => {
             arr.some(o => {
@@ -150,7 +161,7 @@ const getSearch = ({ season, search }, callback) => {
     lastSearch = getApi().getSearch({ season, name: search }, data => {
         lastSearch = null;
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef } = data;
-        callback({ step: 0, season: season?.split("-") || ['', ''] }, search ? resultCount : 0);
+        callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0, seasonResultCount: resultCount });
         nowDay = nowDay_;
         resetWeekDays();
         dataDict.value = dayDictArray;
@@ -166,6 +177,18 @@ const getSearch = ({ season, search }, callback) => {
         loading.value = false;
         lastData.restore();
     });
+}
+
+const updateChecked = (callback) => {
+    updating.value = true;
+    getApi().updateManySubs({ ids: edit.arr }, ({ effectRows, handledCount }) => {
+        message.success(`处理${handledCount}个, 新增${effectRows}条记录.`);
+        callback();
+        updating.value = false;
+    }, () => {
+        callback();
+        updating.value = false;
+    })
 }
 
 /* search highlight */

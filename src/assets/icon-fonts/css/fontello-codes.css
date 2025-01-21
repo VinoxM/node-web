@@ -19,6 +19,7 @@
 .icon-check-empty:before { content: '\f096'; } /* '' */
 .icon-angle-double-left:before { content: '\f100'; } /* '' */
 .icon-angle-double-right:before { content: '\f101'; } /* '' */
+.icon-spinner:before { content: '\f110'; } /* '' */
 .icon-rss-squared:before { content: '\f143'; } /* '' */
 .icon-plus-squared-alt:before { content: '\f196'; } /* '' */
 .icon-calc:before { content: '\f1ec'; } /* '' */

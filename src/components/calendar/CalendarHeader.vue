@@ -5,12 +5,21 @@
             <span v-if="!isSearching && searchCount > 0" class="search-result">{{ searchCount }}</span>
             <input v-show="isSearching" class="search-input" ref="searchInput" placeholder="番剧名搜索" v-model="search"
                 @keypress.enter.prevent.stop="searchBtnClicked(false)" />
-            <button v-show="isSearching" class="ani-btn" @click.stop="searchBtnClicked(false)">搜当季</button>
-            <button v-show="isSearching" class="ani-btn" @click.stop="searchBtnClicked(true)">搜全部</button>
+            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(false)">搜当季</Button>
+            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(true)">搜全部</Button>
         </div>
-        <div class="ani-header-edit-box" @click="emitEdit">
-            <i class="icon-edit"></i>
-            <span>编辑模式</span>
+        <div class="ani-header-edit-box">
+            <div class="ani-header-edit-tools">
+                <div>
+                    <span>{{ checkedCount }}</span> / <span>{{ resultCount }}</span>
+                </div>
+                <Button size="small" icon="refresh-square" type="success" :disabled="checkedCount === 0"
+                    :loading="isUpdating" @click="updateCheckedClicked">更新选中</Button>
+            </div>
+            <div class="ani-header-edit-icon" @click="emitEdit">
+                <span>编辑模式</span>
+                <i class="icon-edit"></i>
+            </div>
         </div>
         <div class="season-year-box">
             <div class="ani-arrow-box">
@@ -55,10 +64,12 @@
 import { onMounted, ref, useTemplateRef, nextTick } from 'vue';
 import { getApi } from '@/api';
 import message from '@/message';
+import Button from '../common/Button.vue';
 
 // props
-const { editMode } = defineProps({
-    editMode: Boolean
+const { editMode, checkedCount } = defineProps({
+    editMode: Boolean,
+    checkedCount: Number
 })
 
 // data
@@ -77,6 +88,9 @@ const searchRef = useTemplateRef('searchInput');
 const isSearching = ref(false);
 
 const searchCount = ref(0);
+const resultCount = ref(0);
+
+const isUpdating = ref(false);
 
 const searchStore = {
     year: '',
@@ -96,21 +110,7 @@ const searchStore = {
 }
 
 // emit
-const emit = defineEmits(['search', 'update:editMode'])
-
-// methods
-const initCurSeason = () => {
-    if (seasonYear.value !== '') return
-    let now = new Date();
-    if (now.getHours() < 6) {
-        now.setDate(now.getDate() - 1);
-    }
-    let month = now.getMonth() + 1;
-    month = (Math.ceil(month / 3) - 1) * 3 + 1;
-    season.value = [now.getFullYear() + '', String(month).padStart(2, '0')];
-    seasonYear.value = season.value[0];
-    seasonMonth.value = season.value[1];
-}
+const emit = defineEmits(['search', 'update:editMode', 'updateChecked'])
 
 const emitSearch = ({ season, search, searchAll }) => {
     const params = {};
@@ -130,9 +130,29 @@ const emitEdit = () => {
     emit('update:editMode', !editMode);
 }
 
-const searchCallback = ({ step, season }, searchResultCount = 0) => {
+const emitUpdateChecked = () => {
+    isUpdating.value = true;
+    emit('updateChecked', () => isUpdating.value = false);
+}
+
+// methods
+const initCurSeason = () => {
+    if (seasonYear.value !== '') return
+    let now = new Date();
+    if (now.getHours() < 6) {
+        now.setDate(now.getDate() - 1);
+    }
+    let month = now.getMonth() + 1;
+    month = (Math.ceil(month / 3) - 1) * 3 + 1;
+    season.value = [now.getFullYear() + '', String(month).padStart(2, '0')];
+    seasonYear.value = season.value[0];
+    seasonMonth.value = season.value[1];
+}
+
+const searchCallback = ({ step, season }, { searchResultCount = 0, seasonResultCount = 0 }) => {
     setupSeasonYearStep(step, season)
     searchCount.value = searchResultCount;
+    resultCount.value = seasonResultCount;
     nextTick(() => {
         const resultNode = document.querySelector('.search-result');
         if (resultNode) {
@@ -169,6 +189,12 @@ const setupSeasonBtnArray = () => {
         })
     }
     seasonBtnArray.value = result;
+}
+
+const updateCheckedClicked = () => {
+    if (checkedCount > 0) {
+        emitUpdateChecked()
+    }
 }
 
 const monthClicked = (month) => {
@@ -228,7 +254,7 @@ const toSearching = () => {
         }
     }
     mask.className = 'main-mask';
-    document.body.appendChild(mask);
+    document.querySelector('.ani-main').appendChild(mask);
     const parentNode = document.querySelector('.ani-main');
     const origin = searchBox.value;
     cloneNode = origin.cloneNode(false);
