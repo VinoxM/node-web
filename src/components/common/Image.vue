@@ -36,6 +36,7 @@ onMounted(() => {
 .image-box {
     position: relative;
     display: flex;
+    justify-content: center;
 }
 
 .error {

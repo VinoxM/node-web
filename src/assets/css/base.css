@@ -9,6 +9,7 @@
     --color-white-0: #F1F2F3;
     --color-white-1: #d5d5d5;
     --color-gray-0: #9499a0;
+    --color-gray-1: #6d7075;
     --color-blue-0: #00a1d6;
     --color-blue-1: #5553d5;
     --color-red-0: #FF0000;
@@ -206,6 +207,10 @@ input:focus {
 
     div.season-btn-container div.season-btn-10 {
         border-top-right-radius: 0;
+    }
+
+    div.dialog-container div.subs-info-box {
+        flex-direction: column;
     }
 }
 

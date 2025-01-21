@@ -1,6 +1,7 @@
 @import './base.css';
 @import './button.css';
 @import './edit.css';
+@import './dialog.css';
 
 .ani-main {
   display: flex;
@@ -756,7 +757,7 @@ span.limited-box {
   transition: all var(--item-hover-transition);
 }
 
-.ani-item:hover .ani-item-title .limited-box:not(.title-jp) {
+.ani-item:hover .ani-item-title .limited-box.title-cn {
   color: var(--color-blue-0);
   text-decoration: underline;
 }

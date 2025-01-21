@@ -15,7 +15,7 @@
             <div class="ani-row-box" v-loading="updating" loading-text="Updating...">
                 <div class="ani-container-row" :style="rowStyle">
                     <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading"
-                        @item-click="itemClick">
+                        @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate">
                     </CalendarContainer>
                 </div>
             </div>
@@ -150,6 +150,19 @@ watch(editMode, (val) => {
         edit.reset();
     }
 })
+
+const itemEdit = (unique) => {
+    if (!editMode.value) return;
+}
+
+const itemUpdate = (unique) => {
+    if (!editMode.value) return;
+    updating.value = true;
+    getApi().updateOneSubs({ id: unique }, ({ handledCount, effectRows }) => {
+        message.success(`处理${handledCount}个, 新增${effectRows}条记录.`);
+        updating.value = false;
+    }, () => updating.value = false);
+}
 
 /* api func */
 const getSearch = ({ season, search }, callback) => {

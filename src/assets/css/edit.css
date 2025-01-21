@@ -1,4 +1,4 @@
-:root {    
+:root {
     /* edit */
     --edit-height: 32px;
     --edit-width: 380px;
@@ -145,5 +145,16 @@
 
 /* item edit box */
 .ani-item-edit-box {
-    display: block;
+    display: none;
+    height: var(--item-edit-height);
+}
+
+.ani-main.edit-mode .ani-item-edit-box {
+    display: flex;
+    gap: 5px;
+}
+
+.ani-main.edit-mode .ani-item-title {
+    --item-edit-height: 26px;
+    height: calc(var(--item-title-height) * 2 + var(--item-edit-height));
 }

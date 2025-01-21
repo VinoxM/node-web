@@ -58,7 +58,7 @@ const btnClass = computed(() => {
     return result.join(' ');
 })
 
-const needIcon = computed(() => loading && icon !== '')
+const needIcon = computed(() => loading || icon !== '')
 
 const iconClass = computed(() => loading ? 'icon-loading animate-spin' : `icon-${icon}`);
 </script>

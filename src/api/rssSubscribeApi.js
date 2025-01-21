@@ -5,5 +5,12 @@ export default {
         headers: {
             secret: 'mAou5820.subscribe'
         }
+    },
+    updateOneSubs: {
+        path: '/rss/subscribe/updateOne',
+        method: 'post',
+        headers: {
+            secret: 'mAou5820.subscribe'
+        }
     }
 }

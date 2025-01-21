@@ -26,7 +26,7 @@
                 <i class="icon-angle-double-left" @click="setupSeasonYearStep(-1)"></i>
                 <i class="icon-angle-double-right" @click="setupSeasonYearStep(1)"></i>
             </div>
-            <input v-if="seasonVisible" ref="season" class="season-input" v-model="seasonYearTemp" @blur="hideSeason" />
+            <input v-if="seasonVisible" ref="seasonInput" class="season-input" v-model="seasonYearTemp" @blur="hideSeason" />
             <div v-else class="season-year" @click="showSeason">
                 <span>{{ seasonYear }}</span>
             </div>
@@ -78,7 +78,7 @@ const seasonVisible = ref(false);
 const seasonYear = ref('');
 const seasonYearTemp = ref('');
 const seasonMonth = ref('');
-const seasonRef = useTemplateRef('season');
+const seasonRef = useTemplateRef('seasonInput');
 const seasonDict = ref([]);
 const seasonBtnArray = ref([{ style: '' }, { style: '' }, { style: '' }, { style: '' }]);
 
@@ -223,15 +223,16 @@ const showSeason = () => {
     seasonVisible.value = true;
     nextTick(() => {
         seasonYearTemp.value = seasonYear.value;
-        const season = seasonRef.value;
-        season.focus();
+        const s = seasonRef.value;
+        s.focus();
     })
 }
 
 const hideSeason = () => {
     seasonVisible.value = false;
     if (/^[0-9]{4}$/.test(seasonYearTemp.value)) {
-        seasonYear.value = seasonYearTemp.value
+        seasonYear.value = seasonYearTemp.value;
+        setupSeasonBtnArray();
     }
 }
 

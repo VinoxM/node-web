@@ -7,6 +7,10 @@
             <div class="ani-item-title">
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
+                <div class="ani-item-edit-box">
+                    <Button icon="refresh-square" size="small" @click.stop="$emit('itemUpdate', props.unique)"></Button>
+                    <Button icon="edit" size="small" @click.stop="$emit('itemEdit', props.unique)"></Button>
+                </div>
             </div>
             <div class="ani-item-noodle" v-if="isShort">
                 <Noodle class="noodle-svg"></Noodle>
@@ -29,6 +33,7 @@
 <script setup>
 import { computed } from 'vue';
 import Noodle from '../common/Noodle.vue';
+import Button from '../common/Button.vue';
 
 const props = defineProps({
     titleCN: String,
