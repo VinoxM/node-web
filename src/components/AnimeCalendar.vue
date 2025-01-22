@@ -183,7 +183,7 @@ const getSearch = ({ season, search }, callback) => {
         dataDict.value = dayDictArray;
         webArr.value = webArray;
         loading.value = false;
-        setupTransforStep();
+        setupTransForStep();
         edit.init(listRef);
         nextTick(() => {
             setupHighlight(search);
@@ -264,7 +264,7 @@ const setupStepForClick = (incr) => {
 }
 
 /* ani transform */
-const setupTransforStep = () => {
+const setupTransForStep = () => {
     const maxCount = Number(getComputedStyle(document.documentElement).getPropertyValue('--row-max-count'));
     const middleCount = Math.ceil(maxCount / 2);
     let nowDay_ = nowDay === 0 ? 7 : nowDay;
@@ -309,7 +309,7 @@ const setupBackgroundImage = (install = true) => {
 const setupDocumentHeight = () => {
     let vh = window.innerHeight;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
-    setupTransforStep();
+    setupTransForStep();
 }
 
 /* mounted */
