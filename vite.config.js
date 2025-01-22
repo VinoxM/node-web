@@ -27,6 +27,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: '/home/node-file/edit',
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin used during production bundling
