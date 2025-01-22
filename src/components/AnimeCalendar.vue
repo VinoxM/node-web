@@ -22,7 +22,8 @@
         </div>
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
             @item-click="itemClick"></CalendarWebBox>
-        <CalendarDialog v-model="unique"></CalendarDialog>
+        <CalendarEditor v-model="unique" v-if="editMode"></CalendarEditor>
+        <CalendarViewer v-model="unique" v-else></CalendarViewer>
     </div>
     <AnimeFooter></AnimeFooter>
 </template>
@@ -31,13 +32,14 @@
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import CalendarContainer from './calendar/CalendarContainer.vue';
 import { getApi, cancel } from '@/api';
-import CalendarDialog from './calendar/CalendarDialog.vue';
+import CalendarViewer from './calendar/CalendarViewer.vue';
 import CalendarWeekDays from './calendar/CalendarWeekDays.vue';
 import AnimeFooter from './AnimeFooter.vue';
 import { getNowDay } from '@/utils/dateUtils';
 import CalendarWebBox from './calendar/CalendarWebBox.vue';
 import CalendarHeader from './calendar/CalendarHeader.vue';
 import message from '@/message';
+import CalendarEditor from './calendar/CalendarEditor.vue';
 
 let nowDay = getNowDay();
 
@@ -151,14 +153,15 @@ watch(editMode, (val) => {
     }
 })
 
-const itemEdit = (unique) => {
+const itemEdit = (unique_) => {
     if (!editMode.value) return;
+    unique.value = unique_;
 }
 
-const itemUpdate = (unique) => {
+const itemUpdate = (unique_) => {
     if (!editMode.value) return;
     updating.value = true;
-    getApi().updateOneSubs({ id: unique }, ({ handledCount, effectRows }) => {
+    getApi().updateOneSubs({ id: unique_ }, ({ handledCount, effectRows }) => {
         message.success(`处理${handledCount}个, 新增${effectRows}条记录.`);
         updating.value = false;
     }, () => updating.value = false);

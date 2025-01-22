@@ -85,6 +85,7 @@
     /* input style */
     --input-border-color: var(--color-gray-0);
     --input-focus-border-color: var(--color-blue-0);
+    --input-border-width: 1px;
     --input-height: calc(var(--text-height) + 4px);
     --input-radius: calc(var(--input-height)/2 - 2px);
     --input-padding: calc(var(--input-height)/2 - 2px);
@@ -94,6 +95,7 @@
     --subs-header-height: 54px;
     --subs-header-height-1: 30px;
     --subs-gap: 4px;
+    --subs-row-height: 27px;
     /* header */
     --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height));
 }
@@ -109,10 +111,10 @@ body {
 }
 
 input {
-    border: 1px solid var(--input-border-color);
+    border: var(--input-border-width) solid var(--input-border-color);
     height: var(--input-height);
-    line-height: var(--text-height);
-    padding: 1px var(--input-padding);
+    line-height: calc(var(--input-height) - var(--input-border-width) * 2);
+    padding: 0 var(--input-padding);
     border-radius: var(--input-radius);
     box-sizing: border-box;
 }
@@ -121,6 +123,17 @@ input:focus {
     outline: 1px solid var(--input-focus-border-color);
     border-color: var(--input-focus-border-color);
     box-shadow: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+input[type='number'] {
+    appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 @media screen and (max-width: 2366px) {
@@ -181,10 +194,11 @@ input:focus {
     :root {
         --row-max-count: 1;
         --cover-width: 140px;
-        --dialog-width: 360px;
+        --dialog-width: 380px;
         --subs-cover-width: 100px;
         --subs-header-height: 46px;
         --subs-header-height-1: 26px;
+        --subs-row-height: 22px;
         --season-btn-box-gap: 3px;
         --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height) * 2 + var(--season-btn-box-gap));
     }

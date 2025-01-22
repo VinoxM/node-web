@@ -1,7 +1,7 @@
 @import './base.css';
 @import './button.css';
 @import './edit.css';
-@import './dialog.css';
+/* @import './dialog.css'; */
 
 .ani-main {
   display: flex;

@@ -3,12 +3,16 @@ const defaultLoadingText = 'Loading...';
 const toLoading = (el) => {
     if (el.classList.contains("directive-loading-parent")) return;
     const loadingText = el.hasAttribute('loading-text') ? el.getAttribute('loading-text') : defaultLoadingText;
-    const bgColor = el.hasAttribute('loading-bg-color') ? el.hasAttribute('loading-bg-color')?.trim() : '';
+    const bgColor = el.hasAttribute('loading-bg-color') ? el.getAttribute('loading-bg-color')?.trim() : '';
     el.classList.add("directive-loading-parent");
     const mask = document.createElement('div');
     mask.classList.add('directive-loading');
     if (bgColor !== '') {
         mask.style.backgroundColor = bgColor;
+    }
+    if (el.hasAttribute('mask-index')) {
+        const maskIndex = Number(el.getAttribute('mask-index')?.trim());
+        mask.style.zIndex = maskIndex;
     }
     const label = document.createElement("div");
     label.classList.add('directive-loading-spinner');
