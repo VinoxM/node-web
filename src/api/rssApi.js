@@ -116,6 +116,6 @@ export default {
         }
     },
     getResults: {
-        path: '/rss/v2/getOne.results'
+        path: '/rss/v2/getOne.detail'
     }
 }
