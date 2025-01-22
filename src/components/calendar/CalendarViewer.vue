@@ -77,7 +77,7 @@ const initSubscribe = () => {
 // data
 const unique = defineModel();
 const subscribe = ref(initSubscribe());
-const dialog = useTemplateRef("dialog");
+const dialogRef = useTemplateRef("dialog");
 const visible = ref(false);
 const loading = ref(true);
 const viewSwitch = ref(true);
@@ -121,7 +121,7 @@ watch(() => unique.value, (v) => {
 
 // methods
 const openTorrent = (res) => {
-    const dialog_ = dialog.value;
+    const dialog_ = dialogRef.value.$el;
     if (res.copyAll) {
         const input = document.createElement("input");
         input.value = res.torrent;
