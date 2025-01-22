@@ -20,7 +20,7 @@
             </div>
         </div>
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" @item-click="itemClick"></CalendarWebBox>
-        <CalendarDialog v-model="unique"></CalendarDialog>
+        <CalendarViewer v-model="unique"></CalendarViewer>
     </div>
     <AnimeFooter></AnimeFooter>
 </template>
@@ -29,7 +29,7 @@
 import { nextTick, onMounted, onUnmounted, ref } from 'vue';
 import CalendarContainer from './calendar/CalendarContainer.vue';
 import { getApi, cancel } from '@/api';
-import CalendarDialog from './calendar/CalendarDialog.vue';
+import CalendarViewer from './calendar/CalendarViewer.vue';
 import CalendarWeekDays from './calendar/CalendarWeekDays.vue';
 import AnimeFooter from './AnimeFooter.vue';
 import { getNowDay } from '@/utils/dateUtils';
@@ -102,7 +102,7 @@ const getSearch = ({ season, search }, callback) => {
         dataDict.value = dayDictArray;
         webArr.value = webArray;
         loading.value = false;
-        setupTransforStep();
+        setupTransForStep();
         nextTick(()=>{
             setupHighlight(search);
         })
@@ -164,7 +164,8 @@ const setupStepForClick = (incr) => {
     setupDictFront(newStep, maxCount);
 }
 
-const setupTransforStep = () => {
+/* ani transform */
+const setupTransForStep = () => {
     const maxCount = Number(getComputedStyle(document.documentElement).getPropertyValue('--row-max-count'));
     const middleCount = Math.ceil(maxCount / 2);
     let nowDay_ = nowDay === 0 ? 7 : nowDay;
@@ -178,6 +179,7 @@ const setupTransforStep = () => {
     setupDictFront(step, maxCount);
 }
 
+/* front view max height */
 const setupDictFront = (step, maxCount) => {
     if (dataDict.value === null) {
         return
@@ -208,7 +210,7 @@ const setupBackgroundImage = (install = true) => {
 const setupDocumentHeight = () => {
     let vh = window.innerHeight;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
-    setupTransforStep();
+    setupTransForStep();
 }
 
 /* mounted */

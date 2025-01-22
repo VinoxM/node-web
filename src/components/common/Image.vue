@@ -36,6 +36,7 @@ onMounted(() => {
 .image-box {
     position: relative;
     display: flex;
+    justify-content: center;
 }
 
 .error {
@@ -44,9 +45,9 @@ onMounted(() => {
     line-height: 20px;
     font-size: var(--font-size-mini);
     color: var(--color-gray-0);
-    text-align: center;
     width: 100%;
     margin: auto 0;
+    text-align: center;
     user-select: none;
 }
 </style>

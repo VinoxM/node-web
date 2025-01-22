@@ -20,7 +20,7 @@ div.ani-header {
   margin: 0 auto;
   padding: calc(var(--main-gap) + (var(--search-height) - var(--season-year-height)) / 2) 0 var(--main-gap) 0;
   border-radius: 0 0 8px 8px;
-  transition: all 0.4s;
+  transition: all var(--transition-delay);
   position: relative;
   min-height: var(--header-min-height);
 }
@@ -33,14 +33,14 @@ div.ani-header {
   --search-box-radius: 10px;
   --search-box-width: var(--search-height);
   position: absolute;
-  left: calc(50% - 164px);
+  left: calc(50% - var(--search-width) / 2);
   top: var(--main-gap);
   height: var(--search-height);
   line-height: var(--search-height);
   width: var(--search-box-width);
   overflow: hidden;
   font-size: var(--font-size-small);
-  transition: width var(--transition-delay);
+  transition: all var(--transition-delay);
   display: flex;
 }
 
@@ -64,7 +64,7 @@ div.ani-header {
   display: block;
 }
 
-div.season-search-box i {
+div.season-search-box>i {
   height: var(--search-height);
   text-align: center;
   cursor: pointer;
@@ -73,13 +73,13 @@ div.season-search-box i {
   margin-left: calc((var(--search-height) - 16px) / 2);
 }
 
-.ani-header.searching div.season-search-box i,
-.ani-header:not(.searching) div.season-search-box:not(.has-results) i {
+.ani-header.searching div.season-search-box>i,
+.ani-header:not(.searching) div.season-search-box:not(.has-results)>i {
   width: var(--search-height);
   margin: 0;
 }
 
-div.season-search-box i::before {
+div.season-search-box>i::before {
   margin: 0 auto;
   width: 16px;
   line-height: var(--search-height);
@@ -755,7 +755,7 @@ span.limited-box {
   transition: all var(--item-hover-transition);
 }
 
-.ani-item:hover .ani-item-title .limited-box:not(.title-jp) {
+.ani-item:hover .ani-item-title .limited-box.title-cn {
   color: var(--color-blue-0);
   text-decoration: underline;
 }
@@ -859,4 +859,48 @@ span.limited-box.two-line {
   flex-flow: wrap;
   column-gap: calc(var(--box-gap) + var(--time-line-gap) + var(--time-line-box-width) + 1px);
   row-gap: var(--box-gap);
+}
+
+/* v-loading */
+.directive-loading-parent {
+  position: relative !important;
+}
+
+.directive-loading {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: 0;
+  background-color: hsla(0, 0%, 100%, .9);
+  z-index: 2000;
+  transition: opacity var(--transition-delay);
+}
+
+.directive-loading-spinner {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  width: 100%;
+  color: #409eff;
+}
+
+.directive-loading-label {
+  user-select: none;
+  margin: 0;
+}
+
+.directive-loading-icon {
+  user-select: none;
+  display: block;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+}
+
+.directive-loading-icon::before {
+  width: 24px;
+  height: 24px;
 }

@@ -1,95 +1,92 @@
 <template>
-    <dialog class="dialog card-panel" ref="dialog" v-if="!destroyed">
-        <div class="dialog-container skeleton-loading" v-if="loading">
-            <div class="dialog-close" @click="close">
-                <i class="icon-cancel"></i>
+    <Dialog v-model:visible="visible" title="false" :destroy-on-close="false" ref="dialog" @closed="closed" :loading="loading" :min-height="554">
+        <div class="subs-header">
+            <div class="subs-type">
+                <span class="subs-origin-type limited-box one-line"
+                    :class="'origin-type-' + (subscribe.originType[0] || 'unknown')">{{ subscribe.originType[1] || '-'
+                    }}</span>
+                <span class="subs-type-tag limited-box one-line">{{ subscribe.typeTag || '-' }}</span>
+            </div>
+            <div class="subs-title">
+                <span class="subs-title-cn limited-box one-line">{{ subscribe.name || '-' }}</span>
+                <span class="subs-title-jp limited-box one-line">{{ subscribe.nameJP || '-' }}</span>
             </div>
         </div>
-        <div class="dialog-container" v-else>
-            <div class="dialog-close" @click="close">
-                <i class="icon-cancel"></i>
+        <div class="subs-main">
+            <div class="subs-main-left">
+                <ani-image :src="subscribe.cover" class="subs-cover"></ani-image>
+                <div class="subs-link-box">
+                    <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener">{{
+                        val.title || '-' }}</a>
+                </div>
+                <div class="subs-broadcast">
+                    <span>{{ subscribe.broadcast[0] || '-' }}</span>
+                    <span>{{ subscribe.broadcast[1] || '' }}</span>
+                </div>
+                <div class="subs-copyright-box">
+                    <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank" rel="noopener">
+                        <ani-image :src="val.image"></ani-image>
+                        <p>{{ val.area || '-' }}</p>
+                    </a>
+                </div>
             </div>
-            <div class="subs-header">
-                <div class="subs-type">
-                    <span class="subs-origin-type limited-box one-line"
-                        :class="'origin-type-' + subscribe.originType[0]">{{ subscribe.originType[1] }}</span>
-                    <span class="subs-type-tag limited-box one-line">{{ subscribe.typeTag }}</span>
+            <div class="subs-main-right">
+                <div class="subs-info-switch" @click="viewSwitch = !viewSwitch" v-if="subscribe.results.length > 0">
+                    <i :class="viewClass"></i>
+                    <span>{{ viewSwitch ? '隐藏Staff&Cast' : '显示Staff&Cast' }}</span>
                 </div>
-                <div class="subs-title">
-                    <span class="subs-title-cn limited-box one-line">{{ subscribe.name }}</span>
-                    <span class="subs-title-jp limited-box one-line">{{ subscribe.nameJP }}</span>
+                <div class="subs-info-box" v-show="viewSwitch">
+                    <div class="subs-staff" v-html="subscribe.staff || '-'"></div>
+                    <div class="subs-cast" v-html="subscribe.cast || '-'"></div>
                 </div>
-            </div>
-            <div class="subs-main">
-                <div class="subs-main-left">
-                    <ani-image :src="subscribe.cover" class="subs-cover"></ani-image>
-                    <div class="subs-link-box">
-                        <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank"
-                            rel="noopener">{{ val.title }}</a>
-                    </div>
-                    <div class="subs-broadcast">
-                        <span>{{ subscribe.broadcast[0] }}</span>
-                        <span>{{ subscribe.broadcast[1] }}</span>
-                    </div>
-                    <div class="subs-copyright-box">
-                        <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank"
-                            rel="noopener">
-                            <ani-image :src="val.image" fit="fill"></ani-image>
-                            <p>{{ val.area }}</p>
-                        </a>
-                    </div>
-                </div>
-                <div class="subs-main-right">
-                    <div class="subs-info-box">
-                        <div class="subs-staff" v-html="subscribe.staff"></div>
-                        <div class="subs-cast" v-html="subscribe.cast"></div>
-                    </div>
-                    <div class="results-box">
-                        <div class="results-scroll" v-if="subscribe.results && subscribe.results.length > 0">
-                            <div v-for="(val, key) of subscribe.results" :key="key" class="results-item"
-                                @click="openTorrent(val)">
-                                <span :title="val.title">{{ val.title }}</span>
-                                <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
-                            </div>
+                <div class="results-box">
+                    <div class="results-scroll" v-if="subscribe.results.length > 0">
+                        <div v-for="(val, key) of subscribe.results" :key="key" class="results-item"
+                            @click="openTorrent(val)">
+                            <span :title="val.title">{{ val.title }}</span>
+                            <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
                         </div>
-                        <div class="results-empty" v-else>
-                            <span>无结果</span>
-                        </div>
+                    </div>
+                    <div class="results-empty" v-else>
+                        <span>无结果</span>
                     </div>
                 </div>
             </div>
         </div>
-    </dialog>
+    </Dialog>
 </template>
 
 <script setup>
-import { onMounted, watch, ref, defineEmits, useTemplateRef, nextTick } from 'vue';
+import { onMounted, watch, ref, defineEmits, useTemplateRef, nextTick, computed } from 'vue';
 import { getApi, cancel } from '@/api';
 import message from '@/message';
+import Dialog from '../common/Dialog.vue';
+
+const initSubscribe = () => {
+    unique.value = 0;
+    return {
+        originType: [],
+        cover: '',
+        link: [],
+        broadcast: [],
+        copyright: [],
+        results: []
+    }
+}
 
 // data
-const subscribe = ref({});
+const unique = defineModel();
+const subscribe = ref(initSubscribe());
 const dialog = useTemplateRef("dialog");
-const destroyed = ref(true);
+const visible = ref(false);
 const loading = ref(true);
+const viewSwitch = ref(true);
 
 let lastRequest = null;
 
-// emit
-const emit = defineEmits(['update:modelValue']);
-
-// props
-const { modelValue } = defineProps({
-    modelValue: {
-        type: Number,
-        required: true
-    }
-})
-
 // watch
-watch(() => modelValue, (v) => {
+watch(() => unique.value, (v) => {
     if (v > 0) {
-        loading.value = true;
         cancel(lastRequest);
         show();
         lastRequest = getApi().getResults({ id: v }, data => {
@@ -110,15 +107,14 @@ watch(() => modelValue, (v) => {
                     torrent: results.map(o => o.torrent).join(" ")
                 })
             }
-            const originType = (data.originType + '').split('-');
-            const broadcast = (data.broadcast + '').split('-');
+            const originType = (data.originType || '').split('-');
+            const broadcast = (data.broadcast || '').split('-');
             subscribe.value = { ...data, broadcast, originType, results, cover, isResults: true };
             lastRequest = null;
             loading.value = false;
+            viewSwitch.value = results.length === 0;
         }, () => {
-            setTimeout(() => {
-                // close();
-            }, 1000);
+            setTimeout(close, 1000);
         })
     }
 })
@@ -133,7 +129,7 @@ const openTorrent = (res) => {
         input.select();
         document.execCommand('copy');
         dialog_.removeChild(input);
-        message.success('已复制种子链接到剪贴板.', 2000, dialog_)
+        message.success('已复制种子链接到剪贴板.', { duration: 2000, appendTo: dialog_ })
         return
     }
     const a = document.createElement("a")
@@ -145,96 +141,30 @@ const openTorrent = (res) => {
 }
 
 const show = () => {
-    destroyed.value = false;
-    nextTick(() => {
-        dialog.value.addEventListener('cancel', () => {
-            close();
-        })
-        dialog.value.addEventListener('click', e => {
-            if (e.target === dialog.value) {
-                close();
-            }
-        })
-        dialog.value.showModal();
-    })
+    loading.value = true;
+    visible.value = true;
 }
 
 const close = () => {
-    dialog.value?.close();
-    cancel(lastRequest);
-    emit('update:modelValue', 0);
-    nextTick(() => {
-        destroyed.value = true;
-        loading.value = false;
-    })
+    visible.value = false;
 }
 
-// mounted
-onMounted(() => {
+const closed = () => {
+    cancel(lastRequest);
+    subscribe.value = initSubscribe();
+    loading.value = false;
+}
+
+// computed
+const viewClass = computed(() => {
+    return viewSwitch.value ? 'icon-eye' : 'icon-eye-off';
 })
+
 </script>
 
 <style scoped>
-.dialog {
-    padding: 0;
-    border: 0;
-    overflow: hidden;
-}
-
-dialog.dialog:focus-visible {
-    outline: 0;
-}
-
 .dialog-container {
     --subs-line-height: 20px;
-    width: var(--dialog-width);
-}
-
-.dialog-container.skeleton-loading {
-    height: 554px;
-}
-
-
-.dialog:modal {
-    animation: fadeInUp 0.3s;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 20%, 0);
-    }
-
-    to {
-        opacity: 1;
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-.dialog-header {
-    height: 36px;
-    line-height: 36px;
-    text-align: center;
-    box-shadow: 0 0 3px 0px var(--color-gray-0);
-    position: relative;
-}
-
-.dialog-close {
-    height: 24px;
-    width: 24px;
-    position: absolute;
-    right: 3px;
-    top: 0;
-    line-height: 24px;
-    color: var(--color-gray-0);
-    user-select: none;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.dialog-close:hover {
-    color: var(--color-red-0);
 }
 
 /* dialog */
@@ -370,6 +300,22 @@ dialog.dialog:focus-visible {
     flex-direction: column;
 }
 
+.subs-info-switch {
+    text-align: center;
+    height: 24px;
+    line-height: 24px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    user-select: none;
+    color: var(--color-gray-1);
+    text-decoration: underline;
+    font-size: 14px;
+}
+
+.subs-info-switch:hover {
+    color: var(--color-blue-0);
+}
+
 .subs-info-box {
     font-size: var(--font-size-small);
     display: flex;
@@ -473,5 +419,14 @@ dialog.dialog:focus-visible {
 
 .origin-type-o {
     --origin-type-color: #707070;
+}
+
+.origin-type-unknown {
+    --origin-type-color: #707070;
+}
+
+:deep(.dialog-close) {
+    top: 3px;
+    right: 3px;
 }
 </style>

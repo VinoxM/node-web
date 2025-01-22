@@ -11,10 +11,11 @@ const createInstance = (cfg) => {
     cls.value = `message ${config.type}`;
     messageNode.setAttributeNode(cls);
 
-    const handleRemove = () => {
+    const handleRemove = (callback) => {
         ins.unmount(messageNode);
         appendTo.removeChild(messageNode);
         resetMsgTop();
+        if (callback && callback instanceof Function) callback();
     }
     const resetMsgTop = () => {
         const msgArr = Array.from(appendTo.querySelectorAll('div.message'));
@@ -27,25 +28,25 @@ const createInstance = (cfg) => {
         }
     }
     const ins = createApp(Message, {
-        config, remove: () => handleRemove()
+        config, remove: () => handleRemove(cfg.closed)
     })
     ins.mount(messageNode);
     appendTo.appendChild(messageNode);
     resetMsgTop();
-    ins.close = () => handleRemove();
+    ins.close = () => handleRemove(cfg.closed);
     return ins;
 }
 
-export const typeEnum = ['info','success','warning','error']
+export const typeEnum = ['info', 'success', 'warning', 'error']
 
-export const renderMessage = (type = 'info', message, duration = 2000, appendTo) => {
+export const renderMessage = ({ type = 'info', message, duration = 2000, appendTo, closed }) => {
     let t = typeEnum.indexOf(type) === -1 ? 'info' : type;
     let d = duration > 0 ? duration : 2000;
     return createInstance({
-        type: t, duration: d, content: message, appendTo
+        type: t, duration: d, content: message, appendTo, closed
     });
 }
 
-typeEnum.forEach(t=> {
-    renderMessage[t] = (msg, duration, appendTo) => renderMessage(t, msg, duration, appendTo);
+typeEnum.forEach(t => {
+    renderMessage[t] = (msg, ops) => renderMessage({ type: t, message: msg, ...ops });
 })

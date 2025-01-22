@@ -1,11 +1,13 @@
+@import './animation.css';
+
 @font-face {
   font-family: 'fontello';
-  src: url('../font/fontello.eot?69565525');
-  src: url('../font/fontello.eot?69565525#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff2?69565525') format('woff2'),
-       url('../font/fontello.woff?69565525') format('woff'),
-       url('../font/fontello.ttf?69565525') format('truetype'),
-       url('../font/fontello.svg?69565525#fontello') format('svg');
+  src: url('../font/fontello.eot?67960688');
+  src: url('../font/fontello.eot?67960688#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff2?67960688') format('woff2'),
+       url('../font/fontello.woff?67960688') format('woff'),
+       url('../font/fontello.ttf?67960688') format('truetype'),
+       url('../font/fontello.svg?67960688#fontello') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +17,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?69565525#fontello') format('svg');
+    src: url('../font/fontello.svg?67960688#fontello') format('svg');
   }
 }
 */
@@ -62,5 +64,22 @@
 .icon-msg-info:before { content: '\e805'; } /* '' */
 .icon-msg-warning:before { content: '\e806'; } /* '' */
 .icon-msg-success:before { content: '\e807'; } /* '' */
+.icon-lock:before { content: '\e808'; } /* '' */
+.icon-edit:before { content: '\e809'; } /* '' */
+.icon-feedback:before { content: '\e80a'; } /* '' */
+.icon-lock-open:before { content: '\e80b'; } /* '' */
+.icon-trash-empty:before { content: '\e80c'; } /* '' */
+.icon-refresh-square:before { content: '\e80d'; } /* '' */
+.icon-eye:before { content: '\e80e'; } /* '' */
+.icon-eye-off:before { content: '\e80f'; } /* '' */
+.icon-check:before { content: '\e810'; } /* '' */
+.icon-check-empty:before { content: '\f096'; } /* '' */
 .icon-angle-double-left:before { content: '\f100'; } /* '' */
 .icon-angle-double-right:before { content: '\f101'; } /* '' */
+.icon-loading:before { content: '\f110'; } /* '' */
+.icon-rss-squared:before { content: '\f143'; } /* '' */
+.icon-plus-squared:before { content: '\f196'; } /* '' */
+.icon-calc:before { content: '\f1ec'; } /* '' */
+.icon-trash:before { content: '\f1f8'; } /* '' */
+.icon-switch-off:before { content: '\f204'; } /* '' */
+.icon-switch-on:before { content: '\f205'; } /* '' */

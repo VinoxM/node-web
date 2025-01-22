@@ -5,15 +5,15 @@
             <span v-if="!isSearching && searchCount > 0" class="search-result">{{ searchCount }}</span>
             <input v-show="isSearching" class="search-input" ref="searchInput" placeholder="番剧名搜索" v-model="search"
                 @keypress.enter.prevent.stop="searchBtnClicked(false)" />
-            <button v-show="isSearching" class="ani-btn" @click.stop="searchBtnClicked(false)">搜当季</button>
-            <button v-show="isSearching" class="ani-btn" @click.stop="searchBtnClicked(true)">搜全部</button>
+            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(false)">搜当季</Button>
+            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(true)">搜全部</Button>
         </div>
         <div class="season-year-box">
             <div class="ani-arrow-box">
                 <i class="icon-angle-double-left" @click="setupSeasonYearStep(-1)"></i>
                 <i class="icon-angle-double-right" @click="setupSeasonYearStep(1)"></i>
             </div>
-            <input v-if="seasonVisible" ref="season" class="season-input" v-model="seasonYearTemp" @blur="hideSeason" />
+            <input v-if="seasonVisible" ref="seasonInput" class="season-input" v-model="seasonYearTemp" @blur="hideSeason" />
             <div v-else class="season-year" @click="showSeason">
                 <span>{{ seasonYear }}</span>
             </div>
@@ -51,6 +51,7 @@
 import { onMounted, ref, useTemplateRef, nextTick } from 'vue';
 import { getApi } from '@/api';
 import message from '@/message';
+import Button from '../common/Button.vue';
 
 // data
 const season = ref([]);
@@ -58,7 +59,7 @@ const seasonVisible = ref(false);
 const seasonYear = ref('');
 const seasonYearTemp = ref('');
 const seasonMonth = ref('');
-const seasonRef = useTemplateRef('season');
+const seasonRef = useTemplateRef('seasonInput');
 const seasonDict = ref([]);
 const seasonBtnArray = ref([{ style: '' }, { style: '' }, { style: '' }, { style: '' }]);
 
@@ -89,20 +90,6 @@ const searchStore = {
 // emit
 const emit = defineEmits(['search'])
 
-// methods
-const initCurSeason = () => {
-    if (seasonYear.value !== '') return
-    let now = new Date();
-    if (now.getHours() < 6) {
-        now.setDate(now.getDate() - 1);
-    }
-    let month = now.getMonth() + 1;
-    month = (Math.ceil(month / 3) - 1) * 3 + 1;
-    season.value = [now.getFullYear() + '', String(month).padStart(2, '0')];
-    seasonYear.value = season.value[0];
-    seasonMonth.value = season.value[1];
-}
-
 const emitSearch = ({ season, search, searchAll }) => {
     const params = {};
     if (!searchAll) {
@@ -115,6 +102,20 @@ const emitSearch = ({ season, search, searchAll }) => {
         return;
     }
     emit('search', params, searchCallback);
+}
+
+// methods
+const initCurSeason = () => {
+    if (seasonYear.value !== '') return
+    let now = new Date();
+    if (now.getHours() < 6) {
+        now.setDate(now.getDate() - 1);
+    }
+    let month = now.getMonth() + 1;
+    month = (Math.ceil(month / 3) - 1) * 3 + 1;
+    season.value = [now.getFullYear() + '', String(month).padStart(2, '0')];
+    seasonYear.value = season.value[0];
+    seasonMonth.value = season.value[1];
 }
 
 const searchCallback = ({ step, season }, searchResultCount = 0) => {
@@ -158,6 +159,12 @@ const setupSeasonBtnArray = () => {
     seasonBtnArray.value = result;
 }
 
+const updateCheckedClicked = () => {
+    if (checkedCount > 0) {
+        emitUpdateChecked()
+    }
+}
+
 const monthClicked = (month) => {
     if (!isSearching.value) {
         initCurSeason();
@@ -184,15 +191,16 @@ const showSeason = () => {
     seasonVisible.value = true;
     nextTick(() => {
         seasonYearTemp.value = seasonYear.value;
-        const season = seasonRef.value;
-        season.focus();
+        const s = seasonRef.value;
+        s.focus();
     })
 }
 
 const hideSeason = () => {
     seasonVisible.value = false;
     if (/^[0-9]{4}$/.test(seasonYearTemp.value)) {
-        seasonYear.value = seasonYearTemp.value
+        seasonYear.value = seasonYearTemp.value;
+        setupSeasonBtnArray();
     }
 }
 
@@ -215,7 +223,7 @@ const toSearching = () => {
         }
     }
     mask.className = 'main-mask';
-    document.body.appendChild(mask);
+    document.querySelector('.ani-main').appendChild(mask);
     const parentNode = document.querySelector('.ani-main');
     const origin = searchBox.value;
     cloneNode = origin.cloneNode(false);

@@ -1,9 +1,16 @@
 <template>
-    <dialog class="dialog" ref="dialog">
-        <div class="dialog-container">
-            <div class="dialog-header">
+    <dialog class="dialog" ref="dialog" v-if="!destroyed">
+        <div class="dialog-container-loading" v-loading="loading" mask-index="99" v-if="loading" :style="{minHeight: minHeight + 'px'}">
+            <div class="dialog-close" @click="visible = false">
+                <i class="icon-cancel"></i>
+            </div>
+        </div>
+        <div class="dialog-container" v-else :style="{minHeight: minHeight + 'px'}">
+            <div class="dialog-header" v-if="needTitle">
                 <slot name="header"><span class="limit-box one-line">{{ title }}</span></slot>
-                <div class="dialog-close" @click="closeDialog">X</div>
+            </div>
+            <div class="dialog-close" @click="visible = false">
+                <i class="icon-cancel"></i>
             </div>
             <div class="dialog-main">
                 <slot></slot>
@@ -16,57 +23,113 @@
 </template>
 
 <script setup>
-import { onMounted, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 const dialog = useTemplateRef("dialog");
+const destroyed = ref(false);
+const visible = defineModel('visible', { type: Boolean, required: true, default: false });
 
-const emit = defineEmits(['update:visible'])
-
-const { visible } = defineProps({
-    visible: {
+const { title, destroyOnClose, loading, minHeight } = defineProps({
+    title: {
+        type: [String, Boolean],
+        required: false,
+        default: ''
+    },
+    destroyOnClose: {
         type: Boolean,
+        required: false,
         default: false
     },
-    title: {
-        type: String,
+    beforeClose: {
+        type: Function,
         required: false
+    },
+    loading: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    minHeight: {
+        type: Number,
+        required: false,
+        default: 500
     }
 })
 
-onMounted(() => {
-    dialog.value.addEventListener('cancel', () => {
-        if (visible) {
-            emit('update:visible', false);
-        }
-    })
+const emit = defineEmits(['opened', 'closed']);
 
-    dialog.value.addEventListener('click', e => {
-        if (e.target === dialog.value) {
-            emit('update:visible', false);
-        }
-    })
+watch(() => visible.value, (val) => {
+    if (val) {
+        show();
+    } else {
+        close();
+    }
 })
 
-const closeDialog = () => {
-    emit('update:visible', false);
+const needTitle = computed(() => {
+    if (typeof title === 'boolean') {
+        return title;
+    } else if (typeof title === 'string') {
+        return title !== 'false';
+    }
+    return true;
+})
+
+const addListener = (callback) => {
+    nextTick(() => {
+        dialog.value?.addEventListener('cancel', () => {
+            if (visible.value) {
+                visible.value = false;
+            }
+        })
+        dialog.value?.addEventListener('click', e => {
+            if (e.target === dialog.value) {
+                visible.value = false;
+            }
+        })
+        if (callback && callback instanceof Function) {
+            callback();
+        }
+    })
 }
 
-watch(() => visible, (v) => {
-    if (v) {
+const show = () => {
+    const showModal = () => {
         dialog.value.showModal();
-    } else {
-        dialog.value.close();
+        emit('opened');
     }
+    if (destroyOnClose) {
+        destroyed.value = false;
+        addListener(showModal);
+    } else {
+        showModal();
+    }
+}
+
+const close = () => {
+    dialog.value?.close();
+    if (destroyOnClose) {
+        destroyed.value = true;
+    }
+    emit('closed');
+}
+
+onMounted(() => {
+    if (destroyOnClose) {
+        destroyed.value = true;
+    } 
+    addListener();
 })
 
 </script>
 
-<style scoped>
+<style>
 .dialog {
     padding: 0;
     border: 0;
     border-radius: 8px;
     overflow: hidden;
+    max-width: 100%;
 }
 
 dialog.dialog:focus-visible {
@@ -74,6 +137,11 @@ dialog.dialog:focus-visible {
 }
 
 .dialog-container {
+    width: var(--dialog-width);
+}
+
+.dialog-container-loading {
+    display: block;
     width: var(--dialog-width);
 }
 
@@ -100,6 +168,8 @@ dialog.dialog:focus-visible {
     text-align: center;
     box-shadow: 0 0 3px 0px var(--color-gray-0);
     position: relative;
+    user-select: none;
+    color: #303133;
 }
 
 .dialog-close {
@@ -112,15 +182,11 @@ dialog.dialog:focus-visible {
     color: var(--color-gray-0);
     user-select: none;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all var(--transition-delay);
+    z-index: 100;
 }
 
 .dialog-close:hover {
     color: var(--color-red-0);
-}
-
-.dialog-main {
-    padding: 15px;
-    height: 500px;
 }
 </style>

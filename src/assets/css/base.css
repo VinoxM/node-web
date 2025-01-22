@@ -9,6 +9,7 @@
     --color-white-0: #F1F2F3;
     --color-white-1: #d5d5d5;
     --color-gray-0: #9499a0;
+    --color-gray-1: #6d7075;
     --color-blue-0: #00a1d6;
     --color-blue-1: #5553d5;
     --color-red-0: #FF0000;
@@ -84,6 +85,7 @@
     /* input style */
     --input-border-color: var(--color-gray-0);
     --input-focus-border-color: var(--color-blue-0);
+    --input-border-width: 1px;
     --input-height: calc(var(--text-height) + 4px);
     --input-radius: calc(var(--input-height)/2 - 2px);
     --input-padding: calc(var(--input-height)/2 - 2px);
@@ -108,10 +110,10 @@ body {
 }
 
 input {
-    border: 1px solid var(--input-border-color);
+    border: var(--input-border-width) solid var(--input-border-color);
     height: var(--input-height);
-    line-height: var(--text-height);
-    padding: 1px var(--input-padding);
+    line-height: calc(var(--input-height) - var(--input-border-width) * 2);
+    padding: 0 var(--input-padding);
     border-radius: var(--input-radius);
     box-sizing: border-box;
 }
@@ -120,6 +122,17 @@ input:focus {
     outline: 1px solid var(--input-focus-border-color);
     border-color: var(--input-focus-border-color);
     box-shadow: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+input[type='number'] {
+    appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 @media screen and (max-width: 2366px) {
@@ -180,7 +193,7 @@ input:focus {
     :root {
         --row-max-count: 1;
         --cover-width: 140px;
-        --dialog-width: 360px;
+        --dialog-width: 380px;
         --subs-cover-width: 100px;
         --subs-header-height: 46px;
         --subs-header-height-1: 26px;
@@ -206,6 +219,10 @@ input:focus {
 
     div.season-btn-container div.season-btn-10 {
         border-top-right-radius: 0;
+    }
+
+    div.dialog-container div.subs-info-box {
+        flex-direction: column;
     }
 }
 
