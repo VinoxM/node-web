@@ -30,7 +30,7 @@ export default {
             let dayDictArray = initDataDict(nowDay);
             let webArray = [];
             const protocol = document.location.protocol;
-            const now = new Date('2025/01/20 22:00:00');
+            const now = new Date();
             // group by day.
             for (const obj of list) {
                 let cover = String(obj.C);
