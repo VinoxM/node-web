@@ -355,7 +355,7 @@ const submitSubscribe = () => {
         ...val
     }
     loading.value = true;
-    getApi().editOneSubs(body, close);
+    getApi().editOneSubs(body, () => (flushSearch = true, close()));
 }
 
 const getDialogEl = () => dialogRef.value.$el;
@@ -622,6 +622,7 @@ const closed = () => {
     if (flushSearch) {
         emit('research');
     }
+    flushSearch = false;
 }
 
 onMounted(() => {
