@@ -353,6 +353,7 @@ div.ani-row-box.sticky {
   width: calc(var(--container-box-width) * 7 + var(--box-gap) * 6);
   overflow: hidden;
   padding-top: var(--container-padding);
+  padding-right: var(--box-gap);
 }
 
 .ani-container-row,
@@ -526,6 +527,7 @@ div.ani-row-box.sticky {
   line-height: var(--box-min-height);
   color: var(--color-gray-0);
   height: var(--box-min-height);
+  user-select: none;
 }
 
 /* Anime Calendar Box */
@@ -756,7 +758,7 @@ span.limited-box {
   transition: all var(--item-hover-transition);
 }
 
-.ani-item:hover .ani-item-title .limited-box.title-cn {
+.ani-main:not(.edit-mode) .ani-item:hover .ani-item-title .limited-box.title-cn {
   color: var(--color-blue-0);
   text-decoration: underline;
 }
@@ -875,6 +877,7 @@ span.limited-box.two-line {
   bottom: 0;
   margin: 0;
   background-color: hsla(0, 0%, 100%, .9);
+  color: #409eff;
   z-index: 2000;
   transition: opacity var(--transition-delay);
 }
@@ -885,7 +888,6 @@ span.limited-box.two-line {
   transform: translateY(-50%);
   text-align: center;
   width: 100%;
-  color: #409eff;
 }
 
 .directive-loading-label {
@@ -901,7 +903,9 @@ span.limited-box.two-line {
   text-align: center;
 }
 
-.directive-loading-icon::before {
+i.directive-loading-icon::before {
   width: 24px;
   height: 24px;
+  line-height: 24px;
+  margin: 0;
 }

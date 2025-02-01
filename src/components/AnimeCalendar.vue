@@ -15,14 +15,15 @@
             <div class="ani-row-box" v-loading="updating" loading-text="Updating...">
                 <div class="ani-container-row" :style="rowStyle">
                     <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading"
-                        @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate">
+                        @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate" @item-fin="itemFin">
                     </CalendarContainer>
                 </div>
             </div>
         </div>
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
-            @item-click="itemClick"></CalendarWebBox>
-        <CalendarEditor v-model="unique" v-if="editMode"></CalendarEditor>
+            @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate" @item-fin="itemFin">
+        </CalendarWebBox>
+        <CalendarEditor v-model="unique" :matchers="matchers" v-if="editMode" @research="research"></CalendarEditor>
         <CalendarViewer v-model="unique" v-else></CalendarViewer>
     </div>
     <AnimeFooter></AnimeFooter>
@@ -77,8 +78,10 @@ const unique = ref(0);
 const rowStyle = ref({});
 const loading = ref(false);
 const updating = ref(false);
+const matchers = ref([]);
 
 let lastSearch = null;
+let lastSearchBody = null;
 let lastData = {
     dict: null,
     webArr: [],
@@ -143,6 +146,29 @@ const edit = {
                 });
             }
         }
+    },
+    getItem(unique) {
+        const findItem = (arr) => {
+            const index = arr.findIndex(o => o.unique === unique);
+            return index > -1 ? arr[index] : null;
+        }
+        let obj = { value: null, startTime: null };
+        if (unique in this.ref) {
+            const { isWeb, day, updateTime, startTime } = this.ref[unique];
+            obj.startTime = startTime;
+            if (isWeb) {
+                obj.value = findItem(webArr.value);
+            } else {
+                dataDict.value[day].timeline.some(o => {
+                    if (o.time === updateTime) {
+                        obj.value = findItem(o.list);
+                        return true;
+                    }
+                    return false;
+                });
+            }
+        }
+        return obj;
     }
 }
 
@@ -167,7 +193,24 @@ const itemUpdate = (unique_) => {
     }, () => updating.value = false);
 }
 
+const itemFin = (unique_) => {
+    if (!editMode.value) return;
+    const { value: item, startTime } = edit.getItem(unique_);
+    if (item !== null) {
+        item.finLoading = true;
+        getApi().setOneSubsFin({ id: unique_, fin: item.status === 2 ? 'N' : 'Y' }, () => {
+            const now = new Date().getTime();
+            item.status = item.status === 2 ? (now - startTime >= 0 ? 1 : 0) : 2;
+            item.finLoading = false;
+        })
+    }
+}
+
 /* api func */
+const research = () => {
+    if (lastSearchBody) getSearch(lastSearchBody);
+}
+
 const getSearch = ({ season, search }, callback) => {
     cancel(lastSearch);
     lastData.store();
@@ -175,14 +218,16 @@ const getSearch = ({ season, search }, callback) => {
     webArr.value = [];
     loading.value = true;
     lastSearch = getApi().getSearch({ season, name: search }, data => {
+        lastSearchBody = { season, search };
         lastSearch = null;
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef } = data;
-        callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0, seasonResultCount: resultCount });
+        if (callback instanceof Function) callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0, seasonResultCount: resultCount });
         nowDay = nowDay_;
         resetWeekDays();
         dataDict.value = dayDictArray;
         webArr.value = webArray;
         loading.value = false;
+        initContainerHeight();
         setupTransForStep();
         edit.init(listRef);
         nextTick(() => {
@@ -193,6 +238,10 @@ const getSearch = ({ season, search }, callback) => {
         loading.value = false;
         lastData.restore();
     });
+}
+
+const getMatchers = () => {
+    getApi().getMatchers(null, data => matchers.value = data)
 }
 
 const updateChecked = (callback) => {
@@ -223,7 +272,7 @@ const setupHighlight = (str) => {
         const indices = [];
         let startPos = 0;
         while (startPos < text.length) {
-            const index = text.indexOf(str, startPos);
+            const index = text.toLocaleLowerCase().indexOf(str.toLocaleLowerCase(), startPos);
             if (index === -1) break;
             indices.push(index);
             startPos = index + str.length;
@@ -279,13 +328,21 @@ const setupTransForStep = () => {
 }
 
 /* front view max height */
+const initContainerHeight = () => {
+    nextTick(() => {
+        Array.from(document.querySelectorAll("div.ani-container-row div.ani-container")).forEach(elem => {
+            elem.__offsetHeight = elem.offsetHeight;
+        });
+    })
+}
+
 const setupDictFront = (step, maxCount) => {
     if (dataDict.value === null) {
         return
     }
     nextTick(() => {
         const sliceArr = Array.from(document.querySelectorAll("div.ani-container-row div.ani-container")).slice(step, step + maxCount);
-        const rowMaxHeight = Math.max(...sliceArr.map(elem => elem.offsetHeight));
+        const rowMaxHeight = Math.max(...sliceArr.map(elem => elem.__offsetHeight));
         rowStyle.value = { '--container-row-height': rowMaxHeight + 'px' };
     })
 }
@@ -319,6 +376,7 @@ onMounted(() => {
     nextTick(() => {
         setupDocumentHeight();
     })
+    getMatchers();
 })
 
 onUnmounted(() => {

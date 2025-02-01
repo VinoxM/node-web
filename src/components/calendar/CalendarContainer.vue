@@ -4,7 +4,8 @@
             <CalendarBox v-for="(val, key) of props.timeline" :key="key" v-bind="val"
                 @item-click="$emit('itemClick', $event)"
                 @item-edit="$emit('itemEdit', $event)"
-                @item-update="$emit('itemUpdate', $event)"></CalendarBox>
+                @item-update="$emit('itemUpdate', $event)"
+                @item-fin="$emit('itemFin', $event)"></CalendarBox>
         </div>
         <div class="ani-day-group" v-else>
             <CalendarLoadingBox v-if="loading"></CalendarLoadingBox>

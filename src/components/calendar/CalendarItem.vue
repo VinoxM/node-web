@@ -1,5 +1,5 @@
 <template>
-    <div class="ani-item" :class="{checked: props.checked}" @click="$emit('itemClick', props.unique)">
+    <div class="ani-item" :class="{ checked: props.checked }" v-click="() => $emit('itemClick', props.unique)">
         <div class="ani-item-cover">
             <ani-image class="ani-item-cover-img" :src="props.cover"></ani-image>
         </div>
@@ -7,10 +7,6 @@
             <div class="ani-item-title">
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
-                <div class="ani-item-edit-box">
-                    <Button icon="refresh-square" size="small" @click.stop="$emit('itemUpdate', props.unique)"></Button>
-                    <Button icon="edit" size="small" @click.stop="$emit('itemEdit', props.unique)"></Button>
-                </div>
             </div>
             <div class="ani-item-noodle" v-if="isShort">
                 <Noodle class="noodle-svg"></Noodle>
@@ -23,6 +19,13 @@
                 <span :class="'ep-color-' + episodeColor" class="ani-item-episode-span" v-html="episode"></span>
                 <span class="ani-item-new new-shine" v-if="props.hasNew">New</span>
             </div>
+            <div class="ani-item-edit-box">
+                <Switch class="ani-item-fin" :value="props.status === 2" inline :loading="props.finLoading"
+                    @change="$emit('itemFin', props.unique)" active-text="完结" inactive-text="放送" active-color="#6A0808">
+                </Switch>
+                <Link icon="refresh-square" v-click.stop="() => $emit('itemUpdate', props.unique)">更新</Link>
+                <Link icon="edit" v-click.stop="() => $emit('itemEdit', props.unique)">编辑</Link>
+            </div>
         </div>
         <div class="ani-item-check-box">
             <i :class="checkboxClass"></i>
@@ -33,7 +36,8 @@
 <script setup>
 import { computed } from 'vue';
 import Noodle from '../common/Noodle.vue';
-import Button from '../common/Button.vue';
+import Switch from '../common/Switch.vue';
+import Link from '../common/Link.vue';
 
 const props = defineProps({
     titleCN: String,
@@ -58,8 +62,11 @@ const props = defineProps({
     hasNew: Number,
     unique: Number,
     epCount: Number,
-    checked: Boolean
+    checked: Boolean,
+    finLoading: { type: Boolean, default: false }
 });
+
+const emit = defineEmits(['itemClick', 'itemUpdate', 'itemEdit'])
 
 const episode = computed(() => {
     if (props.status === 0) {
@@ -71,7 +78,7 @@ const episode = computed(() => {
     return props.latestEp === null ? '无更新' : `更新至<span>${props.latestEp}</span>`;
 });
 
-const checkboxClass = computed(()=>{
+const checkboxClass = computed(() => {
     return props.checked ? 'icon-check' : 'icon-check-empty';
 })
 
@@ -85,7 +92,7 @@ const episodeColor = computed(() => {
     return 'normal';
 })
 
-const isShort = computed(()=>{
+const isShort = computed(() => {
     return Number(props.type.split('')[0]) === 1;
 })
 

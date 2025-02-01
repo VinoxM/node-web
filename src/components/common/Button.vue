@@ -8,7 +8,7 @@
 <script setup>
 import { computed } from 'vue';
 
-const { plain, size, icon, type, disabled, loading } = defineProps({
+const { plain, size, icon, type, disabled, loading, borderLess } = defineProps({
     plain: {
         type: Boolean,
         required: false,
@@ -40,6 +40,11 @@ const { plain, size, icon, type, disabled, loading } = defineProps({
         type: Boolean,
         required: false,
         default: false
+    },
+    borderLess: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
@@ -54,6 +59,9 @@ const btnClass = computed(() => {
     }
     if (disabled || loading) {
         result.push('disabled');
+    }
+    if (borderLess) {
+        result.push('border-less');
     }
     return result.join(' ');
 })

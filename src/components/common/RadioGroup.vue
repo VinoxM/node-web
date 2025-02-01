@@ -54,7 +54,6 @@ const needLabel = computed(() => {
 .radio-group .prepend {
     display: block;
     position: relative;
-    width: 55px;
     text-align: right;
     box-sizing: border-box;
     font-size: var(--radio-group-font-size);
@@ -63,7 +62,7 @@ const needLabel = computed(() => {
     background-color: #f5f7fa;
     color: #909399;
     border-radius: 8px 0 0 8px;
-    padding-right: 4px;
+    padding: 0 4px;
     flex-shrink: 0;
     user-select: none;
 }

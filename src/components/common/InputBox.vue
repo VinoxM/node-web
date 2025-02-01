@@ -1,8 +1,10 @@
 <template>
     <div class="input-box" :style="widthStyle">
-        <span class="prepend" v-if="needLabel">{{ label }}</span>
-        <input class="input" :type="type" :class="inputAlign" v-if="!ignoreInput" v-model="model" @focus="inputFocus"
-            @change="changed" />
+        <span class="prepend" :class="{ float: type === 'textarea' }" v-if="needLabel">{{ label }}</span>
+        <input class="input" :type="type" :class="inputAlign" v-if="!ignoreInput && type !== 'textarea'" v-model="model"
+            @focus="inputFocus" spellcheck="false" ref="input" @change="changed" />
+        <textarea class="textarea" v-if="type === 'textarea'" v-model="model" :rows="rows" spellcheck="false"></textarea>
+        <slot name="append"></slot>
     </div>
 </template>
 
@@ -15,7 +17,7 @@ const emit = defineEmits(['change']);
 
 let oldVal = '';
 
-const { label, width, ignoreInput, inputAlign, type, autoSelect, validator } = defineProps({
+const { label, width, ignoreInput, inputAlign, type, autoSelect, validator, rows } = defineProps({
     label: {
         type: [String, Boolean],
         required: false,
@@ -48,10 +50,15 @@ const { label, width, ignoreInput, inputAlign, type, autoSelect, validator } = d
     validator: {
         type: Function,
         required: false
+    },
+    rows: {
+        type: [Number, String],
+        required: false,
+        default: 1
     }
 })
 
-const widthStyle = computed(() => Number(width) > -1 ? { width: width + 'px' } : { width })
+const widthStyle = computed(() => Number(width) > -1 ? { width: width + 'px' } : { width });
 
 const needLabel = computed(() => {
     if (typeof label === 'boolean') {
@@ -86,24 +93,24 @@ onMounted(() => {
 .input-box {
     --input-box-height: var(--input-height);
     --input-box-font-size: var(--font-size-normal);
+    position: relative;
     display: flex;
     flex-direction: row;
     gap: 0;
-    height: var(--input-box-height);
     box-shadow: 0 0 2px 1px #dcdfe6;
     border-radius: 8px;
     overflow: hidden;
     transition: all var(--transition-delay);
 }
 
-.input-box:has(input:focus) {
+.input-box:has(input:focus),
+.input-box:has(textarea:focus) {
     box-shadow: 0 0 2px 1px #409eff;
 }
 
 .input-box .prepend {
     display: block;
     position: relative;
-    width: 55px;
     text-align: right;
     box-sizing: border-box;
     font-size: var(--input-box-font-size);
@@ -112,9 +119,16 @@ onMounted(() => {
     background-color: #f5f7fa;
     color: #909399;
     border-radius: 8px 0 0 8px;
-    padding-right: 4px;
+    padding: 0 4px;
     flex-shrink: 0;
     user-select: none;
+}
+
+.input-box .prepend.float {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 8px 0 8px 0;
 }
 
 .input-box .prepend::after {
@@ -127,19 +141,34 @@ onMounted(() => {
     top: 0;
 }
 
+.input-box .prepend.float::after {
+    display: none;
+}
+
 .input-box .prepend~input.input {
     width: calc(100% - 64px);
 }
 
-.input-box input {
+.input-box input,
+.input-box textarea {
     border: none;
     border-radius: 0;
     flex-grow: 1;
-    height: var(--input-box-height);
-    line-height: var(--input-box-height);
     font-size: var(--input-box-font-size);
     padding: 0 4px;
     width: calc(100% - 8px);
+}
+
+.input-box input {
+    height: var(--input-box-height);
+    line-height: var(--input-box-height);
+}
+
+.input-box textarea {
+    resize: none;
+    line-height: calc(var(--input-box-height) * .8);
+    word-break: break-all;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .input-box input.left {
@@ -154,8 +183,13 @@ onMounted(() => {
     text-align: right;
 }
 
-.input-box input:focus {
+.input-box input:focus,
+.input-box textarea:focus {
     outline: none;
     border: none;
+}
+
+.input-box input.none-resize {
+    resize: none;
 }
 </style>

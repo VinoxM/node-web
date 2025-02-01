@@ -10,7 +10,8 @@
             <CalendarItem v-for="(val, i) in list" v-bind="val" :key="i"
              @item-click="$emit('itemClick', $event)" 
              @item-edit="$emit('itemEdit', $event)"
-             @item-update="$emit('itemUpdate', $event)"></CalendarItem>
+             @item-update="$emit('itemUpdate', $event)"
+             @item-fin="$emit('itemFin', $event)"></CalendarItem>
         </div>
     </div>
 </template>

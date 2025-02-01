@@ -72,7 +72,7 @@ const apiPlugin = {
                     api_[m] = (data, resolve, reject) => {
                         const source = axios.CancelToken.source();
                         http[method](basePath + path, data, { ...defaultHeaders, ...headers }, source.token).then(data => {
-                            resolve(handle ? handle(data) : data)
+                            if (resolve instanceof Function) resolve(handle ? handle(data) : data)
                         }).catch(e => {
                             if (!ignoreError && typeof e === 'string') {
                                 message.error(e);

@@ -1,5 +1,5 @@
 <template>
-    <div class="checkbox" :class="{ active: model }" @click="checkboxClicked">
+    <div class="checkbox" :class="{ active: model, disabled: disabled }" @click="checkboxClicked">
         <i :class="iconClass"></i>
         <span class="label" v-if="needLabel">{{ label }}</span>
     </div>
@@ -12,9 +12,14 @@ const model = defineModel({
     type: Boolean,
     default: false
 });
-const { label } = defineProps({
+const { label, disabled } = defineProps({
     label: {
         type: [String, Boolean],
+        required: false,
+        default: false
+    },
+    disabled: {
+        type: Boolean,
         required: false,
         default: false
     }
@@ -32,7 +37,7 @@ const needLabel = computed(() => {
 const iconClass = computed(() => model.value ? 'icon-check' : 'icon-check-empty');
 
 const checkboxClicked = () => {
-    model.value = !model.value;
+    if(!disabled) model.value = !model.value;
 }
 </script>
 
@@ -53,6 +58,11 @@ const checkboxClicked = () => {
     color: #606266;
     background-color: #f5f7fa;
     box-shadow: 0 0 2px 1px #dcdfe6;
+}
+
+.checkbox.disabled {
+    color: #a8abb2;
+    cursor: not-allowed;
 }
 
 .checkbox.active {

@@ -9,12 +9,14 @@ import Image from './components/common/Image.vue'
 import './message/message.css'
 
 import loading from './directive/loading'
+import click from './directive/click'
 
 const app = createApp(App)
 
 app.use(router)
 app.use(api)
 app.use(loading)
+app.use(click)
 app.component('ani-image', Image)
 
 app.mount('#app')

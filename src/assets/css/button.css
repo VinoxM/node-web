@@ -249,3 +249,7 @@ button.ani-btn.disabled.plain.danger:focus {
     --ani-btn-bg-color: #fef0f0;
     --ani-btn-border-color: #fde2e2;
 }
+
+button.ani-btn.border-less {
+    border: none !important;
+}

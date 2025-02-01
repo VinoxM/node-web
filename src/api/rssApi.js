@@ -41,6 +41,7 @@ export default {
                 const d = obj.D + '';
                 const startDate = [d.substring(0, 4), d.substring(4, 6), d.substring(6, 8)];
                 const updateTime = [d.substring(8, 10), d.substring(10, 12)];
+                const startTime = new Date(startDate.join('/') + ' ' + updateTime.join(':') + ':00').getTime();
                 let day = Number(d.substring(12, 13));
                 const val = {
                     titleCN: obj.Z,
@@ -53,12 +54,14 @@ export default {
                     hasNew: obj.N,
                     unique: obj.U,
                     epCount: obj.R,
-                    checked: false
+                    checked: false,
+                    finLoading: false
                 }
                 if (val.type.split("")[1] === '1') {
                     webArray.push(val);
                     listRef[val.unique] = {
-                        isWeb: true
+                        isWeb: true,
+                        startTime
                     }
                     continue;
                 }
@@ -67,7 +70,8 @@ export default {
                 listRef[val.unique] = {
                     isWeb:false,
                     day,
-                    updateTime: updateTime.join(':')
+                    updateTime: updateTime.join(':'),
+                    startTime
                 }
                 dayDictArray[day].timeline.push({ ...val, updateTime: updateTime.join(":") });
             }
@@ -127,5 +131,49 @@ export default {
     },
     getResults: {
         path: '/rss/v2/getOne.detail'
+    },
+    setOneSubsFin: {
+        path: '/rss/subscribe/setFin',
+        method: 'post'
+    },
+    getMatchers: {
+        path: '/rss/getMatchers'
+    },
+    getRegexHistory: {
+        path: '/rss/regex/history'
+    },
+    addRssRegex: {
+        path: '/rss/regex/add',
+        method: 'post'
+    },
+    getOneLinks: {
+        path: '/rss/link/getMany'
+    },
+    addOneLink: {
+        path: '/rss/link/addOne',
+        method: 'post'
+    },
+    editOneLink: {
+        path: '/rss/link/editOne',
+        method: 'post'
+    },
+    delOneLink: {
+        path: '/rss/link/delOne',
+        method: 'post'
+    },
+    getOneCopyrights: {
+        path: '/rss/copyright/getMany'
+    },
+    delOneCopyright: {
+        path: '/rss/copyright/delOne',
+        method: 'post'
+    },
+    addOneCopyright: {
+        path: '/rss/copyright/addOne',
+        method: 'post'
+    },
+    editOneCopyright: {
+        path: '/rss/copyright/editOne',
+        method: 'post'
     }
 }

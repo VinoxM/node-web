@@ -94,6 +94,7 @@
     --subs-cover-width: 120px;
     --subs-header-height: 54px;
     --subs-header-height-1: 30px;
+    --subs-btn-size: 32px;
     --subs-gap: 4px;
     --subs-row-height: 27px;
     /* header */
@@ -297,4 +298,70 @@ body,
 
 .over-hidden {
     overflow: hidden !important;
+}
+
+dialog[open] {
+    opacity: 1;
+}
+
+dialog {
+    opacity: 0;
+    transition:
+        opacity var(--transition-delay) ease-out,
+        overlay var(--transition-delay) ease-out allow-discrete,
+        display var(--transition-delay) ease-out allow-discrete;
+}
+
+@starting-style {
+    dialog[open] {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+}
+
+dialog::backdrop {
+    background-color: rgb(0 0 0 / 0%);
+    transition:
+        display var(--transition-delay) allow-discrete,
+        overlay var(--transition-delay) allow-discrete,
+        background-color var(--transition-delay);
+}
+
+dialog[open]::backdrop {
+    background-color: rgb(0 0 0 / 25%);
+}
+
+@starting-style {
+    dialog[open]::backdrop {
+        background-color: rgb(0 0 0 / 0%);
+    }
+}
+
+/* Origin Type */
+.origin-type-a {
+    --origin-type-color: #ce0000;
+}
+
+.origin-type-b {
+    --origin-type-color: #007979;
+}
+
+.origin-type-c {
+    --origin-type-color: #ea7500;
+}
+
+.origin-type-d {
+    --origin-type-color: #0072e3;
+}
+
+.origin-type-e {
+    --origin-type-color: #609;
+}
+
+.origin-type-o {
+    --origin-type-color: #707070;
+}
+
+.origin-type-unknown {
+    --origin-type-color: #707070;
 }
