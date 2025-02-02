@@ -128,8 +128,8 @@
                                 <InputBox label="磁链" v-model="editResult.torrent" type="textarea" :rows="3"></InputBox>
                             </div>
                             <div class="subs-row center box-edit-footer">
-                                <Button icon="cancel" @click="cancelEditResult">取消</Button>
-                                <Button icon="check" type="primary" @click="submitEditResult">保存</Button>
+                                <Link icon="cancel" @click="cancelEditResult">取消</Link>
+                                <Link icon="check" type="primary" @click="submitEditResult">保存</Link>
                             </div>
                         </div>
                     </div>
@@ -150,8 +150,8 @@
                     <InputBox label="放送补充" v-model="subscribe.broadcast[1]"></InputBox>
                 </div>
                 <div class="subs-row gap-4">
-                    <InputBox type="textarea" label="Cast" rows="6" v-model="subscribe.cast"></InputBox>
                     <InputBox type="textarea" label="Staff" rows="6" v-model="subscribe.staff"></InputBox>
+                    <InputBox type="textarea" label="Cast" rows="6" v-model="subscribe.cast"></InputBox>
                 </div>
                 <div class="subs-row center">
                     <Link :active="!isCopyrightDetail && !editDetail" @click="changeDetailView">相关链接</Link>
@@ -208,8 +208,8 @@
                             <InputBox label="链接" v-model="editDetail.href"></InputBox>
                             <InputBox label="图片" v-if="'image' in editDetail" v-model="editDetail.image"></InputBox>
                             <div class="subs-row center box-edit-footer width-full">
-                                <Button icon="cancel" @click="cancelEditDetail">取消</Button>
-                                <Button icon="check" type="primary" @click="submitEditDetail">保存</Button>
+                                <Link icon="cancel" @click="cancelEditDetail">取消</Link>
+                                <Link icon="check" type="primary" @click="submitEditDetail">保存</Link>
                             </div>
                         </div>
                     </div>
@@ -239,7 +239,6 @@ import SelectableInput from '../common/SelectableInput.vue';
 import message from '@/message';
 import { handleEpisode } from '@/utils/rssUtils';
 import Select from '../common/Select.vue';
-import Switch from '../common/Switch.vue';
 
 const initSubscribe = () => {
     subscribe.value = null;
@@ -324,7 +323,7 @@ watch(() => unique.value, (v) => {
             const { season, isShort, goon, url, broadcast, originType, ...val } = data;
             matcherIndex.value = matchers.findIndex(o => url.includes(o.source));
             setupSubsCover(val.cover);
-            regexArr.value = val.regex.split(',');
+            regexArr.value = (val.regex && val.regex.trim() !== '') ? val.regex.split(',') : [];
             subscribe.value = {
                 season: season?.split('-') || ['', ''],
                 isShort: isShort === 1,
@@ -343,7 +342,7 @@ watch(() => unique.value, (v) => {
 
 /* subscribe save */
 const submitSubscribe = () => {
-    const {season, isShort, goon, url, keyword, broadcast, originType, copyright, link, regex, ...val} = subscribe.value;
+    const { season, isShort, goon, url, keyword, broadcast, originType, copyright, link, regex, ...val } = subscribe.value;
     const body = {
         season: [...season].join('-'),
         isShort: isShort ? 1 : 0,
@@ -459,7 +458,7 @@ const getCurrentResults = () => {
 }
 
 const getTestResults = () => {
-    if (resultsLoading.value) return;
+    if (resultsLoading.value || matcherIndex.value < 0 || subscribe.value.keyword === '') return;
     resultsLoading.value = true;
     getApi().getSubsTestResults({ url: getUrlFormKeyword(subscribe.value.keyword), regex: regexArr.value.join(',') }, data => {
         testResults.value = data;

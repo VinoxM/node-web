@@ -89,6 +89,7 @@ const getDialogEl = () => dialogRef.value.$el;
 // watch
 watch(() => unique.value, (v) => {
     if (v > 0) {
+        cancelClosed();
         cancel(lastRequest);
         show();
         lastRequest = getApi().getResults({ id: v }, data => {
@@ -151,10 +152,21 @@ const close = () => {
     visible.value = false;
 }
 
+let closedTimeout = null;
+
+const cancelClosed = () => {
+    if (closedTimeout) {
+        clearTimeout(closedTimeout);
+        closedTimeout = null;
+    }
+}
+
 const closed = () => {
-    cancel(lastRequest);
-    subscribe.value = initSubscribe();
-    loading.value = false;
+    closedTimeout = setTimeout(()=>{
+        cancel(lastRequest);
+        subscribe.value = initSubscribe();
+        loading.value = false;
+    }, 500)
 }
 
 // computed
@@ -333,6 +345,9 @@ const viewClass = computed(() => {
 
 /* Results */
 .results-box {
+    --results-item-height: var(--subs-header-height);
+    --results-item-height-1: var(--subs-header-height-1);
+    --results-item-height-2: var(--subs-header-height-2);
     display: block;
     padding: 2px;
     overflow: auto;
@@ -347,9 +362,6 @@ const viewClass = computed(() => {
 }
 
 .results-item {
-    --results-item-height: var(--subs-header-height);
-    --results-item-height-1: var(--subs-header-height-1);
-    --results-item-height-2: var(--subs-header-height-2);
     background-color: #dee1e1;
     display: flex;
     flex-direction: column;
