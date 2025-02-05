@@ -142,7 +142,7 @@ onUnmounted(() => {
     display: flex;
     position: relative;
     box-shadow: 0 0 2px 1px #dcdfe6;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .select-label input {
@@ -206,7 +206,7 @@ onUnmounted(() => {
     box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 12px 0px;
     background-color: #fff;
     height: calc(var(--select-height) * 4);
-    border-radius: 6px;
+    border-radius: 8px;
     overflow-y: scroll;
     z-index: 20;
 }

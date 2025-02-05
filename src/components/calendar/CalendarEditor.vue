@@ -136,11 +136,11 @@
                 </div>
             </div>
             <div class="subs-column gap-4" v-show="!isResultsView">
-                <div class="subs-row gap-4">
-                    <InputBox class="flex-shrink" ignore-input label="原作类型" width="56"></InputBox>
-                    <Select class="flex-shrink" :options="originTypeOptions" v-model="subscribe.originType[0]"
+                <div class="subs-row gap-0 border-radius-group">
+                    <InputBox class="flex-shrink lt" ignore-input label="原作类型" width="56"></InputBox>
+                    <Select class="flex-shrink ct" :options="originTypeOptions" v-model="subscribe.originType[0]"
                         width="60"></Select>
-                    <InputBox v-model="subscribe.originType[1]"></InputBox>
+                    <InputBox class="rt" v-model="subscribe.originType[1]"></InputBox>
                 </div>
                 <div class="subs-row gap-4">
                     <InputBox label="番剧标签" v-model="subscribe.typeTag"></InputBox>
@@ -702,6 +702,19 @@ div.width-full {
     width: 100%;
 }
 
+div.border-radius-group .lt {
+    border-radius: 8px 0 0 8px;
+}
+
+div.border-radius-group .ct :deep(div.select-label),
+div.border-radius-group .ct :deep(div.select-label span) {
+    border-radius: 0;
+}
+
+div.border-radius-group .rt {
+    border-radius: 0 8px 8px 0;
+}
+
 .subs-column {
     display: flex;
     flex-direction: column;
@@ -947,7 +960,7 @@ div.width-full {
     background-color: var(--origin-type-color);
     color: #f4f4f5;
     padding: 0 5px;
-    border-radius: 6px;
+    border-radius: 8px;
     height: var(--subs-row-height);
     line-height: var(--subs-row-height);
 }

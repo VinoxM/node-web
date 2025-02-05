@@ -1,5 +1,4 @@
 @import './base.css';
-@import './button.css';
 @import './edit.css';
 
 .ani-main {
@@ -325,6 +324,7 @@ div.season-btn:hover .season-bg,
 .ani-weekly-box {
   width: var(--row-max-width);
   margin: 0 auto;
+  transition: all var(--transition-delay);
 }
 
 .ani-row-box {
@@ -333,6 +333,7 @@ div.season-btn:hover .season-bg,
   width: var(--row-max-width);
   scrollbar-width: none;
   margin: 0 auto;
+  transition: all var(--transition-delay);
 }
 
 div.ani-row-box.sticky {
