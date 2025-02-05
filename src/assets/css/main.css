@@ -105,7 +105,7 @@ div.season-search-box i:has(~.search-input:focus),
   flex-shrink: 0;
 }
 
-.season-search-box .ani-btn {
+div.season-search-box button.ani-btn {
   border-radius: 0;
   height: var(--search-height);
   line-height: var(--search-height);
@@ -114,7 +114,7 @@ div.season-search-box i:has(~.search-input:focus),
   flex-shrink: 0;
 }
 
-.season-search-box .ani-btn:last-of-type {
+div.season-search-box button.ani-btn:last-of-type {
   border-radius: 0 var(--search-box-radius) var(--search-box-radius) 0;
 }
 
