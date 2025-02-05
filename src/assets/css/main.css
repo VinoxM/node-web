@@ -7,7 +7,7 @@
   flex-direction: column;
   gap: var(--main-gap);
   position: relative;
-  min-height: calc(var(--vh) - var(--footer-height) - var(--main-gap) * 3);
+  min-height: calc(var(--vh) - var(--footer-height) - var(--main-gap) * 3 - var(--holder-height));
 }
 
 /* Calendar Season Header */
@@ -176,6 +176,8 @@ div.ani-header div.ani-arrow-box {
   flex-direction: row;
   gap: var(--season-btn-box-gap);
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .season-btn-box {
@@ -193,6 +195,7 @@ div.ani-header div.ani-arrow-box {
   box-sizing: border-box;
   position: relative;
   display: inline-block;
+  background-color: #fff;
 }
 
 .season-btn {
@@ -200,7 +203,7 @@ div.ani-header div.ani-arrow-box {
   --season-text-shadow-color: #8a8a8a;
   --season-box-shadow-color: #cccccc;
   color: var(--season-text-color);
-  box-shadow: 0px 4px 0px 0px var(--season-box-shadow-color);
+  box-shadow: 2px 4px 2px 1px var(--season-box-shadow-color);
   transition: all .5s;
 }
 
@@ -266,7 +269,7 @@ div.season-btn:hover {
 .season-btn.active {
   transform: translate(0, 3px);
   background-color: var(--season-bg-color);
-  box-shadow: none;
+  box-shadow: 1px 1px 2px 1px var(--season-box-shadow-color);
 }
 
 div.season-btn:hover .season-bg,

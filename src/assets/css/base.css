@@ -108,6 +108,7 @@ body {
     --subs-header-height-2: calc(var(--subs-header-height) - var(--subs-header-height-1));
     --box-min-height: calc(var(--cover-height) + var(--box-gap));
     --transition-delay: 0.5s;
+    --holder-height: 0px;
     background-color: #eee;
 }
 
@@ -200,8 +201,6 @@ input[type='number'] {
         --subs-header-height: 46px;
         --subs-header-height-1: 26px;
         --subs-row-height: 22px;
-        --season-btn-box-gap: 3px;
-        --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height) * 2 + var(--season-btn-box-gap));
     }
 
     div.season-btn-container {
