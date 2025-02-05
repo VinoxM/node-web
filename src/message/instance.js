@@ -5,7 +5,7 @@ const createInstance = (cfg) => {
     const config = cfg || {
         type: 'info'
     };
-    const appendTo = config.appendTo ?? document.body;
+    const appendTo = config.appendTo ?? document.querySelector('dialog[open]') ?? document.body;
     let messageNode = document.createElement("div");
     const cls = document.createAttribute('class');
     cls.value = `message ${config.type}`;

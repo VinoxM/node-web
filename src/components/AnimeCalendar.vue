@@ -96,14 +96,15 @@ const getSearch = ({ season, search }, callback) => {
     lastSearch = getApi().getSearch({ season, name: search }, data => {
         lastSearch = null;
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount } = data;
-        callback({step: 0, season: season?.split("-") || ['', '']}, search ? resultCount : 0);
+        if (callback instanceof Function) callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0 });
         nowDay = nowDay_;
         resetWeekDays();
         dataDict.value = dayDictArray;
         webArr.value = webArray;
         loading.value = false;
+        initContainerHeight();
         setupTransForStep();
-        nextTick(()=>{
+        nextTick(() => {
             setupHighlight(search);
         })
     }, () => {
@@ -180,13 +181,21 @@ const setupTransForStep = () => {
 }
 
 /* front view max height */
+const initContainerHeight = () => {
+    nextTick(() => {
+        Array.from(document.querySelectorAll("div.ani-container-row div.ani-container")).forEach(elem => {
+            elem.__offsetHeight = elem.offsetHeight;
+        });
+    })
+}
+
 const setupDictFront = (step, maxCount) => {
     if (dataDict.value === null) {
         return
     }
     nextTick(() => {
         const sliceArr = Array.from(document.querySelectorAll("div.ani-container-row div.ani-container")).slice(step, step + maxCount);
-        const rowMaxHeight = Math.max(...sliceArr.map(elem => elem.offsetHeight));
+        const rowMaxHeight = Math.max(...sliceArr.map(elem => elem.__offsetHeight));
         rowStyle.value = { '--container-row-height': rowMaxHeight + 'px' };
     })
 }

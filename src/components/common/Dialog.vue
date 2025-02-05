@@ -1,11 +1,12 @@
 <template>
     <dialog class="dialog" ref="dialog" v-if="!destroyed">
-        <div class="dialog-container-loading" v-loading="loading" mask-index="99" v-if="loading" :style="{minHeight: minHeight + 'px'}">
+        <div class="dialog-container-loading" v-loading="loading" mask-index="99" v-if="loading"
+            :style="{ minHeight: minHeight + 'px' }">
             <div class="dialog-close" @click="visible = false">
                 <i class="icon-cancel"></i>
             </div>
         </div>
-        <div class="dialog-container" v-else :style="{minHeight: minHeight + 'px'}">
+        <div class="dialog-container" v-else :style="{ minHeight: minHeight + 'px' }">
             <div class="dialog-header" v-if="needTitle">
                 <slot name="header"><span class="limit-box one-line">{{ title }}</span></slot>
             </div>
@@ -29,7 +30,7 @@ const dialog = useTemplateRef("dialog");
 const destroyed = ref(false);
 const visible = defineModel('visible', { type: Boolean, required: true, default: false });
 
-const { title, destroyOnClose, loading, minHeight } = defineProps({
+const { title, destroyOnClose, loading, minHeight, closeOnClickModel, closeOnPressEsc } = defineProps({
     title: {
         type: [String, Boolean],
         required: false,
@@ -53,6 +54,16 @@ const { title, destroyOnClose, loading, minHeight } = defineProps({
         type: Number,
         required: false,
         default: 500
+    },
+    closeOnClickModel: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    closeOnPressEsc: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
@@ -66,6 +77,10 @@ watch(() => visible.value, (val) => {
     }
 })
 
+watch(() => closeOnClickModel, (v) => {
+    dialog.value?.[v ? 'addEventListener' : 'removeEventListener']('click', clickModel);
+})
+
 const needTitle = computed(() => {
     if (typeof title === 'boolean') {
         return title;
@@ -75,18 +90,25 @@ const needTitle = computed(() => {
     return true;
 })
 
+const clickModel = (e) => {
+    if (e.target === dialog.value) {
+        visible.value = false;
+    }
+}
+
 const addListener = (callback) => {
     nextTick(() => {
-        dialog.value?.addEventListener('cancel', () => {
-            if (visible.value) {
+        dialog.value?.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            if (!closeOnPressEsc) {
+                e.preventDefault();
+            } else if (visible.value) {
                 visible.value = false;
             }
         })
-        dialog.value?.addEventListener('click', e => {
-            if (e.target === dialog.value) {
-                visible.value = false;
-            }
-        })
+        if (closeOnClickModel) {
+            dialog.value?.addEventListener('click', clickModel);
+        }
         if (callback && callback instanceof Function) {
             callback();
         }
@@ -117,7 +139,7 @@ const close = () => {
 onMounted(() => {
     if (destroyOnClose) {
         destroyed.value = true;
-    } 
+    }
     addListener();
 })
 
@@ -130,6 +152,7 @@ onMounted(() => {
     border-radius: 8px;
     overflow: hidden;
     max-width: 100%;
+    background-color: #fff;
 }
 
 dialog.dialog:focus-visible {
@@ -145,23 +168,6 @@ dialog.dialog:focus-visible {
     width: var(--dialog-width);
 }
 
-.dialog:modal {
-    animation: fadeInUp 0.3s;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 20%, 0);
-    }
-
-    to {
-        opacity: 1;
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-    }
-}
-
 .dialog-header {
     height: 36px;
     line-height: 36px;
@@ -170,6 +176,7 @@ dialog.dialog:focus-visible {
     position: relative;
     user-select: none;
     color: #303133;
+    background-color: #eee;
 }
 
 .dialog-close {

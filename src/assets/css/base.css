@@ -197,8 +197,6 @@ input[type='number'] {
         --subs-cover-width: 100px;
         --subs-header-height: 46px;
         --subs-header-height-1: 26px;
-        --season-btn-box-gap: 3px;
-        --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height) * 2 + var(--season-btn-box-gap));
     }
 
     div.season-btn-container {
@@ -295,4 +293,70 @@ body,
 
 .over-hidden {
     overflow: hidden !important;
+}
+
+dialog[open] {
+    opacity: 1;
+}
+
+dialog {
+    opacity: 0;
+    transition:
+        opacity var(--transition-delay) ease-out,
+        overlay var(--transition-delay) ease-out allow-discrete,
+        display var(--transition-delay) ease-out allow-discrete;
+}
+
+@starting-style {
+    dialog[open] {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+}
+
+dialog::backdrop {
+    background-color: rgb(0 0 0 / 0%);
+    transition:
+        display var(--transition-delay) allow-discrete,
+        overlay var(--transition-delay) allow-discrete,
+        background-color var(--transition-delay);
+}
+
+dialog[open]::backdrop {
+    background-color: rgb(0 0 0 / 15%);
+}
+
+@starting-style {
+    dialog[open]::backdrop {
+        background-color: rgb(0 0 0 / 0%);
+    }
+}
+
+/* Origin Type */
+.origin-type-a {
+    --origin-type-color: #ce0000;
+}
+
+.origin-type-b {
+    --origin-type-color: #007979;
+}
+
+.origin-type-c {
+    --origin-type-color: #ea7500;
+}
+
+.origin-type-d {
+    --origin-type-color: #0072e3;
+}
+
+.origin-type-e {
+    --origin-type-color: #609;
+}
+
+.origin-type-o {
+    --origin-type-color: #707070;
+}
+
+.origin-type-unknown {
+    --origin-type-color: #707070;
 }

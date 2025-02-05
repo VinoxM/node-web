@@ -1,5 +1,5 @@
 <template>
-    <Dialog v-model:visible="visible" title="false" :destroy-on-close="false" ref="dialog" @closed="closed" :loading="loading" :min-height="554">
+    <Dialog v-model:visible="visible" title="false" :destroy-on-close="false" ref="dialog" @closed="closed" :loading="loading" :min-height="554" close-on-click-model close-on-press-esc>
         <div class="subs-header">
             <div class="subs-type">
                 <span class="subs-origin-type limited-box one-line"
@@ -84,9 +84,12 @@ const viewSwitch = ref(true);
 
 let lastRequest = null;
 
+const getDialogEl = () => dialogRef.value.$el;
+
 // watch
 watch(() => unique.value, (v) => {
     if (v > 0) {
+        cancelClosed();
         cancel(lastRequest);
         show();
         lastRequest = getApi().getResults({ id: v }, data => {
@@ -121,7 +124,7 @@ watch(() => unique.value, (v) => {
 
 // methods
 const openTorrent = (res) => {
-    const dialog_ = dialogRef.value.$el;
+    const dialog_ = getDialogEl();
     if (res.copyAll) {
         const input = document.createElement("input");
         input.value = res.torrent;
@@ -149,10 +152,21 @@ const close = () => {
     visible.value = false;
 }
 
+let closedTimeout = null;
+
+const cancelClosed = () => {
+    if (closedTimeout) {
+        clearTimeout(closedTimeout);
+        closedTimeout = null;
+    }
+}
+
 const closed = () => {
-    cancel(lastRequest);
-    subscribe.value = initSubscribe();
-    loading.value = false;
+    closedTimeout = setTimeout(()=>{
+        cancel(lastRequest);
+        subscribe.value = initSubscribe();
+        loading.value = false;
+    }, 500)
 }
 
 // computed
@@ -331,6 +345,9 @@ const viewClass = computed(() => {
 
 /* Results */
 .results-box {
+    --results-item-height: var(--subs-header-height);
+    --results-item-height-1: var(--subs-header-height-1);
+    --results-item-height-2: var(--subs-header-height-2);
     display: block;
     padding: 2px;
     overflow: auto;
@@ -352,7 +369,7 @@ const viewClass = computed(() => {
     width: 100%;
     position: relative;
     cursor: pointer;
-    height: var(--subs-header-height);
+    height: var(--results-item-height);
     box-sizing: border-box;
     transition: 0.3s;
 }
@@ -369,60 +386,31 @@ const viewClass = computed(() => {
     padding: 0 4px;
     display: block;
     width: 100%;
-    line-height: var(--subs-header-height-1);
+    line-height: var(--results-item-height-1);
     font-size: var(--font-size-small);
 }
 
 .results-item span:last-of-type {
     color: grey;
     font-size: var(--font-size-small);
-    line-height: var(--subs-header-height-2);
+    line-height: var(--results-item-height-2);
 }
 
 .results-empty {
-    height: var(--subs-header-height);
+    height: var(--results-item-height);
     width: 100%;
     border-radius: 4px;
     background-color: #dee1e1;
 }
 
 .results-empty span {
-    line-height: var(--subs-header-height);
+    line-height: var(--results-item-height);
     font-size: var(--font-size-small);
     display: block;
     text-align: center;
     padding: 0 4px;
     user-select: none;
     color: var(--color-black-0);
-}
-
-/* Origin Type */
-.origin-type-a {
-    --origin-type-color: #ce0000;
-}
-
-.origin-type-b {
-    --origin-type-color: #007979;
-}
-
-.origin-type-c {
-    --origin-type-color: #ea7500;
-}
-
-.origin-type-d {
-    --origin-type-color: #0072e3;
-}
-
-.origin-type-e {
-    --origin-type-color: #609;
-}
-
-.origin-type-o {
-    --origin-type-color: #707070;
-}
-
-.origin-type-unknown {
-    --origin-type-color: #707070;
 }
 
 :deep(.dialog-close) {

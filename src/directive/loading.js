@@ -4,11 +4,15 @@ const toLoading = (el) => {
     if (el.classList.contains("directive-loading-parent")) return;
     const loadingText = el.hasAttribute('loading-text') ? el.getAttribute('loading-text') : defaultLoadingText;
     const bgColor = el.hasAttribute('loading-bg-color') ? el.getAttribute('loading-bg-color')?.trim() : '';
+    const textColor = el.hasAttribute('loading-text-color') ? el.getAttribute('loading-text-color')?.trim() : '';
     el.classList.add("directive-loading-parent");
     const mask = document.createElement('div');
     mask.classList.add('directive-loading');
     if (bgColor !== '') {
         mask.style.backgroundColor = bgColor;
+    }
+    if (textColor !== '') {
+        mask.style.color = textColor;
     }
     if (el.hasAttribute('mask-index')) {
         const maskIndex = Number(el.getAttribute('mask-index')?.trim());

@@ -1,5 +1,4 @@
 @import './base.css';
-@import './button.css';
 
 .ani-main {
   display: flex;
@@ -7,7 +6,7 @@
   flex-direction: column;
   gap: var(--main-gap);
   position: relative;
-  min-height: calc(var(--vh) - var(--footer-height) - var(--main-gap) * 3);
+  min-height: calc(var(--vh) - var(--footer-height) - var(--main-gap) * 3 - var(--holder-height));
 }
 
 /* Calendar Season Header */
@@ -176,6 +175,8 @@ div.ani-header div.ani-arrow-box {
   flex-direction: row;
   gap: var(--season-btn-box-gap);
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .season-btn-box {
@@ -193,6 +194,7 @@ div.ani-header div.ani-arrow-box {
   box-sizing: border-box;
   position: relative;
   display: inline-block;
+  background-color: #fff;
 }
 
 .season-btn {
@@ -200,7 +202,7 @@ div.ani-header div.ani-arrow-box {
   --season-text-shadow-color: #8a8a8a;
   --season-box-shadow-color: #cccccc;
   color: var(--season-text-color);
-  box-shadow: 0px 4px 0px 0px var(--season-box-shadow-color);
+  box-shadow: 2px 4px 2px 1px var(--season-box-shadow-color);
   transition: all .5s;
 }
 
@@ -266,7 +268,7 @@ div.season-btn:hover {
 .season-btn.active {
   transform: translate(0, 3px);
   background-color: var(--season-bg-color);
-  box-shadow: none;
+  box-shadow: 1px 1px 2px 1px var(--season-box-shadow-color);
 }
 
 div.season-btn:hover .season-bg,
@@ -324,6 +326,7 @@ div.season-btn:hover .season-bg,
 .ani-weekly-box {
   width: var(--row-max-width);
   margin: 0 auto;
+  transition: all var(--transition-delay);
 }
 
 .ani-row-box {
@@ -332,6 +335,7 @@ div.season-btn:hover .season-bg,
   width: var(--row-max-width);
   scrollbar-width: none;
   margin: 0 auto;
+  transition: all var(--transition-delay);
 }
 
 div.ani-row-box.sticky {
@@ -352,6 +356,7 @@ div.ani-row-box.sticky {
   width: calc(var(--container-box-width) * 7 + var(--box-gap) * 6);
   overflow: hidden;
   padding-top: var(--container-padding);
+  padding-right: var(--box-gap);
 }
 
 .ani-container-row,
@@ -525,6 +530,7 @@ div.ani-row-box.sticky {
   line-height: var(--box-min-height);
   color: var(--color-gray-0);
   height: var(--box-min-height);
+  user-select: none;
 }
 
 /* Anime Calendar Box */
@@ -755,7 +761,7 @@ span.limited-box {
   transition: all var(--item-hover-transition);
 }
 
-.ani-item:hover .ani-item-title .limited-box.title-cn {
+.ani-main:not(.edit-mode) .ani-item:hover .ani-item-title .limited-box.title-cn {
   color: var(--color-blue-0);
   text-decoration: underline;
 }
@@ -874,6 +880,7 @@ span.limited-box.two-line {
   bottom: 0;
   margin: 0;
   background-color: hsla(0, 0%, 100%, .9);
+  color: #409eff;
   z-index: 2000;
   transition: opacity var(--transition-delay);
 }
@@ -884,7 +891,6 @@ span.limited-box.two-line {
   transform: translateY(-50%);
   text-align: center;
   width: 100%;
-  color: #409eff;
 }
 
 .directive-loading-label {
@@ -900,7 +906,9 @@ span.limited-box.two-line {
   text-align: center;
 }
 
-.directive-loading-icon::before {
+i.directive-loading-icon::before {
   width: 24px;
   height: 24px;
+  line-height: 24px;
+  margin: 0;
 }

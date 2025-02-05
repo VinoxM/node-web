@@ -13,7 +13,8 @@
                 <i class="icon-angle-double-left" @click="setupSeasonYearStep(-1)"></i>
                 <i class="icon-angle-double-right" @click="setupSeasonYearStep(1)"></i>
             </div>
-            <input v-if="seasonVisible" ref="seasonInput" class="season-input" v-model="seasonYearTemp" @blur="hideSeason" />
+            <input v-if="seasonVisible" ref="seasonInput" class="season-input" v-model="seasonYearTemp"
+                @blur="hideSeason" />
             <div v-else class="season-year" @click="showSeason">
                 <span>{{ seasonYear }}</span>
             </div>
@@ -118,10 +119,10 @@ const initCurSeason = () => {
     seasonMonth.value = season.value[1];
 }
 
-const searchCallback = ({ step, season }, searchResultCount = 0) => {
+const searchCallback = ({ step, season }, { searchResultCount = 0 }) => {
     setupSeasonYearStep(step, season)
     searchCount.value = searchResultCount;
-    nextTick(()=> {
+    nextTick(() => {
         const resultNode = document.querySelector('.search-result');
         if (resultNode) {
             searchBox.value.style.setProperty('--search-result-width', resultNode.offsetWidth + 'px');

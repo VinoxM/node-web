@@ -72,7 +72,7 @@ const episodeColor = computed(() => {
     return 'normal';
 })
 
-const isShort = computed(()=>{
+const isShort = computed(() => {
     return Number(props.type.split('')[0]) === 1;
 })
 
