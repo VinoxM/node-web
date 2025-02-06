@@ -439,12 +439,16 @@ const regAddSubmit = () => {
         regexArr.value.push(reg);
         addRegexHistory(reg);
     }
-    regexAddCancel();
+    regexAddInit();
+}
+
+const regexAddInit = () => {
+    regexInput.value = '';
+    regexInputVisible.value = false;
 }
 
 const regexAddCancel = () => {
-    regexInput.value = '';
-    regexInputVisible.value = false;
+    regexInput.value !== '' ? regAddSubmit() : regexAddInit();
 }
 
 /* subscribe results */
