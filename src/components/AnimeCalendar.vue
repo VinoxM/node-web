@@ -1,4 +1,5 @@
 <template>
+    <AnimeHolder></AnimeHolder>
     <div class="ani-main" :class="{ 'edit-mode': editMode }">
         <CalendarHeader @search="getSearch" @update-checked="updateChecked" v-model:edit-mode="editMode"
             :checked-count="checkedCount"></CalendarHeader>
@@ -41,6 +42,7 @@ import CalendarWebBox from './calendar/CalendarWebBox.vue';
 import CalendarHeader from './calendar/CalendarHeader.vue';
 import message from '@/message';
 import CalendarEditor from './calendar/CalendarEditor.vue';
+import AnimeHolder from './AnimeHolder.vue';
 
 let nowDay = getNowDay();
 

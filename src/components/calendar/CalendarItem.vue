@@ -1,7 +1,7 @@
 <template>
     <div class="ani-item" :class="{ checked: props.checked }" v-click="() => $emit('itemClick', props.unique)">
         <div class="ani-item-cover">
-            <ani-image class="ani-item-cover-img" :src="props.cover"></ani-image>
+            <Image class="ani-item-cover-img" :src="props.cover"></Image>
         </div>
         <div class="ani-item-info">
             <div class="ani-item-title">
@@ -38,6 +38,7 @@ import { computed } from 'vue';
 import Noodle from '../common/Noodle.vue';
 import Switch from '../common/Switch.vue';
 import Link from '../common/Link.vue';
+import Image from '../common/Image.vue';
 
 const props = defineProps({
     titleCN: String,

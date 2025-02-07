@@ -1,0 +1,100 @@
+:root {
+    --holder-height: 30px;
+    --holder-btn-width: 40px;
+}
+
+#app {
+    padding-top: var(--holder-height);
+    box-sizing: border-box;
+}
+
+div.sticky {
+    top: var(--holder-height) !important;
+}
+
+.drag {
+    -webkit-app-region: drag;
+}
+
+.no-drag {
+    -webkit-app-region: no-drag;
+}
+
+.ani-holder-box {
+    height: var(--holder-height);
+    width: 100%;
+    position: fixed;
+    box-shadow: 0 0 8px 0px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    top: 0;
+    background-color: #fff;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.ani-holder-box span.title {
+    display: inline-block;
+    height: var(--holder-height);
+    line-height: var(--holder-height);
+    user-select: none;
+}
+
+.ani-holder-box .favicon {
+    height: var(--holder-height);
+    width: var(--holder-height);
+    display: inline-block;
+    user-select: none;
+}
+
+.ani-holder-btns {
+    height: var(--holder-height);
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.ani-holder-btns i {
+    height: var(--holder-height);
+    line-height: var(--holder-height);
+    width: var(--holder-btn-width);
+    cursor: pointer;
+    user-select: none;
+    color: #18191c;
+    transition: all var(--transition-delay);
+}
+
+.ani-holder-btns i::before {
+    margin: 0;
+    padding: 0;
+    height: var(--holder-height);
+    line-height: var(--holder-height);
+    width: var(--holder-btn-width);
+    text-align: center;
+}
+
+.ani-holder-btns i:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.ani-holder-btns i[class^="icon-close"]:hover {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: aliceblue;
+}
+
+.ani-holder-btns i.icon-pin {
+    background-color: rgba(0, 102, 255, 0.5);
+    color: aliceblue;
+}
+
+.ani-holder-btns i.icon-pin:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.ani-holder-btns i.icon-pin-outline:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}

@@ -1,5 +1,6 @@
 <template>
-    <Dialog v-model:visible="visible" title="false" :destroy-on-close="false" ref="dialog" @closed="closed" :loading="loading" :min-height="554" close-on-click-model close-on-press-esc>
+    <Dialog v-model:visible="visible" title="false" destroy-on-close ref="dialog" @close="closeCallback" @closed="closedCallback" :loading="loading"
+        :min-height="554" close-on-click-modal close-on-press-esc>
         <div class="subs-header">
             <div class="subs-type">
                 <span class="subs-origin-type limited-box one-line"
@@ -14,7 +15,7 @@
         </div>
         <div class="subs-main">
             <div class="subs-main-left">
-                <ani-image :src="subscribe.cover" class="subs-cover"></ani-image>
+                <Image :src="subscribe.cover" class="subs-cover"></Image>
                 <div class="subs-link-box">
                     <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener">{{
                         val.title || '-' }}</a>
@@ -25,7 +26,7 @@
                 </div>
                 <div class="subs-copyright-box">
                     <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank" rel="noopener">
-                        <ani-image :src="val.image"></ani-image>
+                        <Image :src="val.image"></Image>
                         <p>{{ val.area || '-' }}</p>
                     </a>
                 </div>
@@ -61,6 +62,7 @@ import { onMounted, watch, ref, defineEmits, useTemplateRef, nextTick, computed 
 import { getApi, cancel } from '@/api';
 import message from '@/message';
 import Dialog from '../common/Dialog.vue';
+import Image from '../common/Image.vue';
 
 const initSubscribe = () => {
     unique.value = 0;
@@ -89,16 +91,9 @@ const getDialogEl = () => dialogRef.value.$el;
 // watch
 watch(() => unique.value, (v) => {
     if (v > 0) {
-        cancelClosed();
         cancel(lastRequest);
         show();
         lastRequest = getApi().getResults({ id: v }, data => {
-            let cover = data.cover
-            const protocol = document.location.protocol;
-            const protocolIndex = cover.indexOf('://');
-            if (protocolIndex > -1) {
-                cover = protocol + cover.substring(protocolIndex + 1);
-            }
             const isFin = data.fin === 'Y';
             const results = Array.from(data.results);
             if (isFin && results.length > 0) {
@@ -112,7 +107,7 @@ watch(() => unique.value, (v) => {
             }
             const originType = (data.originType || '').split('-');
             const broadcast = (data.broadcast || '').split('-');
-            subscribe.value = { ...data, broadcast, originType, results, cover, isResults: true };
+            subscribe.value = { ...data, broadcast, originType, results, isResults: true };
             lastRequest = null;
             loading.value = false;
             viewSwitch.value = results.length === 0;
@@ -152,21 +147,14 @@ const close = () => {
     visible.value = false;
 }
 
-let closedTimeout = null;
-
-const cancelClosed = () => {
-    if (closedTimeout) {
-        clearTimeout(closedTimeout);
-        closedTimeout = null;
-    }
+const closeCallback = () => {
+    cancel(lastRequest);
+    unique.value = 0;
 }
 
-const closed = () => {
-    closedTimeout = setTimeout(()=>{
-        cancel(lastRequest);
-        subscribe.value = initSubscribe();
-        loading.value = false;
-    }, 500)
+const closedCallback = () => {
+    subscribe.value = initSubscribe();
+    loading.value = false;
 }
 
 // computed

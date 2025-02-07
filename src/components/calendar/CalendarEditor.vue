@@ -360,13 +360,7 @@ const submitSubscribe = () => {
 const getDialogEl = () => dialogRef.value.$el;
 
 const setupSubsCover = (cover) => {
-    let c = cover
-    const protocol = document.location.protocol;
-    const protocolIndex = cover.indexOf('://');
-    if (protocolIndex > -1) {
-        c = protocol + cover.substring(protocolIndex + 1);
-    }
-    subsCover.value = c;
+    subsCover.value = cover;
 }
 
 const getMatch = () => {
