@@ -9,6 +9,7 @@ import './message/message.css'
 
 import loading from './directive/loading'
 import click from './directive/click'
+import href from './directive/href'
 
 const app = createApp(App)
 
@@ -16,5 +17,6 @@ app.use(router)
 app.use(api)
 app.use(loading)
 app.use(click)
+app.use(href)
 
 app.mount('#app')

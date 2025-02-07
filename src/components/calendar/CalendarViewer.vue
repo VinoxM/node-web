@@ -17,7 +17,7 @@
             <div class="subs-main-left">
                 <Image :src="subscribe.cover" class="subs-cover"></Image>
                 <div class="subs-link-box">
-                    <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener">{{
+                    <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener" v-href>{{
                         val.title || '-' }}</a>
                 </div>
                 <div class="subs-broadcast">
@@ -25,7 +25,7 @@
                     <span>{{ subscribe.broadcast[1] || '' }}</span>
                 </div>
                 <div class="subs-copyright-box">
-                    <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank" rel="noopener">
+                    <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank" rel="noopener" v-href>
                         <Image :src="val.image"></Image>
                         <p>{{ val.area || '-' }}</p>
                     </a>
