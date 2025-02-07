@@ -187,6 +187,7 @@ dialog.modaless {
     width: 100%;
     background-color: transparent;
     z-index: 999;
+    border-radius: 0;
 }
 
 .dialog-mask {
@@ -223,6 +224,8 @@ dialog.modaless .dialog-container,
     top: 50%;
     transform: translateY(-50%);
     margin: auto;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .dialog-header {
