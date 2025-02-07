@@ -18,8 +18,9 @@
     --message-bg-color: #fff;
     --message-border-color: #fff;
     --message-text-color: #000;
+    --offset-y: 0;
     position: fixed;
-    top: 0;
+    top: calc(var(--offset-y) + var(--holder-height) + 5px);
     opacity: 0;
     left: 50%;
     margin: 0 auto;
