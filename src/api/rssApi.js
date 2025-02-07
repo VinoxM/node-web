@@ -28,15 +28,10 @@ export default {
             const nowDay = getNowDay();
             let dayDictArray = initDataDict(nowDay);
             let webArray = [];
-            const protocol = document.location.protocol;
             const now = new Date();
             // group by day.
             for (const obj of list) {
                 let cover = String(obj.C);
-                const protocolIndex = cover.indexOf('://');
-                if (protocolIndex > -1) {
-                    cover = protocol + cover.substring(protocolIndex + 1);
-                }
                 const d = obj.D + '';
                 const startDate = [d.substring(0, 4), d.substring(4, 6), d.substring(6, 8)];
                 const updateTime = [d.substring(8, 10), d.substring(10, 12)];

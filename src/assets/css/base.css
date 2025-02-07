@@ -322,12 +322,25 @@ dialog::backdrop {
         background-color var(--transition-delay);
 }
 
+dialog .dialog-mask {
+    transition:
+        display var(--transition-delay) allow-discrete,
+        overlay var(--transition-delay) allow-discrete,
+        background-color var(--transition-delay);
+}
+
 dialog[open]::backdrop {
     background-color: rgb(0 0 0 / 15%);
 }
 
 @starting-style {
     dialog[open]::backdrop {
+        background-color: rgb(0 0 0 / 0%);
+    }
+}
+
+@starting-style {
+    dialog[open].modaless .dialog-mask {
         background-color: rgb(0 0 0 / 0%);
     }
 }

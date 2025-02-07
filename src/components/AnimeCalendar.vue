@@ -129,7 +129,7 @@ const setupHighlight = (str) => {
         const indices = [];
         let startPos = 0;
         while (startPos < text.length) {
-            const index = text.indexOf(str, startPos);
+            const index = text.toLocaleLowerCase().indexOf(str.toLocaleLowerCase(), startPos);
             if (index === -1) break;
             indices.push(index);
             startPos = index + str.length;

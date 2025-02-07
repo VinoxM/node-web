@@ -1,15 +1,33 @@
 <template>
     <div class="image-box" :class="{ 'skeleton-loading': loading }">
-        <img v-show="!loading && !error" class="image" ref="img" :src="src"/>
+        <img v-show="!loading && !error" class="image" ref="img" :src="href" />
         <span v-if="error" class="error">图片加载失败</span>
     </div>
 </template>
 
 <script setup>
-import { onMounted, ref, useTemplateRef } from 'vue';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
 
-const { src } = defineProps({
-    src: String
+const { src, mixed } = defineProps({
+    src: String,
+    mixed: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
+})
+
+const href = computed(() => {
+    if (mixed) {
+        let c = src;
+        const protocol = document.location.protocol;
+        const protocolIndex = c.indexOf('://');
+        if (protocolIndex > -1) {
+            c = protocol + c.substring(protocolIndex + 1);
+        }
+        return c;
+    }
+    return src;
 })
 
 const loading = ref(true);

@@ -369,6 +369,7 @@ div.ani-row-box.sticky {
 .ani-row-box.day-box {
   height: var(--ani-day-height);
   position: relative;
+  background-color: #fff;
 }
 
 .ani-background {
@@ -386,7 +387,6 @@ div.ani-row-box.sticky {
   flex-flow: column-reverse;
   flex-shrink: 0;
   border-radius: 8px 8px 0 0;
-  background-color: #fff;
 }
 
 .ani-day-box {

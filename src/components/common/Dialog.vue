@@ -1,5 +1,5 @@
 <template>
-    <dialog class="dialog" ref="dialog" v-if="!destroyed">
+    <dialog class="dialog" ref="dialog" v-if="!destroyed" :class="{ modaless: !modal }">
         <div class="dialog-container-loading" v-loading="loading" mask-index="99" v-if="loading"
             :style="{ minHeight: minHeight + 'px' }">
             <div class="dialog-close" @click="visible = false">
@@ -20,6 +20,7 @@
                 <slot name="footer"></slot>
             </div>
         </div>
+        <div class="dialog-mask" v-if="!modal" ref="dialog-mask"></div>
     </dialog>
 </template>
 
@@ -27,10 +28,11 @@
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 const dialog = useTemplateRef("dialog");
+const mask = useTemplateRef("dialog-mask");
 const destroyed = ref(false);
 const visible = defineModel('visible', { type: Boolean, required: true, default: false });
 
-const { title, destroyOnClose, loading, minHeight, closeOnClickModel, closeOnPressEsc } = defineProps({
+const { title, destroyOnClose, loading, minHeight, closeOnClickModal, closeOnPressEsc, modal } = defineProps({
     title: {
         type: [String, Boolean],
         required: false,
@@ -55,7 +57,7 @@ const { title, destroyOnClose, loading, minHeight, closeOnClickModel, closeOnPre
         required: false,
         default: 500
     },
-    closeOnClickModel: {
+    closeOnClickModal: {
         type: Boolean,
         required: false,
         default: false
@@ -64,10 +66,15 @@ const { title, destroyOnClose, loading, minHeight, closeOnClickModel, closeOnPre
         type: Boolean,
         required: false,
         default: false
+    },
+    modal: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
-const emit = defineEmits(['opened', 'closed']);
+const emit = defineEmits(['opened', 'closed', 'close']);
 
 watch(() => visible.value, (val) => {
     if (val) {
@@ -77,7 +84,7 @@ watch(() => visible.value, (val) => {
     }
 })
 
-watch(() => closeOnClickModel, (v) => {
+watch(() => closeOnClickModal, (v) => {
     dialog.value?.[v ? 'addEventListener' : 'removeEventListener']('click', clickModel);
 })
 
@@ -91,7 +98,9 @@ const needTitle = computed(() => {
 })
 
 const clickModel = (e) => {
-    if (e.target === dialog.value) {
+    if (modal && e.target === dialog.value) {
+        visible.value = false;
+    } else if (!modal && e.target === mask.value) {
         visible.value = false;
     }
 }
@@ -106,7 +115,7 @@ const addListener = (callback) => {
                 visible.value = false;
             }
         })
-        if (closeOnClickModel) {
+        if (closeOnClickModal) {
             dialog.value?.addEventListener('click', clickModel);
         }
         if (callback && callback instanceof Function) {
@@ -117,7 +126,12 @@ const addListener = (callback) => {
 
 const show = () => {
     const showModal = () => {
-        dialog.value.showModal();
+        cancelClosed();
+        if (modal) {
+            dialog.value.showModal();
+        } else {
+            dialog.value.show();
+        }
         emit('opened');
     }
     if (destroyOnClose) {
@@ -128,12 +142,22 @@ const show = () => {
     }
 }
 
+let closedTimeout = null;
+
+const cancelClosed = () => {
+    if (closedTimeout) {
+        clearTimeout(closedTimeout);
+        closedTimeout = null;
+    }
+}
+
 const close = () => {
     dialog.value?.close();
-    if (destroyOnClose) {
-        destroyed.value = true;
-    }
-    emit('closed');
+    emit('close');
+    closedTimeout = setTimeout(() => {
+        if (destroyOnClose) destroyed.value = true;
+        emit('closed');
+    }, 500);
 }
 
 onMounted(() => {
@@ -155,17 +179,50 @@ onMounted(() => {
     background-color: #fff;
 }
 
+dialog.modaless {
+    position: fixed;
+    top: var(--holder-height);
+    left: 0;
+    height: calc(var(--vh) - var(--holder-height));
+    width: 100%;
+    background-color: transparent;
+    z-index: 999;
+}
+
+.dialog-mask {
+    position: absolute;
+    z-index: 900;
+    height: calc(var(--vh) - var(--holder-height));
+    width: 100%;
+    top: 0;
+}
+
+dialog[open] .dialog-mask {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
 dialog.dialog:focus-visible {
     outline: 0;
 }
 
 .dialog-container {
     width: var(--dialog-width);
+    background-color: #fff;
+    position: relative;
 }
 
 .dialog-container-loading {
     display: block;
     width: var(--dialog-width);
+    position: relative;
+}
+
+dialog.modaless .dialog-container,
+.dialog-container-loading {
+    z-index: 998;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
 }
 
 .dialog-header {
