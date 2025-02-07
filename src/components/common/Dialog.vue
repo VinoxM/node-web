@@ -154,10 +154,12 @@ const cancelClosed = () => {
 const close = () => {
     dialog.value?.close();
     emit('close');
-    closedTimeout = setTimeout(() => {
-        if (destroyOnClose) destroyed.value = true;
-        emit('closed');
-    }, 500);
+    if (destroyOnClose) destroyed.value = true;
+    emit('closed');
+    // closedTimeout = setTimeout(() => {
+    //     if (destroyOnClose) destroyed.value = true;
+    //     emit('closed');
+    // }, 500);
 }
 
 onMounted(() => {
