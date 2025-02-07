@@ -22,8 +22,9 @@ const createInstance = (cfg) => {
         const heightArr = msgArr.map(t => t.offsetHeight);
         for (let i = 0; i < msgArr.length; i++) {
             const msgNode = msgArr[i];
-            const sliceArr = heightArr.slice(0, i)
-            msgNode.style.top = sliceArr.reduce((a, b) => a + b, 0) + (i + 1) * 5 + 'px';
+            const sliceArr = heightArr.slice(0, i);
+            const offsetY = sliceArr.reduce((a, b) => a + b, 0) + (i + 1) * 5 + 'px';
+            msgNode.style.setProperty('--offset-y', offsetY);
             msgNode.style.opacity = 1;
         }
     }
