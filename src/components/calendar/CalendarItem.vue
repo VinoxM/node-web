@@ -1,7 +1,7 @@
 <template>
     <div class="ani-item" @click="$emit('itemClick', props.unique)">
         <div class="ani-item-cover">
-            <ani-image class="ani-item-cover-img" :src="props.cover"></ani-image>
+            <Image class="ani-item-cover-img" :src="props.cover"></Image>
         </div>
         <div class="ani-item-info">
             <div class="ani-item-title">
@@ -26,6 +26,7 @@
 <script setup>
 import { computed } from 'vue';
 import Noodle from '../common/Noodle.vue';
+import Image from '../common/Image.vue';
 
 const props = defineProps({
     titleCN: String,

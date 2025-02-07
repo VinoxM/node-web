@@ -97,6 +97,8 @@
     --subs-gap: 4px;
     /* header */
     --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height));
+    /* holder */
+    --holder-height: 0px;
 }
 
 body {
