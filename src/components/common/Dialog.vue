@@ -188,6 +188,7 @@ dialog.modaless {
     background-color: transparent;
     z-index: 999;
     border-radius: 0;
+    display: flex;
 }
 
 .dialog-mask {
@@ -221,8 +222,6 @@ dialog.dialog:focus-visible {
 dialog.modaless .dialog-container,
 .dialog-container-loading {
     z-index: 998;
-    top: 50%;
-    transform: translateY(-50%);
     margin: auto;
     border-radius: 8px;
     overflow: hidden;
