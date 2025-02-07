@@ -16,7 +16,7 @@ import { computed, onMounted, ref } from 'vue';
 const pined = ref(false);
 const pinClass = computed(() => pined.value ? 'icon-pin' : 'icon-pin-outline');
 const windowIcon = ref('');
-const windowTitle = ref('Rss Calendar');
+const windowTitle = ref('Anime Calendar');
 
 const ipc = window.ipc || {};
 

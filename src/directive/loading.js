@@ -1,10 +1,12 @@
 const defaultLoadingText = 'Loading...';
+const defaultLoadingIcon = 'loading';
 
 const toLoading = (el) => {
     if (el.classList.contains("directive-loading-parent")) return;
     const loadingText = el.hasAttribute('loading-text') ? el.getAttribute('loading-text') : defaultLoadingText;
     const bgColor = el.hasAttribute('loading-bg-color') ? el.getAttribute('loading-bg-color')?.trim() : '';
     const textColor = el.hasAttribute('loading-text-color') ? el.getAttribute('loading-text-color')?.trim() : '';
+    const loadingIcon = el.hasAttribute('loading-icon') ? el.getAttribute('loading-icon')?.trim() : defaultLoadingIcon;
     el.classList.add("directive-loading-parent");
     const mask = document.createElement('div');
     mask.classList.add('directive-loading');
@@ -22,7 +24,7 @@ const toLoading = (el) => {
     label.classList.add('directive-loading-spinner');
     mask.appendChild(label);
     const icon = document.createElement("i");
-    icon.className = 'directive-loading-icon icon-loading animate-spin';
+    icon.className = 'directive-loading-icon animate-spin icon-' + loadingIcon;
     label.appendChild(icon);
     const p = document.createElement("p");
     p.classList.add('directive-loading-label');

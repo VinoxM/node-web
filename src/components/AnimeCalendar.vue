@@ -1,6 +1,6 @@
 <template>
     <AnimeHolder></AnimeHolder>
-    <div class="ani-main" :class="{ 'edit-mode': editMode }">
+    <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin1" loading-text="加载中..." loading-bg-color="rgba(0,0,0,0.5)">
         <CalendarHeader @search="getSearch" @update-checked="updateChecked" v-model:edit-mode="editMode"
             :checked-count="checkedCount"></CalendarHeader>
         <div class="ani-weekly-box card-panel">
@@ -213,6 +213,14 @@ const research = () => {
     if (lastSearchBody) getSearch(lastSearchBody);
 }
 
+const firstLoading = ref(true);
+
+const loadOver = () => {
+    if (firstLoading.value) {
+        firstLoading.value = false;
+    }
+}
+
 const getSearch = ({ season, search }, callback) => {
     cancel(lastSearch);
     lastData.store();
@@ -235,6 +243,7 @@ const getSearch = ({ season, search }, callback) => {
         nextTick(() => {
             setupHighlight(search);
         })
+        loadOver();
     }, () => {
         lastSearch = null;
         loading.value = false;
