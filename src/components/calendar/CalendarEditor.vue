@@ -56,8 +56,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="subs-column" v-loading="resultsLoading" loading-bg-color="rgba(0,0,0,0.4)"
-                    loading-text-color="#fff">
+                <div class="subs-column" v-loading="resultsLoading" loading-bg-color="rgba(0,0,0,0.6)">
                     <div class="subs-row center">
                         <Link :active="!isEditResult && !isCurrentResults" @click="resultsChange(0)">测试结果</Link>
                         <Link :active="!isEditResult && isCurrentResults" @click="resultsChange(1)">当前结果</Link>
@@ -65,7 +64,7 @@
                     <div class="subs-results-container">
                         <div class="subs-column gap-0" v-show="!isEditResult && !isCurrentResults">
                             <div class="subs-row center box-tools">
-                                <Link icon="refresh-square" type="normal" @click="getTestResults">刷新</Link>
+                                <Link icon="spin3" type="normal" @click="getTestResults">刷新</Link>
                             </div>
                             <div class="results-box" v-if="testResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of testResults" :key="k" :title="val.title">
@@ -82,7 +81,7 @@
                         </div>
                         <div class="subs-column gap-0" v-show="!isEditResult && isCurrentResults">
                             <div class="subs-row center box-tools">
-                                <Link icon="refresh-square" type="normal" @click="getCurrentResults">刷新</Link>
+                                <Link icon="spin3" type="normal" @click="getCurrentResults">刷新</Link>
                                 <Link icon="trash" type="danger">清空</Link>
                             </div>
                             <div class="results-box" v-if="currentResults.length > 0">
@@ -157,10 +156,10 @@
                     <Link :active="!isCopyrightDetail && !editDetail" @click="changeDetailView">相关链接</Link>
                     <Link :active="isCopyrightDetail && !editDetail" @click="changeDetailView">番剧版权</Link>
                 </div>
-                <div class="subs-detail-container" v-loading="detailLoading">
+                <div class="subs-detail-container" v-loading="detailLoading" loading-bg-color="rgba(0,0,0,0.6)">
                     <div class="subs-column gap-0" v-if="!editDetail">
                         <div class="subs-row center box-tools">
-                            <Link icon="refresh-square" type="normal" @click="refreshDetail">刷新</Link>
+                            <Link icon="spin3" type="normal" @click="refreshDetail">刷新</Link>
                         </div>
                         <div class="subs-detail-box" v-show="!isCopyrightDetail">
                             <div v-for="(val, k) of subscribe.link" :key="k" class="detail-item">

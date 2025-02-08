@@ -1,5 +1,5 @@
 const defaultLoadingText = 'Loading...';
-const defaultLoadingIcon = 'loading';
+const defaultLoadingIcon = 'spin6';
 
 const toLoading = (el) => {
     if (el.classList.contains("directive-loading-parent")) return;
@@ -16,8 +16,8 @@ const toLoading = (el) => {
     if (textColor !== '') {
         mask.style.color = textColor;
     }
-    if (el.hasAttribute('mask-index')) {
-        const maskIndex = Number(el.getAttribute('mask-index')?.trim());
+    if (el.hasAttribute('loading-mask-index')) {
+        const maskIndex = Number(el.getAttribute('loading-mask-index')?.trim());
         mask.style.zIndex = maskIndex;
     }
     const label = document.createElement("div");
@@ -34,16 +34,15 @@ const toLoading = (el) => {
 }
 
 const outLoading = (el) => {
-    Array.from(el.querySelectorAll('.directive-loading')).forEach(e => {
-        e.remove();
-    })
+    if (!el.classList.contains("directive-loading-parent")) return;
+    el.querySelector('.directive-loading-parent>.directive-loading').remove();
     el.classList.remove('directive-loading-parent');
 }
 
 const loadingPlugin = {
     install(app) {
         app.directive('loading', {
-            mounted(el, {value}) {
+            mounted(el, { value }) {
                 if (value) {
                     toLoading(el);
                 }

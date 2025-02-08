@@ -103,8 +103,8 @@
 }
 
 .ani-header-edit-tools button {
-    height: var(--edit-height);
-    line-height: calc(var(--edit-height) - 2px);
+    height: var(--edit-height) !important;
+    line-height: calc(var(--edit-height) - 2px) !important;
 }
 
 /* item check box */

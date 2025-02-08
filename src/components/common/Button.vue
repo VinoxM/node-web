@@ -1,14 +1,14 @@
 <template>
-    <button class="ani-btn" :class="btnClass">
+    <button class="ani-btn" :class="btnClass" :style="iconStyle">
         <i v-if="needIcon" :class="iconClass"></i>
         <slot></slot>
     </button>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
-const { plain, size, icon, type, disabled, loading, borderLess } = defineProps({
+const { plain, size, icon, type, disabled, loading, borderLess, height } = defineProps({
     plain: {
         type: Boolean,
         required: false,
@@ -45,6 +45,11 @@ const { plain, size, icon, type, disabled, loading, borderLess } = defineProps({
         type: Boolean,
         required: false,
         default: false
+    },
+    height: {
+        type: String,
+        required: false,
+        default: null
     }
 })
 
@@ -69,6 +74,8 @@ const btnClass = computed(() => {
 const needIcon = computed(() => loading || icon !== '')
 
 const iconClass = computed(() => loading ? 'icon-loading animate-spin' : `icon-${icon}`);
+
+const iconStyle = computed(() => height ? { '--ani-btn-height': Number(height.replace(/px/g, '')) + 'px'} : {});
 </script>
 
 <style scoped>

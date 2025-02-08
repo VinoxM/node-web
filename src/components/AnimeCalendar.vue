@@ -1,6 +1,6 @@
 <template>
     <AnimeHolder></AnimeHolder>
-    <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin1" loading-text="加载中..." loading-bg-color="rgba(0,0,0,0.5)">
+    <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin3" loading-text="加载中..." loading-bg-color="#fff">
         <CalendarHeader @search="getSearch" @update-checked="updateChecked" v-model:edit-mode="editMode"
             :checked-count="checkedCount"></CalendarHeader>
         <div class="ani-weekly-box card-panel">
@@ -13,7 +13,7 @@
                     <div class="ani-background ani-arrow arrow-right" @click="setupStepForClick(1)"></div>
                 </div>
             </div>
-            <div class="ani-row-box" v-loading="updating" loading-text="Updating...">
+            <div class="ani-row-box" v-loading="updating" loading-text="Updating..." loading-bg-color="rgba(0,0,0,0.6)">
                 <div class="ani-container-row" :style="rowStyle">
                     <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading"
                         @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate" @item-fin="itemFin">
@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
+        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..." loading-bg-color="rgba(0,0,0,0.6)"
             @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate" @item-fin="itemFin">
         </CalendarWebBox>
         <CalendarEditor v-model="unique" :matchers="matchers" v-if="editMode" @research="research"></CalendarEditor>

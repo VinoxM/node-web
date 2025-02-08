@@ -1,6 +1,6 @@
 <template>
     <dialog class="dialog" ref="dialog" v-if="!destroyed" :class="{ modaless: !modal }">
-        <div class="dialog-container-loading" v-loading="loading" mask-index="99" v-if="loading"
+        <div class="dialog-container-loading" v-loading="loading" loading-mask-index="98" v-if="loading"
             :style="{ minHeight: minHeight + 'px' }">
             <div class="dialog-close" @click="visible = false">
                 <i class="icon-cancel"></i>
@@ -219,6 +219,7 @@ dialog.dialog:focus-visible {
     display: block;
     width: var(--dialog-width);
     position: relative;
+    background-color: #fff;
 }
 
 dialog.modaless .dialog-container,

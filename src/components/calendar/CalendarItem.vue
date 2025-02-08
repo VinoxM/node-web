@@ -23,7 +23,7 @@
                 <Switch class="ani-item-fin" :value="props.status === 2" inline :loading="props.finLoading"
                     @change="$emit('itemFin', props.unique)" active-text="完结" inactive-text="放送" active-color="#6A0808">
                 </Switch>
-                <Link icon="refresh-square" v-click.stop="() => $emit('itemUpdate', props.unique)">更新</Link>
+                <Link icon="spin3" v-click.stop="() => $emit('itemUpdate', props.unique)">更新</Link>
                 <Link icon="edit" v-click.stop="() => $emit('itemEdit', props.unique)">编辑</Link>
             </div>
         </div>

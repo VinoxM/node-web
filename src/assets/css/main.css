@@ -19,7 +19,7 @@ div.ani-header {
   flex-direction: column;
   gap: 5px;
   margin: 0 auto;
-  padding: calc(var(--main-gap) + (var(--search-height) - var(--season-year-height)) / 2) 0 var(--main-gap) 0;
+  padding: var(--main-gap) 0;
   border-radius: 0 0 8px 8px;
   transition: all var(--transition-delay);
   position: relative;
@@ -745,7 +745,7 @@ div.ani-row-box.sticky {
 }
 
 .ani-item-title .title-cn::highlight(search-results) {
-  background-color: var(--color-red-2);
+  background-color: #f06;
   color: white;
 }
 
@@ -905,13 +905,7 @@ span.limited-box.two-line {
   display: block;
   width: 24px;
   height: 24px;
+  line-height: 24px;
   text-align: center;
   margin: auto;
-}
-
-i.directive-loading-icon::before {
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  margin: 0;
 }

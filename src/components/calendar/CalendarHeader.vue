@@ -13,7 +13,7 @@
                 <div>
                     <span>{{ checkedCount }}</span> / <span>{{ resultCount }}</span>
                 </div>
-                <Button size="small" icon="refresh-square" type="success" :disabled="checkedCount === 0"
+                <Button size="small" icon="spin3" type="success" :disabled="checkedCount === 0"
                     :loading="isUpdating" @click="updateCheckedClicked">更新选中</Button>
             </div>
             <div class="ani-header-edit-icon" @click="emitEdit">
@@ -260,7 +260,7 @@ const toSearching = () => {
     const origin = searchBox.value;
     cloneNode = origin.cloneNode(false);
     cloneNode.classList.remove('card-panel');
-    origin.scrollIntoView({ behavior: 'smooth' });
+    origin.scrollIntoView({ behavior: 'smooth', block: "center", inline: "nearest" });
     document.body.classList.add('over-hidden');
     parentNode.insertBefore(cloneNode, origin);
     mask.appendChild(origin);

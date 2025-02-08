@@ -290,6 +290,7 @@ body,
     z-index: 100;
     background-color: rgba(0, 0, 0, 0);
     transition: all var(--transition-delay);
+    padding-top: var(--holder-height);
 }
 
 .main-mask.model {
