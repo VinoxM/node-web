@@ -1,6 +1,7 @@
 <template>
     <AnimeHolder></AnimeHolder>
-    <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin3" loading-text="加载中..." loading-bg-color="#fff">
+    <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin3"
+        loading-text="加载中..." loading-bg-color="#fff">
         <CalendarHeader @search="getSearch" @update-checked="updateChecked" v-model:edit-mode="editMode"
             :checked-count="checkedCount"></CalendarHeader>
         <div class="ani-weekly-box card-panel">
@@ -21,8 +22,9 @@
                 </div>
             </div>
         </div>
-        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..." loading-bg-color="rgba(0,0,0,0.6)"
-            @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate" @item-fin="itemFin">
+        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
+            loading-bg-color="rgba(0,0,0,0.6)" @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate"
+            @item-fin="itemFin">
         </CalendarWebBox>
         <CalendarEditor v-model="unique" :matchers="matchers" v-if="editMode" @research="research"></CalendarEditor>
         <CalendarViewer v-model="unique" v-else></CalendarViewer>
@@ -210,7 +212,7 @@ const itemFin = (unique_) => {
 
 /* api func */
 const research = () => {
-    if (lastSearchBody) getSearch(lastSearchBody);
+    if (lastSearchBody) getSearch({ ...lastSearchBody, setupSetp: false });
 }
 
 const firstLoading = ref(true);
@@ -221,15 +223,15 @@ const loadOver = () => {
     }
 }
 
-const getSearch = ({ season, search }, callback) => {
+const getSearch = ({ season, search, setupSetp = true }, callback) => {
     cancel(lastSearch);
     lastData.store();
     dataDict.value = defaultDataDict();
     webArr.value = [];
     loading.value = true;
     lastSearch = getApi().getSearch({ season, name: search }, data => {
-        lastSearchBody = { season, search };
         lastSearch = null;
+        lastSearchBody = { season, search };
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef } = data;
         if (callback instanceof Function) callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0, seasonResultCount: resultCount });
         nowDay = nowDay_;
@@ -238,7 +240,7 @@ const getSearch = ({ season, search }, callback) => {
         webArr.value = webArray;
         loading.value = false;
         initContainerHeight();
-        setupTransForStep();
+        if (setupSetp) setupTransForStep();
         edit.init(listRef);
         nextTick(() => {
             setupHighlight(search);
