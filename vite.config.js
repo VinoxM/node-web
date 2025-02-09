@@ -28,7 +28,7 @@ export default defineConfig({
   },
   build: {
     // outDir: '/home/node-file/edit',
-    outDir: "E:/Projects/uTools/rss-anime/src/rss",
+    outDir: "E:/Projects/uTools/anime-calendar/src/dist",
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin used during production bundling
