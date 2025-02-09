@@ -21,7 +21,8 @@
             </div>
             <div class="ani-item-edit-box">
                 <Switch class="ani-item-fin" :value="props.status === 2" inline :loading="props.finLoading"
-                    @change="$emit('itemFin', props.unique)" active-text="完结" inactive-text="放送" active-color="#6A0808">
+                    @change="$emit('itemFin', props.unique)" active-text="完结" inactive-text="放送" 
+                    active-color="#6A0808" inactive-color="#00a1d6" inline-inactive-color="#fff">
                 </Switch>
                 <Link icon="spin3" v-click.stop="() => $emit('itemUpdate', props.unique)">更新</Link>
                 <Link icon="edit" v-click.stop="() => $emit('itemEdit', props.unique)">编辑</Link>
