@@ -353,7 +353,7 @@ const submitSubscribe = () => {
         ...val
     }
     loading.value = true;
-    getApi().editOneSubs(body, () => (flushSearch = true, close()));
+    getApi().editOneSubs(body, () => (flushSearch = true, close()), ()=> loading.value = false);
 }
 
 const getDialogEl = () => dialogRef.value.$el;
