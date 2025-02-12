@@ -743,7 +743,7 @@ div.ani-row-box.sticky {
 }
 
 .ani-item-title .title-cn::highlight(search-results) {
-  background-color: var(--color-red-2);
+  background-color: #f06;
   color: white;
 }
 
@@ -903,13 +903,7 @@ span.limited-box.two-line {
   display: block;
   width: 24px;
   height: 24px;
+  line-height: 24px;
   text-align: center;
   margin: auto;
-}
-
-i.directive-loading-icon::before {
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  margin: 0;
 }
