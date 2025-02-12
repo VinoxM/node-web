@@ -13,7 +13,7 @@ const { src, mixed } = defineProps({
     mixed: {
         type: Boolean,
         required: false,
-        default: false
+        default: true
     }
 })
 
