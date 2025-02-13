@@ -155,10 +155,6 @@
     transition: var(--transition-delay);
 }
 
-.ani-main.edit-mode .ani-item-episode {
-    height: 0;
-}
-
 /* item edit box */
 .ani-item-edit-box {
     display: flex;
