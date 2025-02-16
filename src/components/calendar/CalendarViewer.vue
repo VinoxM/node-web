@@ -1,6 +1,6 @@
 <template>
-    <Dialog v-model:visible="visible" title="false" destroy-on-close ref="dialog" @close="closeCallback" @closed="closedCallback" :loading="loading"
-        :min-height="554" close-on-click-modal close-on-press-esc>
+    <Dialog v-model:visible="visible" title="false" destroy-on-close ref="dialog" @close="closeCallback"
+        @closed="closedCallback" :loading="loading" :min-height="554" close-on-click-modal close-on-press-esc>
         <div class="subs-header">
             <div class="subs-type">
                 <span class="subs-origin-type limited-box one-line"
@@ -17,15 +17,17 @@
             <div class="subs-main-left">
                 <Image :src="subscribe.cover" class="subs-cover"></Image>
                 <div class="subs-link-box">
-                    <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener" v-href>{{
-                        val.title || '-' }}</a>
+                    <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener"
+                        v-href>{{
+                            val.title || '-' }}</a>
                 </div>
                 <div class="subs-broadcast">
                     <span>{{ subscribe.broadcast[0] || '-' }}</span>
                     <span>{{ subscribe.broadcast[1] || '' }}</span>
                 </div>
                 <div class="subs-copyright-box">
-                    <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank" rel="noopener" v-href>
+                    <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank" rel="noopener"
+                        v-href>
                         <Image :src="val.image"></Image>
                         <p>{{ val.area || '-' }}</p>
                     </a>
@@ -43,7 +45,7 @@
                 <div class="results-box">
                     <div class="results-scroll" v-if="subscribe.results.length > 0">
                         <div v-for="(val, key) of subscribe.results" :key="key" class="results-item"
-                            @click="openTorrent(val)">
+                            @click="openTorrent(val)" @click.right="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
                         </div>
@@ -121,14 +123,7 @@ watch(() => unique.value, (v) => {
 const openTorrent = (res) => {
     const dialog_ = getDialogEl();
     if (res.copyAll) {
-        const input = document.createElement("input");
-        input.value = res.torrent;
-        dialog_.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        dialog_.removeChild(input);
-        message.success('已复制种子链接到剪贴板.', { duration: 2000, appendTo: dialog_ })
-        return
+        copyTorrent(res)
     }
     const a = document.createElement("a")
     a.href = res.torrent
@@ -136,6 +131,18 @@ const openTorrent = (res) => {
     dialog_.appendChild(a)
     a.click()
     dialog_.removeChild(a)
+}
+
+const copyTorrent = (res) => {
+    const dialog_ = getDialogEl();
+    const input = document.createElement("input");
+    input.value = res.torrent;
+    dialog_.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    dialog_.removeChild(input);
+    message.success('已复制种子链接到剪贴板.', { duration: 2000, appendTo: dialog_ })
+    return
 }
 
 const show = () => {
