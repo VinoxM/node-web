@@ -67,7 +67,7 @@
                                 <Link icon="spin3" type="normal" @click="getTestResults">刷新</Link>
                             </div>
                             <div class="results-box" v-if="testResults.length > 0">
-                                <div class="results-item" v-for="(val, k) of testResults" :key="k" :title="val.title">
+                                <div class="results-item" v-for="(val, k) of testResults" :key="k" :title="val.title" @click.right="copyTorrent(val)">
                                     <span>{{ val.title }}</span>
                                     <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
                                     <div class="results-btn-box">
@@ -445,6 +445,18 @@ const regexAddCancel = () => {
 }
 
 /* subscribe results */
+const copyTorrent = (res) => {
+    const dialog_ = getDialogEl();
+    const input = document.createElement("input");
+    input.value = res.torrent;
+    dialog_.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    dialog_.removeChild(input);
+    message.success('已复制种子链接到剪贴板.', { duration: 2000, appendTo: dialog_ })
+    return
+}
+
 const getCurrentResults = () => {
     if (resultsLoading.value) return;
     resultsLoading.value = true;
