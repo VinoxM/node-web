@@ -526,6 +526,10 @@ div.ani-row-box.sticky {
   gap: var(--box-gap);
 }
 
+.ani-day-group .ani-day-loading {
+  padding-bottom: var(--box-gap);
+}
+
 .ani-day-empty {
   display: inline-block;
   text-align: center;

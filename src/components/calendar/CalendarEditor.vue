@@ -562,8 +562,9 @@ const changeDetailView = () => {
     editDetail.value = null;
 }
 
-const refreshDetail = () => {
+const refreshDetail = (needReload) => {
     detailLoading.value = true;
+    flushSearch = !!needReload;
     if (isCopyrightDetail.value) {
         getApi().getOneCopyrights({ pid: unique.value }, data => {
             subscribe.value.copyright = data;
@@ -602,7 +603,7 @@ const deleteDetail = (val) => {
     detailLoading.value = true;
     const isLink = 'title' in val;
     const methodName = `delOne${isLink ? 'Link' : 'Copyright'}`;
-    getApi()[methodName]({ id: val.id }, () => (detailLoading.value = false, refreshDetail()), () => detailLoading.value = false);
+    getApi()[methodName]({ id: val.id }, () => (detailLoading.value = false, refreshDetail(1)), () => detailLoading.value = false);
 }
 
 const submitEditDetail = () => {
@@ -610,7 +611,7 @@ const submitEditDetail = () => {
     const isEdit = (editDetail.value.id ?? 0) > 0;
     const isLink = 'title' in editDetail.value;
     const methodName = `${isEdit ? 'edit' : 'add'}One${isLink ? 'Link' : 'Copyright'}`;
-    getApi()[methodName](editDetail.value, () => (detailLoading.value = false, editDetail.value = null, refreshDetail()), () => detailLoading.value = false);
+    getApi()[methodName](editDetail.value, () => (detailLoading.value = false, editDetail.value = null, refreshDetail(1)), () => detailLoading.value = false);
 }
 
 /* dialog visible handler */

@@ -194,6 +194,7 @@ const itemUpdate = (unique_) => {
     getApi().updateOneSubs({ id: unique_ }, ({ handledCount, effectRows }) => {
         message.success(`处理${handledCount}个, 新增${effectRows}条记录.`);
         updating.value = false;
+        effectRows > 0 && research();
     }, () => updating.value = false);
 }
 
@@ -212,7 +213,7 @@ const itemFin = (unique_) => {
 
 /* api func */
 const research = () => {
-    if (lastSearchBody) getSearch({ ...lastSearchBody, setupSetp: false });
+    if (lastSearchBody) getSearch({ ...lastSearchBody, setupStep: false });
 }
 
 const firstLoading = ref(true);
@@ -223,7 +224,7 @@ const loadOver = () => {
     }
 }
 
-const getSearch = ({ season, search, setupSetp = true }, callback) => {
+const getSearch = ({ season, search, setupStep = true }, callback) => {
     cancel(lastSearch);
     lastData.store();
     dataDict.value = defaultDataDict();
@@ -240,7 +241,7 @@ const getSearch = ({ season, search, setupSetp = true }, callback) => {
         webArr.value = webArray;
         loading.value = false;
         initContainerHeight();
-        if (setupSetp) setupTransForStep();
+        if (setupStep) setupTransForStep();
         edit.init(listRef);
         nextTick(() => {
             setupHighlight(search);
@@ -263,6 +264,7 @@ const updateChecked = (callback) => {
         message.success(`处理${handledCount}个, 新增${effectRows}条记录.`);
         callback();
         updating.value = false;
+        effectRows > 0 && research();
     }, () => {
         callback();
         updating.value = false;
