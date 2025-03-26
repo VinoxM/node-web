@@ -71,13 +71,16 @@ const props = defineProps({
 const emit = defineEmits(['itemClick', 'itemUpdate', 'itemEdit'])
 
 const episode = computed(() => {
-    if (props.status === 0) {
-        return '未开播';
-    }
     if (props.status === 2) {
         return `已完结, 共<span>${props.epCount}</span>结果`;
     }
-    return props.latestEp === null ? '无更新' : `更新至<span>${props.latestEp}</span>`;
+    if (props.latestEp !== null) {
+        return `更新至<span>${props.latestEp}</span>`;
+    }
+    if (props.status === 0) {
+        return '未开播';
+    }
+    return '无更新';
 });
 
 const checkboxClass = computed(() => {
@@ -87,6 +90,9 @@ const checkboxClass = computed(() => {
 const episodeColor = computed(() => {
     if (props.status === 2) {
         return 'fin';
+    }
+    if (props.latestEp !== null) {
+        return 'normal';
     }
     if (props.status === 0) {
         return 'none';

@@ -207,7 +207,7 @@ const itemFin = (unique_) => {
             const now = new Date().getTime();
             item.status = item.status === 2 ? (now - startTime >= 0 ? 1 : 0) : 2;
             item.finLoading = false;
-        })
+        }, m => (message.error(m), item.finLoading = false))
     }
 }
 
