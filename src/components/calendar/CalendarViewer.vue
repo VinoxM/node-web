@@ -21,8 +21,8 @@
                         val.title || '-' }}</a>
                 </div>
                 <div class="subs-broadcast">
-                    <span>{{ subscribe.broadcast[0] || '-' }}</span>
-                    <span>{{ subscribe.broadcast[1] || '' }}</span>
+                    <span v-html="subscribe.broadcast[0] || '-'"></span>
+                    <span v-html="subscribe.broadcast[1] || ''"></span>
                 </div>
                 <div class="subs-copyright-box">
                     <a v-for="(val, k) of subscribe.copyright" :key="k" :href="val.href" target="_blank" rel="noopener">
