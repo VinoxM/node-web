@@ -30,6 +30,9 @@ const apis = {
     },
     delOneResult: {
         path: '/rss/result/delOne'
+    },
+    delManyResults: {
+        path: '/rss/result/delMany'
     }
 }
 

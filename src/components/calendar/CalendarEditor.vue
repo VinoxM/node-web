@@ -56,7 +56,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="subs-column" v-loading="resultsLoading" loading-bg-color="rgba(0,0,0,0.6)">
+                <div class="subs-column" v-loading="resultsLoading" loading-bg-color="rgba(0,0,0,0.6)" loading-mask-index="19">
                     <div class="subs-row center">
                         <Link :active="!isEditResult && !isCurrentResults" @click="resultsChange(0)">测试结果</Link>
                         <Link :active="!isEditResult && isCurrentResults" @click="resultsChange(1)">当前结果</Link>
@@ -82,7 +82,7 @@
                         <div class="subs-column gap-0" v-show="!isEditResult && isCurrentResults">
                             <div class="subs-row center box-tools">
                                 <Link icon="spin3" type="normal" @click="getCurrentResults">刷新</Link>
-                                <Link icon="trash" type="danger">清空</Link>
+                                <Link icon="trash" type="danger" @click="delManyResults">清空</Link>
                             </div>
                             <div class="results-box" v-if="currentResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of currentResults" :key="k" :title="val.title"
@@ -463,6 +463,15 @@ const getCurrentResults = () => {
     getApi().getOneSubsResults({ id: unique.value }, data => {
         currentResults.value = data.map(o => (o.loading = false, o));
         resultsLoading.value = false;
+    }, () => resultsLoading.value = false)
+}
+
+const delManyResults = () => {
+    if (resultsLoading.value) return;
+    resultsLoading.value = true;
+    getApi().delManyResults({pid: unique.value}, data => {
+        resultsLoading.value = false;
+        getCurrentResults()
     }, () => resultsLoading.value = false)
 }
 

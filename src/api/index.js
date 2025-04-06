@@ -1,7 +1,7 @@
 import axios from "axios";
 import message from '@/message';
 
-axios.defaults.timeout = 5 * 1000;
+axios.defaults.timeout = 10 * 1000;
 
 let basePath = "https://vinoxm.fun/server";
 // basePath = "https://www.vinoxm.fun/server";

@@ -3,7 +3,7 @@
         <input ref="input" class="sel-input" v-model="model" @focus="inputFocus" @keydown="inputKeyPress"
             @blur="inputBlur" />
         <div ref="label" class="sel-input-label" v-show="labelVisible" v-loading="loading">
-            <span class="label-item" :class="{ active: activedIndex === k }" v-for="(val, k) of options" :key="k"
+            <span class="label-item" :class="{ active: activeIndex === k }" v-for="(val, k) of options" :key="k"
                 @mouseenter="itemHover(k)" @click="itemConfirm">{{ val.label }}</span>
         </div>
     </div>
@@ -26,7 +26,7 @@ const { options, loading } = defineProps({
     }
 })
 const labelVisible = ref(false);
-const activedIndex = ref(-1);
+const activeIndex = ref(-1);
 
 const boxRef = useTemplateRef("box");
 const inputRef = useTemplateRef("input");
@@ -34,7 +34,7 @@ const labelRef = useTemplateRef("label");
 
 const emit = defineEmits(['submit', 'cancel']);
 
-watch(() => options, () => activedIndex.value = -1);
+watch(() => options, () => activeIndex.value = -1);
 
 const inputFocus = () => {
     labelVisible.value = true;
@@ -58,10 +58,10 @@ const inputKeyPress = e => {
             itemConfirm();
             break;
         case 'ArrowDown':
-            setupActivedIndex(1);
+            setupActiveIndex(1);
             break;
         case 'ArrowUp':
-            setupActivedIndex(-1);
+            setupActiveIndex(-1);
             break;
     }
 }
@@ -69,8 +69,8 @@ const inputKeyPress = e => {
 const itemConfirm = () => {
     if (model.value.trim() !== '') {
         emit('submit');
-    } else if (options[activedIndex.value]) {
-        model.value = options[activedIndex.value].value;
+    } else if (options[activeIndex.value]) {
+        model.value = options[activeIndex.value].value;
         emit('submit');
     } else {
         emit('cancel')
@@ -79,13 +79,13 @@ const itemConfirm = () => {
 }
 
 const itemHover = (i) => {
-    activedIndex.value = i
+    activeIndex.value = i
 }
 
-const setupActivedIndex = (step = 0) => {
-    const newIndex = Math.max(activedIndex.value + step, 0);
+const setupActiveIndex = (step = 0) => {
+    const newIndex = Math.max(activeIndex.value + step, 0);
     if (options[newIndex]) {
-        activedIndex.value = newIndex;
+        activeIndex.value = newIndex;
         Array.from(labelRef.value.querySelectorAll('.label-item'))[newIndex]?.scrollIntoView({ behavior: 'smooth', inline: 'center' });
     }
 }
@@ -100,7 +100,7 @@ const setupPosition = () => {
     }
 }
 
-const bindedElement = [];
+const boundedElement = [];
 
 const bindSetupPosition = () => {
     const elem = labelRef?.value;
@@ -108,18 +108,18 @@ const bindSetupPosition = () => {
     window.addEventListener('resize', setupPosition);
     while (el) {
         el.addEventListener('scroll', setupPosition);
-        bindedElement.push(el);
+        boundedElement.push(el);
         if (el.tagName === 'DIALOG') break;
         el = el.parentElement;
     }
 }
 
 const unbindSetupPosition = () => {
-    let el = bindedElement.pop();
+    let el = boundedElement.pop();
     window.removeEventListener('resize', setupPosition);
     while (el) {
         el.removeEventListener('scroll', setupPosition);
-        el = bindedElement.pop();
+        el = boundedElement.pop();
     }
 }
 
