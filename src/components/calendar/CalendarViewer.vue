@@ -102,7 +102,7 @@ watch(() => unique.value, (v) => {
                     episode: 'ALL',
                     pubDate: '-',
                     copyAll: true,
-                    torrent: results.map(o => o.torrent).join(" \n")
+                    torrent: results.map(o => o.torrent).join(" \r\n")
                 })
             }
             const originType = (data.originType || '').split('-');
@@ -121,12 +121,12 @@ watch(() => unique.value, (v) => {
 const openTorrent = (res) => {
     const dialog_ = getDialogEl();
     if (res.copyAll) {
-        const input = document.createElement("input");
-        input.value = res.torrent;
-        dialog_.appendChild(input);
-        input.select();
+        const textarea = document.createElement("textarea");
+        textarea.value = res.torrent;
+        dialog_.appendChild(textarea);
+        textarea.select();
         document.execCommand('copy');
-        dialog_.removeChild(input);
+        dialog_.removeChild(textarea);
         message.success('已复制种子链接到剪贴板.', { duration: 2000, appendTo: dialog_ })
         return
     }
