@@ -102,7 +102,7 @@ watch(() => unique.value, (v) => {
                     episode: 'ALL',
                     pubDate: '-',
                     copyAll: true,
-                    torrent: results.map(o => o.torrent).join(" ")
+                    torrent: results.map(o => o.torrent).join(" \n")
                 })
             }
             const originType = (data.originType || '').split('-');
