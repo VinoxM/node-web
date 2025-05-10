@@ -322,7 +322,7 @@ watch(() => unique.value, (v) => {
             const { season, isShort, goon, url, broadcast, originType, ...val } = data;
             matcherIndex.value = matchers.findIndex(o => url.includes(o.source));
             setupSubsCover(val.cover);
-            regexArr.value = (val.regex && val.regex.trim() !== '') ? val.regex.split(',') : [];
+            regexArr.value = (val.regex && val.regex.trim() !== '') ? JSON.parse(val.regex) : [];
             subscribe.value = {
                 season: season?.split('-') || ['', ''],
                 isShort: isShort === 1,
@@ -349,7 +349,7 @@ const submitSubscribe = () => {
         url: getUrlFormKeyword(keyword),
         broadcast: [...broadcast].join('-'),
         originType: [...originType].join('-'),
-        regex: regexArr.value.join(','),
+        regex: JSON.stringify(regexArr.value),
         ...val
     }
     loading.value = true;
@@ -478,7 +478,7 @@ const delManyResults = () => {
 const getTestResults = () => {
     if (resultsLoading.value || matcherIndex.value < 0 || subscribe.value.keyword === '') return;
     resultsLoading.value = true;
-    getApi().getSubsTestResults({ url: getUrlFormKeyword(subscribe.value.keyword), regex: regexArr.value.join(',') }, data => {
+    getApi().getSubsTestResults({ url: getUrlFormKeyword(subscribe.value.keyword), regex: JSON.stringify(regexArr.value) }, data => {
         testResults.value = data;
         resultsLoading.value = false;
     }, () => {
