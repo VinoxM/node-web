@@ -48,6 +48,10 @@
                             @click="openTorrent(val)" @click.right="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
+                            <div class="results-btn-box" v-if="!val.copyAll">
+                                <Button icon="rss-squared" type="warning" border-less plain :loading="addTorrentLoading"
+                                    @click.stop="uploadTorrent(val)"></Button>
+                            </div>
                         </div>
                     </div>
                     <div class="results-empty" v-else>
@@ -65,6 +69,8 @@ import { getApi, cancel } from '@/api';
 import message from '@/message';
 import Dialog from '../common/Dialog.vue';
 import Image from '../common/Image.vue';
+import Button from '../common/Button.vue';
+import { getAnimeName } from '@/utils/rssUtils';
 
 const initSubscribe = () => {
     unique.value = 0;
@@ -85,6 +91,7 @@ const dialogRef = useTemplateRef("dialog");
 const visible = ref(false);
 const loading = ref(true);
 const viewSwitch = ref(true);
+const addTorrentLoading = ref(false);
 
 let lastRequest = null;
 
@@ -162,6 +169,22 @@ const closeCallback = () => {
 const closedCallback = () => {
     subscribe.value = initSubscribe();
     loading.value = false;
+}
+
+const uploadTorrent = (val) => {
+    addTorrentLoading.value = true
+    const dialog_ = getDialogEl();
+    const { title, torrent } = val;
+    const params = {
+        torrent,
+        folder: getAnimeName(title)
+    }
+    getApi().addTorrent(params, () => {
+        message.success('已上传至SER', { duration: 2000, appendTo: dialog_ })
+        addTorrentLoading.value = false
+    }, () => {
+        addTorrentLoading.value = false
+    })
 }
 
 // computed
@@ -389,6 +412,30 @@ const viewClass = computed(() => {
     color: grey;
     font-size: var(--font-size-small);
     line-height: var(--results-item-height-2);
+}
+
+.results-btn-box {
+    height: var(--results-item-height);
+    line-height: var(--results-item-height);
+    position: absolute;
+    right: var(--subs-gap);
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--subs-gap);
+    visibility: hidden;
+}
+
+.results-item:hover .results-btn-box {
+    visibility: visible;
+}
+
+.results-btn-box button {
+    padding: 0;
+    width: var(--subs-btn-size);
+    height: var(--subs-btn-size);
+    line-height: var(--subs-btn-size);
 }
 
 .results-empty {

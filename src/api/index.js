@@ -64,14 +64,14 @@ const apiPlugin = {
             const module = await files[key]();
             const configs = module.default || module;
             for (const m in configs) {
-                let { method, path, handle, headers, ignoreError } = configs[m];
+                let { basePath: base, method, path, handle, headers, ignoreError } = configs[m];
                 if (!method) {
                     method = 'get';
                 }
                 if (supportMethod.includes((method + '').toLocaleLowerCase())) {
                     api_[m] = (data, resolve, reject) => {
                         const source = axios.CancelToken.source();
-                        http[method](basePath + path, data, { ...defaultHeaders, ...headers }, source.token).then(data => {
+                        http[method]((base ?? basePath) + path, data, { ...defaultHeaders, ...headers }, source.token).then(data => {
                             if (resolve instanceof Function) resolve(handle ? handle(data) : data)
                         }).catch(e => {
                             if (!ignoreError && typeof e === 'string') {
