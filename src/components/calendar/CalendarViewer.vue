@@ -48,7 +48,7 @@
                             @click="openTorrent(val)" @click.right="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
-                            <div class="results-btn-box" v-if="!val.copyAll">
+                            <div class="results-btn-box" :class="{touchable}" v-if="!val.copyAll">
                                 <Button icon="rss-squared" type="warning" border-less plain :loading="addTorrentLoading"
                                     @click.stop="uploadTorrent(val)"></Button>
                             </div>
@@ -92,6 +92,7 @@ const visible = ref(false);
 const loading = ref(true);
 const viewSwitch = ref(true);
 const addTorrentLoading = ref(false);
+const touchable = ref(false);
 
 let lastRequest = null;
 
@@ -190,6 +191,10 @@ const uploadTorrent = (val) => {
 // computed
 const viewClass = computed(() => {
     return viewSwitch.value ? 'icon-eye' : 'icon-eye-off';
+})
+
+onMounted(() => {
+    touchable.value = 'ontouchstart' in document.documentElement
 })
 
 </script>
@@ -424,10 +429,13 @@ const viewClass = computed(() => {
     flex-direction: row;
     align-items: center;
     gap: var(--subs-gap);
+}
+
+.results-btn-box:not(.touchable) {
     visibility: hidden;
 }
 
-.results-item:hover .results-btn-box {
+.results-item:not(.touchable):hover .results-btn-box {
     visibility: visible;
 }
 
