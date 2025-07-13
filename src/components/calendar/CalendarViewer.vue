@@ -14,7 +14,7 @@
         </div>
         <div class="subs-main">
             <div class="subs-main-left">
-                <span class="subs-type-tag limited-box one-line" v-html="subscribe.typeTag || '-'"></span>
+                <span class="subs-type-tag limited-box" v-html="subscribe.typeTag || '-'"></span>
                 <Image :src="subscribe.cover" class="subs-cover"></Image>
                 <div class="subs-link-box">
                     <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener"
