@@ -17,16 +17,18 @@
             <div class="ani-row-box" v-loading="updating" loading-text="Updating..." loading-bg-color="rgba(0,0,0,0.6)">
                 <div class="ani-container-row" :style="rowStyle">
                     <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading"
-                        @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate" @item-fin="itemFin">
+                        @item-click="itemClick" @item-viewer="itemViewer" @item-edit="itemEdit"
+                        @item-update="itemUpdate" @item-fin="itemFin">
                     </CalendarContainer>
                 </div>
             </div>
         </div>
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
-            loading-bg-color="rgba(0,0,0,0.6)" @item-click="itemClick" @item-edit="itemEdit" @item-update="itemUpdate"
-            @item-fin="itemFin">
+            loading-bg-color="rgba(0,0,0,0.6)" @item-click="itemClick" @item-viewer="itemViewer" @item-edit="itemEdit"
+            @item-update="itemUpdate" @item-fin="itemFin">
         </CalendarWebBox>
-        <CalendarEditor v-model="unique" :matchers="matchers" v-if="editMode" @research="research"></CalendarEditor>
+        <CalendarEditor v-model="unique" :matchers="matchers" v-if="editMode && !viewer" @research="research">
+        </CalendarEditor>
         <CalendarViewer v-model="unique" v-else></CalendarViewer>
     </div>
     <AnimeFooter></AnimeFooter>
@@ -100,6 +102,7 @@ let lastData = {
 }
 
 const editMode = ref(false);
+const viewer = ref(false);
 const checkedCount = ref(0);
 const edit = {
     arr: [],
@@ -306,11 +309,21 @@ const setupHighlight = (str) => {
 
 /* dialog */
 const itemClick = (unique_) => {
+    viewer.value = false;
     if (editMode.value) {
         edit.select(unique_);
     } else {
         unique.value = unique_;
     }
+}
+
+const itemViewer = (unique_) => {
+    if (editMode.value) {
+        viewer.value = true;
+    }
+    nextTick(() => {
+        unique.value = unique_;
+    })
 }
 
 /* calendar step */

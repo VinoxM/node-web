@@ -121,6 +121,11 @@
     box-shadow: 0 0 4px 2px var(--color-blue-0);
 }
 
+.ani-main.edit-mode .ani-item-title:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-blue-0);
+}
+
 .ani-item-check-box {
     display: none;
     position: absolute;

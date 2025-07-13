@@ -4,7 +4,7 @@
             <Image class="ani-item-cover-img" :src="props.cover"></Image>
         </div>
         <div class="ani-item-info">
-            <div class="ani-item-title">
+            <div class="ani-item-title" v-click.stop="() => $emit('itemViewer', props.unique)">
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
@@ -68,7 +68,7 @@ const props = defineProps({
     finLoading: { type: Boolean, default: false }
 });
 
-const emit = defineEmits(['itemClick', 'itemUpdate', 'itemEdit'])
+const emit = defineEmits(['itemClick', 'itemUpdate', 'itemEdit', 'itemViewer'])
 
 const episode = computed(() => {
     if (props.status === 2) {
