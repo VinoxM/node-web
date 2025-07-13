@@ -6,7 +6,6 @@
                 <span class="subs-origin-type limited-box one-line"
                     :class="'origin-type-' + (subscribe.originType[0] || 'unknown')">{{ subscribe.originType[1] || '-'
                     }}</span>
-                <span class="subs-type-tag limited-box one-line">{{ subscribe.typeTag || '-' }}</span>
             </div>
             <div class="subs-title">
                 <span class="subs-title-cn limited-box one-line">{{ subscribe.name || '-' }}</span>
@@ -15,6 +14,7 @@
         </div>
         <div class="subs-main">
             <div class="subs-main-left">
+                <span class="subs-type-tag limited-box one-line" v-html="subscribe.typeTag || '-'"></span>
                 <Image :src="subscribe.cover" class="subs-cover"></Image>
                 <div class="subs-link-box">
                     <a v-for="(val, k) of subscribe.link" :key="k" :href="val.href" target="_blank" rel="noopener"
@@ -38,9 +38,11 @@
                     <i :class="viewClass"></i>
                     <span>{{ viewSwitch ? '隐藏Staff&Cast' : '显示Staff&Cast' }}</span>
                 </div>
-                <div class="subs-info-box" v-show="viewSwitch">
-                    <div class="subs-staff" v-html="subscribe.staff || '-'"></div>
-                    <div class="subs-cast" v-html="subscribe.cast || '-'"></div>
+                <div class="subs-info-box" :class="{ hidden: !viewSwitch }">
+                    <div class="subs-info-box-container">
+                        <div class="subs-staff" v-html="subscribe.staff || '-'"></div>
+                        <div class="subs-cast" v-html="subscribe.cast || '-'"></div>
+                    </div>
                 </div>
                 <div class="results-box">
                     <div class="results-scroll" v-if="subscribe.results.length > 0">
@@ -48,7 +50,7 @@
                             @click="openTorrent(val)" @click.right="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
-                            <div class="results-btn-box" :class="{touchable}" v-if="!val.copyAll">
+                            <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
                                 <Button icon="rss-squared" type="warning" border-less plain :loading="addTorrentLoading"
                                     @click.stop="uploadTorrent(val)"></Button>
                             </div>
@@ -220,16 +222,9 @@ onMounted(() => {
 }
 
 .subs-type .subs-origin-type {
-    --limited-box-height: var(--subs-header-height-1);
+    --limited-box-height: var(--subs-header-height);
     color: #fff;
     background-color: var(--origin-type-color);
-    user-select: none;
-}
-
-.subs-type .subs-type-tag {
-    --limited-box-height: var(--subs-header-height-2);
-    font-size: var(--font-size-mini);
-    background-color: #c0c0c0;
     user-select: none;
 }
 
@@ -266,6 +261,14 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     gap: var(--subs-gap);
+}
+
+.subs-main-left .subs-type-tag {
+    --limited-box-height: var(--subs-header-height-2);
+    font-size: var(--font-size-mini);
+    background-color: #c0c0c0;
+    text-align: center;
+    user-select: none;
 }
 
 .subs-cover,
@@ -354,10 +357,21 @@ onMounted(() => {
 }
 
 .subs-info-box {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: 0.3s;
+}
+
+.subs-info-box.hidden {
+    grid-template-rows: 0fr;
+}
+
+.subs-info-box-container {
     font-size: var(--font-size-small);
     display: flex;
     flex-direction: row;
     background-color: #f1f1f1;
+    overflow: hidden;
 }
 
 .subs-cast,
