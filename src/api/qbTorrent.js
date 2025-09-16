@@ -1,7 +1,7 @@
 
 export default {
     addTorrent: {
-        basePath: "http://server.ser.com",
+        basePath: "http://192.168.1.112/server",
         path: "/qbitTorrent/addTorrent",
         method: "post",
         headers: {

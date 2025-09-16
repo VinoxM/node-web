@@ -47,13 +47,15 @@
                 <div class="results-box">
                     <div class="results-scroll" v-if="subscribe.results.length > 0">
                         <div v-for="(val, key) of subscribe.results" :key="key" class="results-item"
-                            @click="openTorrent(val)" @click.right="copyTorrent(val)">
+                            @click.stop="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
-                            <!-- <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
+                            <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
+                                <Button icon="feather" type="normal" border-less plain
+                                    @click.stop="openTorrent(val)"></Button>
                                 <Button icon="rss-squared" type="warning" border-less plain :loading="addTorrentLoading"
                                     @click.stop="uploadTorrent(val)"></Button>
-                            </div> -->
+                            </div>
                         </div>
                     </div>
                     <div class="results-empty" v-else>
@@ -175,6 +177,9 @@ const closedCallback = () => {
 }
 
 const uploadTorrent = (val) => {
+    if (addTorrentLoading.value) {
+        return
+    }
     addTorrentLoading.value = true
     const dialog_ = getDialogEl();
     const { title, torrent } = val;

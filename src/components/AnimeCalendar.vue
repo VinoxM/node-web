@@ -1,5 +1,5 @@
 <template>
-    <AnimeHolder></AnimeHolder>
+    <!-- <AnimeHolder></AnimeHolder> -->
     <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin3"
         loading-text="加载中..." loading-bg-color="#fff">
         <CalendarHeader @search="getSearch" @update-checked="updateChecked" v-model:edit-mode="editMode"
@@ -46,7 +46,7 @@ import CalendarWebBox from './calendar/CalendarWebBox.vue';
 import CalendarHeader from './calendar/CalendarHeader.vue';
 import message from '@/message';
 import CalendarEditor from './calendar/CalendarEditor.vue';
-import AnimeHolder from './AnimeHolder.vue';
+// import AnimeHolder from './AnimeHolder.vue';
 
 let nowDay = getNowDay();
 

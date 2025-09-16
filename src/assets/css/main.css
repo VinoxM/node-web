@@ -1,6 +1,6 @@
 @import './base.css';
 @import './edit.css';
-@import './utools.css';
+/* @import './utools.css'; */
 
 .ani-main {
   display: flex;
