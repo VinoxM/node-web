@@ -50,10 +50,10 @@
                             @click="openTorrent(val)" @click.right="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
-                            <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
+                            <!-- <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
                                 <Button icon="rss-squared" type="warning" border-less plain :loading="addTorrentLoading"
                                     @click.stop="uploadTorrent(val)"></Button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     <div class="results-empty" v-else>

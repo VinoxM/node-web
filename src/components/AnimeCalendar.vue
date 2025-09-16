@@ -187,8 +187,11 @@ watch(editMode, (val) => {
 })
 
 const itemEdit = (unique_) => {
+    viewer.value = false;
     if (!editMode.value) return;
-    unique.value = unique_;
+    nextTick(() => {
+        unique.value = unique_;
+    })
 }
 
 const itemUpdate = (unique_) => {
