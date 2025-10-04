@@ -8,6 +8,10 @@
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
+            <div class="ani-item-is-goon" v-if="goon === 1">
+                <CheerLeading class="goon-svg"></CheerLeading>
+                <span class="is-goon">续播</span>
+            </div>
             <div class="ani-item-noodle" v-if="isShort">
                 <Noodle class="noodle-svg"></Noodle>
                 <span>泡面番</span>
@@ -40,6 +44,7 @@ import Noodle from '../common/Noodle.vue';
 import Switch from '../common/Switch.vue';
 import Link from '../common/Link.vue';
 import Image from '../common/Image.vue';
+import CheerLeading from '../common/CheerLeading.vue';
 
 const props = defineProps({
     titleCN: String,
@@ -60,6 +65,11 @@ const props = defineProps({
         type: String,
         required: false,
         default: null
+    },
+    goon: {
+        type: Number,
+        required: false,
+        default: 0
     },
     hasNew: Number,
     unique: Number,
@@ -105,7 +115,7 @@ const isShort = computed(() => {
 })
 
 const startDate = computed(() => {
-    return props.startDate === '-' ? '-' : (props.startDate + '~');
+    return props.startDate === '-' ? '-' : (props.startDate + `${props.goon === 0 ? '~' : '+'}`);
 })
 
 </script>

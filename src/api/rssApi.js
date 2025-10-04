@@ -49,6 +49,7 @@ export default {
                     hasNew: obj.N,
                     unique: obj.U,
                     epCount: obj.R,
+                    goon: obj.G ?? 0,
                     checked: false,
                     finLoading: false
                 }

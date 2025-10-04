@@ -975,13 +975,19 @@ div.border-radius-group .rt {
 
 .subs-main :deep(.origin-type span),
 .subs-main :deep(span.origin-type) {
+    --margin: 0px;
     display: inline-block;
     background-color: var(--origin-type-color);
     color: #f4f4f5;
     padding: 0 5px;
-    border-radius: 8px;
-    height: var(--subs-row-height);
-    line-height: var(--subs-row-height);
+    margin: var(--margin) 0;
+    height: calc(var(--subs-row-height) - var(--margin) * 2);
+    line-height: calc(var(--subs-row-height) - var(--margin) * 2);
+    width: calc(100% - 10px);    
+}
+
+.subs-main :deep(.origin-type span) {
+    --margin: 2px;
 }
 
 .subs-detail-container {

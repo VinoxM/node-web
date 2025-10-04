@@ -2,8 +2,8 @@
     <!-- <AnimeHolder></AnimeHolder> -->
     <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin3"
         loading-text="加载中..." loading-bg-color="#fff">
-        <CalendarHeader @search="getSearch" @update-checked="updateChecked" v-model:edit-mode="editMode"
-            :checked-count="checkedCount"></CalendarHeader>
+        <CalendarHeader @search="getSearch" @update-checked="updateChecked" @delete-checked="deleteChecked"
+            v-model:edit-mode="editMode" :checked-count="checkedCount"></CalendarHeader>
         <div class="ani-weekly-box card-panel">
             <div class="ani-row-box day-box sticky">
                 <div class="ani-day-row">
@@ -271,6 +271,19 @@ const updateChecked = (callback) => {
         callback();
         updating.value = false;
         effectRows > 0 && research();
+    }, () => {
+        callback();
+        updating.value = false;
+    })
+}
+
+const deleteChecked = (callback) => {    
+    updating.value = true;
+    getApi().deleteManySubs({ ids: edit.arr }, ({ rows }) => {
+        message.success(`已删除${rows}个`);
+        callback();
+        updating.value = false;
+        rows > 0 && research();
     }, () => {
         callback();
         updating.value = false;

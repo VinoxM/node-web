@@ -11,6 +11,9 @@ const apis = {
     getOneSubs: {
         path: '/rss/v2/getOneForEdit',
         method: 'get'
+    },
+    deleteManySubs: {
+        path: '/rss/subscribe/delMany'
     }
 }
 

@@ -782,6 +782,27 @@ span.limited-box.two-line {
   -webkit-line-clamp: 2;
 }
 
+.ani-item-is-goon {
+  font-size: var(--font-size-mini);
+  user-select: none;
+  height: var(--item-title-height);
+  display: flex;
+  gap: 2px;
+}
+
+.ani-item-is-goon .goon-svg {
+  height: var(--item-title-height);
+  width: var(--item-title-height);
+  display: inline-block;
+}
+
+.ani-item-is-goon span {
+  line-height: var(--item-title-height);
+  color: var(--color-pink-1);
+  height: var(--item-title-height);
+  display: inline-block;
+}
+
 .ani-item-noodle {
   font-size: var(--font-size-mini);
   user-select: none;
@@ -809,6 +830,9 @@ span.limited-box.two-line {
   height: var(--item-title-height);
   width: var(--item-title-width);
   color: var(--color-green-0);
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
 }
 
 .ani-item-episode {

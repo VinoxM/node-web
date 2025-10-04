@@ -13,6 +13,8 @@
                 <div>
                     <span>{{ checkedCount }}</span> / <span>{{ resultCount }}</span>
                 </div>
+                <Button size="small" icon="trash" type="danger" :disabled="checkedCount === 0"
+                    :loading="isUpdating" @click="deleteCheckedClicked">删除选中</Button>
                 <Button size="small" icon="spin3" type="success" :disabled="checkedCount === 0"
                     :loading="isUpdating" @click="updateCheckedClicked">更新选中</Button>
             </div>
@@ -135,6 +137,11 @@ const emitUpdateChecked = () => {
     emit('updateChecked', () => isUpdating.value = false);
 }
 
+const emitDeleteChecked = () => {
+    isUpdating.value = true;
+    emit('deleteChecked', () => isUpdating.value = false);
+}
+
 // methods
 const initCurSeason = () => {
     if (seasonYear.value !== '') return
@@ -189,6 +196,12 @@ const setupSeasonBtnArray = () => {
         })
     }
     seasonBtnArray.value = result;
+}
+
+const deleteCheckedClicked = () => {
+    if (checkedCount > 0) {
+        emitDeleteChecked()
+    }    
 }
 
 const updateCheckedClicked = () => {
