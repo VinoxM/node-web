@@ -27,7 +27,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '/home/node-file/view',
+    outDir: '/home/maou/.github/node-web/out-view',
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin used during production bundling
