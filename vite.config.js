@@ -27,8 +27,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '/home/maou/.github/node-web/out',
-    // outDir: "E:/Projects/uTools/anime-calendar/src/dist",
+    outDir: '/mnt/data/.deploy/node-web/anime-edit',
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin used during production bundling
