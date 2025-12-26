@@ -27,7 +27,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '/mnt/data/.deploy/node-web/view',
+    outDir: '/mnt/data/.deploy/node-web/anime-view',
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin used during production bundling
