@@ -3,7 +3,7 @@ import message from '@/message';
 
 axios.defaults.timeout = 10 * 1000;
 
-let basePath = "https://server.vinoxm.ser";
+let basePath = "https://server.vinoxm.name";
 // basePath = "https://www.vinoxm.fun/server";
 const defaultHeaders = {
     'content-type': 'application/json;charset=UTF-8',
