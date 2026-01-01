@@ -1,5 +1,5 @@
 export default {
-    addQbiTorrent: {
+    addTorrent: {
         path: "/qbitTorrent/addTorrent",
         method: "post",
         headers: {

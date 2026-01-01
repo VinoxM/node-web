@@ -1,5 +1,5 @@
 export default {
-    addTorrent: {
+    addAria2Torrent: {
         path: "/aria2/addTorrent",
         method: "post",
         headers: {
