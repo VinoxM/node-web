@@ -10,7 +10,8 @@ export default defineConfig({
   base: './',
   server: {
     // accept remote host access.
-    host: true
+    host: true,
+    allowedHosts: true
   },
   plugins: [
     vue(),

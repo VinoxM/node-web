@@ -1,10 +1,10 @@
 <template>
-    <div class="ani-item" :class="{ checked: props.checked }" v-click="() => $emit('itemClick', props.unique)">
+    <div class="ani-item" :class="{ checked: props.checked }" v-click="() => itemClick(props.unique)">
         <div class="ani-item-cover">
             <Image class="ani-item-cover-img" :src="props.cover"></Image>
         </div>
         <div class="ani-item-info">
-            <div class="ani-item-title" v-click.stop="() => $emit('itemViewer', props.unique)">
+            <div class="ani-item-title" v-click.stop="() => itemViewer(props.unique)">
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
@@ -25,11 +25,11 @@
             </div>
             <div class="ani-item-edit-box">
                 <Switch class="ani-item-fin" :value="props.status === 2" inline :loading="props.finLoading"
-                    @change="$emit('itemFin', props.unique)" active-text="完结" inactive-text="放送" 
-                    active-color="#6A0808" inactive-color="#00a1d6" inline-inactive-color="#fff">
+                    @change="itemFin(props.unique)" active-text="完结" inactive-text="放送" active-color="#6A0808"
+                    inactive-color="#00a1d6" inline-inactive-color="#fff">
                 </Switch>
-                <Link icon="spin3" v-click.stop="() => $emit('itemUpdate', props.unique)">更新</Link>
-                <Link icon="edit" v-click.stop="() => $emit('itemEdit', props.unique)">编辑</Link>
+                <Link icon="spin3" v-click.stop="() => itemUpdate(props.unique)">更新</Link>
+                <Link icon="edit" v-click.stop="() => itemEdit(props.unique)">编辑</Link>
             </div>
         </div>
         <div class="ani-item-check-box">
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import Noodle from '../common/Noodle.vue';
 import Switch from '../common/Switch.vue';
 import Link from '../common/Link.vue';
@@ -118,6 +118,11 @@ const startDate = computed(() => {
     return props.startDate === '-' ? '-' : (props.startDate + `${props.goon === 0 ? '~' : '+'}`);
 })
 
+const itemClick = inject('animeItemClick')
+const itemViewer = inject('animeItemViewer')
+const itemEdit = inject('animeItemEdit')
+const itemUpdate = inject('animeItemUpdate')
+const itemFin = inject('animeItemFin')
 </script>
 
 <style></style>

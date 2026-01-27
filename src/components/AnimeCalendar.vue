@@ -1,5 +1,4 @@
 <template>
-    <!-- <AnimeHolder></AnimeHolder> -->
     <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin3"
         loading-text="加载中..." loading-bg-color="#fff">
         <CalendarHeader @search="getSearch" @update-checked="updateChecked" @delete-checked="deleteChecked"
@@ -16,16 +15,13 @@
             </div>
             <div class="ani-row-box" v-loading="updating" loading-text="Updating..." loading-bg-color="rgba(0,0,0,0.6)">
                 <div class="ani-container-row" :style="rowStyle">
-                    <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading"
-                        @item-click="itemClick" @item-viewer="itemViewer" @item-edit="itemEdit"
-                        @item-update="itemUpdate" @item-fin="itemFin">
+                    <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading">
                     </CalendarContainer>
                 </div>
             </div>
         </div>
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
-            loading-bg-color="rgba(0,0,0,0.6)" @item-click="itemClick" @item-viewer="itemViewer" @item-edit="itemEdit"
-            @item-update="itemUpdate" @item-fin="itemFin">
+            loading-bg-color="rgba(0,0,0,0.6)">
         </CalendarWebBox>
         <CalendarEditor v-model="unique" :matchers="matchers" v-if="editMode && !viewer" @research="research">
         </CalendarEditor>
@@ -35,7 +31,7 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, watch, provide } from 'vue';
 import CalendarContainer from './calendar/CalendarContainer.vue';
 import { getApi, cancel } from '@/api';
 import CalendarViewer from './calendar/CalendarViewer.vue';
@@ -46,7 +42,6 @@ import CalendarWebBox from './calendar/CalendarWebBox.vue';
 import CalendarHeader from './calendar/CalendarHeader.vue';
 import message from '@/message';
 import CalendarEditor from './calendar/CalendarEditor.vue';
-// import AnimeHolder from './AnimeHolder.vue';
 
 let nowDay = getNowDay();
 
@@ -186,15 +181,15 @@ watch(editMode, (val) => {
     }
 })
 
-const itemEdit = (unique_) => {
+provide('animeItemEdit', (unique_) => {
     viewer.value = false;
     if (!editMode.value) return;
     nextTick(() => {
         unique.value = unique_;
     })
-}
+})
 
-const itemUpdate = (unique_) => {
+provide('animeItemUpdate', (unique_) => {
     if (!editMode.value) return;
     updating.value = true;
     getApi().updateOneSubs({ id: unique_ }, ({ handledCount, effectRows }) => {
@@ -202,9 +197,9 @@ const itemUpdate = (unique_) => {
         updating.value = false;
         effectRows > 0 && research();
     }, () => updating.value = false);
-}
+})
 
-const itemFin = (unique_) => {
+provide('animeItemFin', (unique_) => {
     if (!editMode.value) return;
     const { value: item, startTime } = edit.getItem(unique_);
     if (item !== null) {
@@ -215,7 +210,7 @@ const itemFin = (unique_) => {
             item.finLoading = false;
         }, m => (message.error(m), item.finLoading = false))
     }
-}
+})
 
 /* api func */
 const research = () => {
@@ -324,23 +319,23 @@ const setupHighlight = (str) => {
 }
 
 /* dialog */
-const itemClick = (unique_) => {
+provide('animeItemClick', (unique_) => {
     viewer.value = false;
     if (editMode.value) {
         edit.select(unique_);
     } else {
         unique.value = unique_;
     }
-}
+})
 
-const itemViewer = (unique_) => {
+provide('animeItemViewer', (unique_) => {
     if (editMode.value) {
         viewer.value = true;
     }
     nextTick(() => {
         unique.value = unique_;
     })
-}
+})
 
 /* calendar step */
 const setupStepForClick = (incr) => {

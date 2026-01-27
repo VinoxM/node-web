@@ -1,5 +1,5 @@
 <template>
-    <div class="ani-box" :class="{'is-published': published, 'is-timer': isTimer}">
+    <div class="ani-box" :class="{ 'is-published': published, 'is-timer': isTimer }">
         <div class="ani-timeline">
             <span>{{ time }}</span>
         </div>
@@ -7,12 +7,7 @@
             <span class="ani-item-timer"></span>
         </div>
         <div class="ani-item-box" v-else>
-            <CalendarItem v-for="(val, i) in list" v-bind="val" :key="i"
-             @item-click="$emit('itemClick', $event)" 
-             @item-viewer="$emit('itemViewer', $event)" 
-             @item-edit="$emit('itemEdit', $event)"
-             @item-update="$emit('itemUpdate', $event)"
-             @item-fin="$emit('itemFin', $event)"></CalendarItem>
+            <CalendarItem v-for="(val, i) in list" v-bind="val" :key="i"></CalendarItem>
         </div>
     </div>
 </template>
@@ -34,5 +29,4 @@ const { list, time } = defineProps({
 
 </script>
 
-<style>
-</style>
+<style></style>
