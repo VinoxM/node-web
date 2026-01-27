@@ -13,20 +13,19 @@
             </div>
             <div class="ani-row-box">
                 <div class="ani-container-row" :style="rowStyle">
-                    <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading"
-                        @item-click="itemClick">
+                    <CalendarContainer v-for="(val, key) in dataDict" :key="key" v-bind="val" :loading="loading">
                     </CalendarContainer>
                 </div>
             </div>
         </div>
-        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" @item-click="itemClick"></CalendarWebBox>
+        <CalendarWebBox v-if="webArr.length > 0" :arr="webArr"></CalendarWebBox>
         <CalendarViewer v-model="unique"></CalendarViewer>
     </div>
     <AnimeFooter></AnimeFooter>
 </template>
 
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, provide, ref } from 'vue';
 import CalendarContainer from './calendar/CalendarContainer.vue';
 import { getApi, cancel } from '@/api';
 import CalendarViewer from './calendar/CalendarViewer.vue';
@@ -147,9 +146,9 @@ const setupHighlight = (str) => {
 }
 
 /* dialog */
-const itemClick = (unique_) => {
+provide('animeItemClick', (unique_) => {
     unique.value = unique_;
-}
+})
 
 /* calendar step */
 const setupStepForClick = (incr) => {

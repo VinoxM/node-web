@@ -1,5 +1,5 @@
 <template>
-    <div class="ani-item" @click="$emit('itemClick', props.unique)">
+    <div class="ani-item" @click="itemClick(props.unique)">
         <div class="ani-item-cover">
             <Image class="ani-item-cover-img" :src="props.cover"></Image>
         </div>
@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import Noodle from '../common/Noodle.vue';
 import Image from '../common/Image.vue';
 
@@ -86,6 +86,8 @@ const isShort = computed(() => {
 const startDate = computed(() => {
     return props.startDate === '-' ? '-' : (props.startDate + '~');
 })
+
+const itemClick = inject('animeItemClick')
 
 </script>
 

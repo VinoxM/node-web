@@ -1,8 +1,7 @@
 <template>
     <div class="ani-container" :class="{ 'is-today': isToday }">
         <div class="ani-day-group" v-if="props.timeline.length > 0">
-            <CalendarBox v-for="(val, key) of props.timeline" :key="key" v-bind="val"
-                @item-click="$emit('itemClick', $event)"></CalendarBox>
+            <CalendarBox v-for="(val, key) of props.timeline" :key="key" v-bind="val"></CalendarBox>
         </div>
         <div class="ani-day-group" v-else>
             <CalendarLoadingBox v-if="loading"></CalendarLoadingBox>
