@@ -38,7 +38,7 @@
     --time-line-color-published: var(--color-gray-0);
     --time-line-color-active: var(--color-pink-0);
     /* footer */
-    --footer-height: 38px;
+    --footer-height: 20px;
     /* calendar background */
     --arrow-box-display: none;
     --calendar-bg-image: '';
