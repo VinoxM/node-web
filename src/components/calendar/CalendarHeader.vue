@@ -8,21 +8,6 @@
             <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(false)">搜当季</Button>
             <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(true)">搜全部</Button>
         </div>
-        <div class="ani-header-edit-box">
-            <div class="ani-header-edit-tools">
-                <div>
-                    <span>{{ checkedCount }}</span> / <span>{{ resultCount }}</span>
-                </div>
-                <Button size="small" icon="trash" type="danger" :disabled="checkedCount === 0"
-                    :loading="isUpdating" @click="deleteCheckedClicked">删除选中</Button>
-                <Button size="small" icon="spin3" type="success" :disabled="checkedCount === 0"
-                    :loading="isUpdating" @click="updateCheckedClicked">更新选中</Button>
-            </div>
-            <div class="ani-header-edit-icon" @click="emitEdit">
-                <span>编辑模式</span>
-                <i class="icon-edit"></i>
-            </div>
-        </div>
         <div class="season-year-box">
             <div class="ani-arrow-box">
                 <i class="icon-angle-double-left" @click="setupSeasonYearStep(-1)"></i>
@@ -68,12 +53,6 @@ import { getApi } from '@/api';
 import message from '@/message';
 import Button from '../common/Button.vue';
 
-// props
-const { editMode, checkedCount } = defineProps({
-    editMode: Boolean,
-    checkedCount: Number
-})
-
 // data
 const season = ref([]);
 const seasonVisible = ref(false);
@@ -90,9 +69,6 @@ const searchRef = useTemplateRef('searchInput');
 const isSearching = ref(false);
 
 const searchCount = ref(0);
-const resultCount = ref(0);
-
-const isUpdating = ref(false);
 
 const searchStore = {
     year: '',
@@ -112,7 +88,7 @@ const searchStore = {
 }
 
 // emit
-const emit = defineEmits(['search', 'update:editMode', 'updateChecked'])
+const emit = defineEmits(['search'])
 
 const emitSearch = ({ season, search, searchAll }) => {
     const params = {};
@@ -126,20 +102,6 @@ const emitSearch = ({ season, search, searchAll }) => {
         return;
     }
     emit('search', params, searchCallback);
-}
-
-const emitEdit = () => {
-    emit('update:editMode', !editMode);
-}
-
-const emitUpdateChecked = () => {
-    isUpdating.value = true;
-    emit('updateChecked', () => isUpdating.value = false);
-}
-
-const emitDeleteChecked = () => {
-    isUpdating.value = true;
-    emit('deleteChecked', () => isUpdating.value = false);
 }
 
 // methods
@@ -156,10 +118,9 @@ const initCurSeason = () => {
     seasonMonth.value = season.value[1];
 }
 
-const searchCallback = ({ step, season }, { searchResultCount = 0, seasonResultCount = 0 }) => {
+const searchCallback = ({ step, season }, { searchResultCount = 0 }) => {
     setupSeasonYearStep(step, season)
     searchCount.value = searchResultCount;
-    resultCount.value = seasonResultCount;
     nextTick(() => {
         const resultNode = document.querySelector('.search-result');
         if (resultNode) {
@@ -196,18 +157,6 @@ const setupSeasonBtnArray = () => {
         })
     }
     seasonBtnArray.value = result;
-}
-
-const deleteCheckedClicked = () => {
-    if (checkedCount > 0) {
-        emitDeleteChecked()
-    }    
-}
-
-const updateCheckedClicked = () => {
-    if (checkedCount > 0) {
-        emitUpdateChecked()
-    }
 }
 
 const monthClicked = (month) => {

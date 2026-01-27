@@ -1,8 +1,7 @@
 <template>
     <div class="ani-main" :class="{ 'edit-mode': editMode }" v-loading="firstLoading" loading-icon="spin3"
         loading-text="加载中..." loading-bg-color="#fff">
-        <CalendarHeader @search="getSearch" @update-checked="updateChecked" @delete-checked="deleteChecked"
-            v-model:edit-mode="editMode" :checked-count="checkedCount"></CalendarHeader>
+        <CalendarHeader @search="getSearch"></CalendarHeader>
         <div class="ani-weekly-box card-panel">
             <div class="ani-row-box day-box sticky">
                 <div class="ani-day-row">
@@ -20,6 +19,8 @@
                 </div>
             </div>
         </div>
+        <CalendarEditBox @update-checked="updateChecked" @delete-checked="deleteChecked" v-model:edit-mode="editMode"
+            :checked-count="checkedCount" :result-count="seasonResultCount"></CalendarEditBox>
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
             loading-bg-color="rgba(0,0,0,0.6)">
         </CalendarWebBox>
@@ -42,6 +43,7 @@ import CalendarWebBox from './calendar/CalendarWebBox.vue';
 import CalendarHeader from './calendar/CalendarHeader.vue';
 import message from '@/message';
 import CalendarEditor from './calendar/CalendarEditor.vue';
+import CalendarEditBox from './calendar/CalendarEditBox.vue';
 
 let nowDay = getNowDay();
 
@@ -99,6 +101,7 @@ let lastData = {
 const editMode = ref(false);
 const viewer = ref(false);
 const checkedCount = ref(0);
+const seasonResultCount = ref(0);
 const edit = {
     arr: [],
     ref: {},
@@ -235,7 +238,8 @@ const getSearch = ({ season, search, setupStep = true }, callback) => {
         lastSearch = null;
         lastSearchBody = { season, search };
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef } = data;
-        if (callback instanceof Function) callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0, seasonResultCount: resultCount });
+        seasonResultCount.value = resultCount
+        if (callback instanceof Function) callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0 });
         nowDay = nowDay_;
         resetWeekDays();
         dataDict.value = dayDictArray;
@@ -272,7 +276,7 @@ const updateChecked = (callback) => {
     })
 }
 
-const deleteChecked = (callback) => {    
+const deleteChecked = (callback) => {
     updating.value = true;
     getApi().deleteManySubs({ ids: edit.arr }, ({ rows }) => {
         message.success(`已删除${rows}个`);

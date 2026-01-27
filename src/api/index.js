@@ -4,9 +4,12 @@ import message from '@/message';
 axios.defaults.timeout = 10 * 1000;
 
 let basePath = "https://server.vinoxm.name";
-// basePath = "https://www.vinoxm.fun/server";
-basePath = `${location.protocol}//${location.host.replace("anime", 'server')}`;
-basePath = `https://server.vinoxm.cloud`
+if (import.meta.env.DEV) {
+    basePath = `https://server.vinoxm.cloud`;
+} else {
+    basePath = `${location.protocol}//${location.host.replace("anime", 'server')}`;
+}
+
 const defaultHeaders = {
     'content-type': 'application/json;charset=UTF-8',
     'secret': "mAou5820"

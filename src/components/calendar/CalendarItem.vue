@@ -78,8 +78,6 @@ const props = defineProps({
     finLoading: { type: Boolean, default: false }
 });
 
-const emit = defineEmits(['itemClick', 'itemUpdate', 'itemEdit', 'itemViewer'])
-
 const episode = computed(() => {
     if (props.status === 2) {
         return `已完结, 共<span>${props.epCount}</span>结果`;
