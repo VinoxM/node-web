@@ -261,10 +261,15 @@ const unique = defineModel();
 const subscribe = ref(null);
 const subsCover = ref('');
 const matcherIndex = ref(-1);
-const { matchers } = defineProps({
+const { matchers, episodeMatchers } = defineProps({
     matchers: {
         type: Array,
         required: true
+    },
+    episodeMatchers: {
+        type: Array,
+        required: false,
+        default: null
     }
 })
 let matcherOps = [];
@@ -527,8 +532,8 @@ const toEditResult = (val) => {
     isEditResult.value = true;
 }
 
-const calcResultEpisode = () => {
-    editResult.value.episode = handleEpisode(editResult.value.title)
+const calcResultEpisode = () => {    
+    editResult.value.episode = handleEpisode(editResult.value.title, episodeMatchers)
 }
 
 const cancelEditResult = () => {
@@ -645,6 +650,7 @@ const closed = () => {
 
 onMounted(() => {
     matcherOps = matchers.map((o, i) => ({ label: o.name, value: i }));
+
 })
 
 </script>

@@ -8,6 +8,10 @@
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
+            <div v-if="authorized" class="ani-item-favorites" :class="{ 'favorites-on': props.favorites }">
+                <Favorites class="favorites-svg" :on="props.favorites"></Favorites>
+                <span>{{ favoritesLabel }}</span>
+            </div>
             <div class="ani-item-is-goon" v-if="goon === 1">
                 <CheerLeading class="goon-svg"></CheerLeading>
                 <span class="is-goon">续播</span>
@@ -45,6 +49,7 @@ import Switch from '../common/Switch.vue';
 import Link from '../common/Link.vue';
 import Image from '../common/Image.vue';
 import CheerLeading from '../common/CheerLeading.vue';
+import Favorites from '../common/Favorites.vue';
 
 const props = defineProps({
     titleCN: String,
@@ -75,7 +80,12 @@ const props = defineProps({
     unique: Number,
     epCount: Number,
     checked: Boolean,
-    finLoading: { type: Boolean, default: false }
+    finLoading: { type: Boolean, default: false },
+    favorites: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
 });
 
 const episode = computed(() => {
@@ -116,11 +126,17 @@ const startDate = computed(() => {
     return props.startDate === '-' ? '-' : (props.startDate + `${props.goon === 0 ? '~' : '+'}`);
 })
 
+const favoritesLabel = computed(() => {
+    return props.favorites ? '已收藏' : '收藏'
+})
+
 const itemClick = inject('animeItemClick')
 const itemViewer = inject('animeItemViewer')
 const itemEdit = inject('animeItemEdit')
 const itemUpdate = inject('animeItemUpdate')
 const itemFin = inject('animeItemFin')
+
+const { authorized } = inject('authorization')
 </script>
 
 <style></style>

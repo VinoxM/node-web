@@ -17,12 +17,15 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import Button from '../common/Button.vue';
 const { editMode, resultCount, checkedCount } = defineProps({
     editMode: Boolean,
     resultCount: Number,
     checkedCount: Number
 })
+
+const isUpdating = ref(false)
 
 // emit
 const emit = defineEmits(['update:editMode', 'updateChecked', 'deleteChecked'])

@@ -782,6 +782,32 @@ span.limited-box.two-line {
   -webkit-line-clamp: 2;
 }
 
+.ani-item-favorites {
+  font-size: var(--font-size-mini);
+  user-select: none;
+  height: var(--item-title-height);
+  display: flex;
+  gap: 2px;
+}
+
+.ani-item-favorites .favorites-svg {
+  height: var(--item-title-height);
+  width: var(--item-title-height);
+  padding: 2px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.ani-item-favorites span {
+  line-height: var(--item-title-height);
+  color: var(--color-gray-0);
+  height: var(--item-title-height);
+  display: inline-block;
+}
+
+.ani-item-favorites.favorites-on span {
+  color: var(--color-yellow-0);
+}
 .ani-item-is-goon {
   font-size: var(--font-size-mini);
   user-select: none;

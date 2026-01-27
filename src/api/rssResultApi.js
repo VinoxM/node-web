@@ -33,6 +33,10 @@ const apis = {
     },
     delManyResults: {
         path: '/rss/result/delMany'
+    },
+    getEpisodeMatchers: {
+        path: '/rss/result/getEpisodeMatchers',
+        method: 'get'
     }
 }
 

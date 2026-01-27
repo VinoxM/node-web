@@ -24,7 +24,8 @@
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
             loading-bg-color="rgba(0,0,0,0.6)">
         </CalendarWebBox>
-        <CalendarEditor v-model="unique" :matchers="matchers" v-if="editMode && !viewer" @research="research">
+        <CalendarEditor v-model="unique" :matchers="matchers" :episodeMatchers="episodeMatchers"
+            v-if="editMode && !viewer" @research="research">
         </CalendarEditor>
         <CalendarViewer v-model="unique" v-else></CalendarViewer>
     </div>
@@ -32,7 +33,7 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref, watch, provide } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, watch, provide, readonly } from 'vue';
 import CalendarContainer from './calendar/CalendarContainer.vue';
 import { getApi, cancel } from '@/api';
 import CalendarViewer from './calendar/CalendarViewer.vue';
@@ -82,6 +83,10 @@ const rowStyle = ref({});
 const loading = ref(false);
 const updating = ref(false);
 const matchers = ref([]);
+const episodeMatchers = ref([]);
+
+const authed = ref(false)
+provide('authorization', { authorized: readonly(authed) })
 
 let lastSearch = null;
 let lastSearchBody = null;
@@ -261,6 +266,7 @@ const getSearch = ({ season, search, setupStep = true }, callback) => {
 
 const getMatchers = () => {
     getApi().getMatchers(null, data => matchers.value = data)
+    getApi().getEpisodeMatchers?.(null, data => episodeMatchers.value = data);
 }
 
 const updateChecked = (callback) => {
