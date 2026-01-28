@@ -1,4 +1,4 @@
-export default {
+const apis = {
     addAria2Torrent: {
         path: "/download/aria2/addTorrent",
         method: "post",
@@ -14,3 +14,17 @@ export default {
         }
     }
 }
+
+
+const defaultProp = {
+    label: 'download'
+}
+
+Object.keys(apis).forEach(key => {
+    apis[key] = {
+        ...defaultProp,
+        ...apis[key]
+    }
+})
+
+export default apis;

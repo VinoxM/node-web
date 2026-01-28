@@ -8,8 +8,9 @@
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
-            <div v-if="authorized" class="ani-item-favorites" :class="{ 'favorites-on': props.favorites }">
-                <Favorites class="favorites-svg" :on="props.favorites"></Favorites>
+            <div v-if="authorized" class="ani-item-favorites" :class="{ 'favorites-on': favorites }"
+                v-click.stop="() => favoritesClicked(props.unique)">
+                <Favorites class="favorites-svg" :on="favorites" :loading="favoritesLoading"></Favorites>
                 <span>{{ favoritesLabel }}</span>
             </div>
             <div class="ani-item-is-goon" v-if="goon === 1">
@@ -81,11 +82,7 @@ const props = defineProps({
     epCount: Number,
     checked: Boolean,
     finLoading: { type: Boolean, default: false },
-    favorites: {
-        type: Boolean,
-        required: false,
-        default: false
-    }
+    favoritesLoading: { type: Boolean, default: false }
 });
 
 const episode = computed(() => {
@@ -126,9 +123,13 @@ const startDate = computed(() => {
     return props.startDate === '-' ? '-' : (props.startDate + `${props.goon === 0 ? '~' : '+'}`);
 })
 
+const favorites = computed(() => isFavorites(props.unique))
+
 const favoritesLabel = computed(() => {
-    return props.favorites ? '已收藏' : '收藏'
+    return isFavorites(props.unique) ? '已收藏' : '收藏'
 })
+
+const favoritesClicked = (val) => isFavorites(props.unique) ? delFavorites(val) : addFavorites(val)
 
 const itemClick = inject('animeItemClick')
 const itemViewer = inject('animeItemViewer')
@@ -136,7 +137,8 @@ const itemEdit = inject('animeItemEdit')
 const itemUpdate = inject('animeItemUpdate')
 const itemFin = inject('animeItemFin')
 
-const { authorized } = inject('authorization')
+const authorized = inject('authorization')
+const isFavorites = inject('isFavorites')
+const addFavorites = inject('addFavorites')
+const delFavorites = inject('delFavorites')
 </script>
-
-<style></style>

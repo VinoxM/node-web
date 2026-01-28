@@ -1,5 +1,6 @@
 <template>
-    <svg v-if="on" t="1769500601931" class="icon" viewBox="0 0 1024 1024" version="1.1"
+    <i class="icon-loading animate-spin" v-if="loading"></i>
+    <svg v-else-if="on" t="1769500601931" class="icon" viewBox="0 0 1024 1024" version="1.1"
         xmlns="http://www.w3.org/2000/svg" p-id="6054" width="200" height="200">
         <path
             d="M512.02464 857.594104l248.318293 157.11892c45.439688 28.799802 101.119305-13.759905 89.151387-67.647535l-65.855547-295.485969 219.64649-199.038631c40.063725-36.35175 18.559872-105.215277-34.111766-109.631247l-289.022013-25.599824L567.064262 37.951739a58.879595 58.879595 0 0 0-110.079244 0L343.897796 316.605823 54.875783 342.397646C2.268145 346.685617-19.299707 415.549143 20.764017 451.836894l219.64649 199.102631-65.855547 295.549968c-11.967918 53.75963 43.711699 96.383337 89.151387 67.583535L512.02464 857.594104z"
@@ -15,11 +16,30 @@
 </template>
 
 <script setup>
-const { on } = defineProps({
+const { on, loading } = defineProps({
     on: {
+        type: Boolean,
+        default: false,
+        required: false
+    },
+    loading: {
         type: Boolean,
         default: false,
         required: false
     }
 })
 </script>
+
+<style scoped>
+i.icon-loading {
+    padding: 0;
+}
+
+i::before {
+    padding: 0;
+    margin: 0;
+    height: var(--height);
+    width: var(--height);
+    line-height: var(--height);
+}
+</style>

@@ -791,7 +791,8 @@ span.limited-box.two-line {
 }
 
 .ani-item-favorites .favorites-svg {
-  height: var(--item-title-height);
+  --height:  var(--item-title-height);
+  height: var(--height);
   width: var(--item-title-height);
   padding: 2px;
   box-sizing: border-box;

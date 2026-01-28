@@ -15,7 +15,7 @@ const initDataDict = (nowDay) => {
     ];
 }
 
-export default {
+const apis = {
     getSeason: {
         path: "/rss/v2/getSeason"
     },
@@ -51,7 +51,8 @@ export default {
                     epCount: obj.R,
                     goon: obj.G ?? 0,
                     checked: false,
-                    finLoading: false
+                    finLoading: false,
+                    favoritesLoading: false,
                 }
                 if (val.type.split("")[1] === '1') {
                     webArray.push(val);
@@ -64,7 +65,7 @@ export default {
                 day = day - 1;
                 if (day < 0) day = 6;
                 listRef[val.unique] = {
-                    isWeb:false,
+                    isWeb: false,
                     day,
                     updateTime: updateTime.join(':'),
                     startTime
@@ -133,7 +134,8 @@ export default {
         method: 'post'
     },
     getMatchers: {
-        path: '/rss/getMatchers'
+        path: '/rss/getMatchers',
+        ignoreError: true
     },
     getRegexHistory: {
         path: '/rss/regex/history'
@@ -173,3 +175,16 @@ export default {
         method: 'post'
     }
 }
+
+const defaultProp = {
+    label: 'rss'
+}
+
+Object.keys(apis).forEach(key => {
+    apis[key] = {
+        ...defaultProp,
+        ...apis[key]
+    }
+})
+
+export default apis;

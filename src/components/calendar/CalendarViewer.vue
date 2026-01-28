@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, ref, defineEmits, useTemplateRef, nextTick, computed } from 'vue';
+import { onMounted, watch, ref, useTemplateRef, computed } from 'vue';
 import { getApi, cancel } from '@/api';
 import message from '@/message';
 import Dialog from '../common/Dialog.vue';

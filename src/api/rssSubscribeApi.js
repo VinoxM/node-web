@@ -21,7 +21,8 @@ const defaultProp = {
     method: 'post',
     headers: {
         secret: 'mAou5820.subscribe'
-    }
+    },
+    label: 'rssSubscribe'
 }
 
 Object.keys(apis).forEach(key => {

@@ -1,9 +1,10 @@
 <template>
-    <div class="input-box" :style="widthStyle">
+    <div class="input-box" :style="widthStyle" :class="inputClass">
         <span class="prepend" :class="{ float: type === 'textarea' }" v-if="needLabel">{{ label }}</span>
         <input class="input" :type="type" :class="inputAlign" v-if="!ignoreInput && type !== 'textarea'" v-model="model"
-            @focus="inputFocus" spellcheck="false" ref="input" @change="changed" />
-        <textarea class="textarea" v-if="type === 'textarea'" v-model="model" :rows="rows" spellcheck="false"></textarea>
+            @focus="inputFocus" spellcheck="false" ref="input" @change="changed" @keyup.enter="enterPress" />
+        <textarea class="textarea" v-if="type === 'textarea'" v-model="model" :rows="rows" spellcheck="false"
+            @focus="inputFocus" @change="changed"></textarea>
         <slot name="append"></slot>
     </div>
 </template>
@@ -13,11 +14,11 @@ import { computed, onMounted } from 'vue';
 
 const model = defineModel();
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change', 'enter-press']);
 
 let oldVal = '';
 
-const { label, width, ignoreInput, inputAlign, type, autoSelect, validator, rows } = defineProps({
+const { label, width, ignoreInput, inputAlign, type, autoSelect, validator, rows, size } = defineProps({
     label: {
         type: [String, Boolean],
         required: false,
@@ -55,10 +56,17 @@ const { label, width, ignoreInput, inputAlign, type, autoSelect, validator, rows
         type: [Number, String],
         required: false,
         default: 1
+    },
+    size: {
+        type: String,
+        required: false,
+        default: 'normal'
     }
 })
 
 const widthStyle = computed(() => Number(width) > -1 ? { width: width + 'px' } : { width });
+
+const inputClass = computed(() => size)
 
 const needLabel = computed(() => {
     if (typeof label === 'boolean') {
@@ -84,6 +92,8 @@ const changed = () => {
     emit('change', oldVal);
 }
 
+const enterPress = () => emit('enter-press')
+
 onMounted(() => {
     oldVal = model.value
 })
@@ -101,6 +111,18 @@ onMounted(() => {
     border-radius: 8px;
     overflow: hidden;
     transition: all var(--transition-delay);
+}
+
+.input-box.large {
+    --input-box-font-size: var(--font-size-large);
+}
+
+.input-box.small {
+    --input-box-font-size: var(--font-size-small);
+}
+
+.input-box.mini {
+    --input-box-font-size: var(--font-size-mini);
 }
 
 .input-box:has(input:focus),

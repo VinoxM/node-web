@@ -36,12 +36,18 @@ const apis = {
     },
     getEpisodeMatchers: {
         path: '/rss/result/getEpisodeMatchers',
-        method: 'get'
+        method: 'get',
+        ignoreError: true,
+        handle(data) {
+            localStorage.setItem('episodeMatchers', JSON.stringify(data))
+            return data
+        }
     }
 }
 
 const defaultProp = {
-    method: 'post'
+    method: 'post',
+    label: 'rssResult'
 }
 
 Object.keys(apis).forEach(key => {

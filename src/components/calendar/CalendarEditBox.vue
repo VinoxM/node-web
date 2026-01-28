@@ -49,7 +49,7 @@ const deleteCheckedClicked = () => checkedCount > 0 && emitDeleteChecked()
 const updateCheckedClicked = () => checkedCount > 0 && emitUpdateChecked()
 </script>
 
-<style>
+<style scoped>
 .ani-edit-box {
     --edit-icon-width: 20px;
     --edit-width: var(--edit-icon-width);
@@ -64,6 +64,7 @@ const updateCheckedClicked = () => checkedCount > 0 && emitUpdateChecked()
     width: var(--edit-width);
     overflow: hidden;
     transition: all var(--transition-delay);
+    z-index: 2001;
 }
 
 .ani-main.edit-mode .ani-edit-box {

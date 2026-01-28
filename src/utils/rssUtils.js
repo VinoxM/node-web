@@ -9,10 +9,16 @@ const episodeMatches = [
     /.*?★([0-9]{1,4}(\.5)?)(v[0-3])?★.*/i
 ]
 
-export const handleEpisode = (str, episodeMatchers_ = episodeMatches) => {
+export const handleEpisode = (str) => {
     let result = '-';
     if (!str) return '-';
     let s = String(str);
+    let episodeMatchers_ = localStorage.getItem('episodeMatchers');
+    try {
+        episodeMatchers_ = episodeMatchers_ ? JSON.parse(episodeMatchers_) : episodeMatches;        
+    } catch (ignored) {
+        episodeMatchers_ = episodeMatches
+    }
     episodeMatchers_.some(match => {
         const exec = new RegExp(match, 'i').exec(s);
         if (exec !== null) {

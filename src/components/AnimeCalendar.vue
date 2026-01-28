@@ -19,15 +19,16 @@
                 </div>
             </div>
         </div>
-        <CalendarEditBox @update-checked="updateChecked" @delete-checked="deleteChecked" v-model:edit-mode="editMode"
-            :checked-count="checkedCount" :result-count="seasonResultCount"></CalendarEditBox>
         <CalendarWebBox v-if="webArr.length > 0" :arr="webArr" v-loading="updating" loading-text="Updating..."
-            loading-bg-color="rgba(0,0,0,0.6)">
-        </CalendarWebBox>
-        <CalendarEditor v-model="unique" :matchers="matchers" :episodeMatchers="episodeMatchers"
-            v-if="editMode && !viewer" @research="research">
+            loading-bg-color="rgba(0,0,0,0.6)"></CalendarWebBox>
+        <CalendarEditor v-if="editMode && !viewer" v-model="unique" :matchers="matchers" @research="research">
         </CalendarEditor>
-        <CalendarViewer v-model="unique" v-else></CalendarViewer>
+        <CalendarViewer v-else v-model="unique"></CalendarViewer>
+        <CalendarUserBox @click="userClicked"></CalendarUserBox>
+        <CalendarEditBox v-if="authed" @update-checked="updateChecked" @delete-checked="deleteChecked"
+            v-model:edit-mode="editMode" :checked-count="checkedCount" :result-count="seasonResultCount">
+        </CalendarEditBox>
+        <CalendarLogin v-model="loginVisible" @login-success="loginSuccessed"></CalendarLogin>
     </div>
     <AnimeFooter></AnimeFooter>
 </template>
@@ -35,7 +36,7 @@
 <script setup>
 import { nextTick, onMounted, onUnmounted, ref, watch, provide, readonly } from 'vue';
 import CalendarContainer from './calendar/CalendarContainer.vue';
-import { getApi, cancel } from '@/api';
+import apiPlugin, { getApi, cancel } from '@/api';
 import CalendarViewer from './calendar/CalendarViewer.vue';
 import CalendarWeekDays from './calendar/CalendarWeekDays.vue';
 import AnimeFooter from './AnimeFooter.vue';
@@ -45,6 +46,17 @@ import CalendarHeader from './calendar/CalendarHeader.vue';
 import message from '@/message';
 import CalendarEditor from './calendar/CalendarEditor.vue';
 import CalendarEditBox from './calendar/CalendarEditBox.vue';
+import CalendarLogin from './calendar/CalendarLogin.vue';
+import CalendarUserBox from './calendar/CalendarUserBox.vue';
+
+apiPlugin.registerInterceptor('authorization', (opts) => {
+    const { headers } = opts
+    const token = localStorage.getItem('token')
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+    }
+    return opts
+})
 
 let nowDay = getNowDay();
 
@@ -83,11 +95,46 @@ const rowStyle = ref({});
 const loading = ref(false);
 const updating = ref(false);
 const matchers = ref([]);
-const episodeMatchers = ref([]);
+const favorites = ref([])
 
+/** authorization */
 const authed = ref(false)
-provide('authorization', { authorized: readonly(authed) })
+provide('authorization', readonly(authed))
+const loginVisible = ref(false)
 
+const userClicked = () => authed.value ? logout() : toLogin()
+
+const toLogin = () => {
+    if (!loginVisible.value) {
+        loginVisible.value = true;
+    }
+}
+
+const loginSuccessed = () => {
+    authed.value = true;
+    loginVisible.value = false;
+    getMatchers();
+}
+
+const logout = () => {
+    getApi('authorization')?.logout?.(null, () => {
+        authed.value = false
+        editMode.value = false
+    })
+}
+
+const checkAuth = () => {
+    const token = localStorage.getItem('token')
+    if (token) {
+        getApi('authorization')?.checkAuth?.(null, () => authed.value = true, () => {
+            authed.value = false
+            localStorage.removeItem('token')
+            editMode.value = false
+        })
+    }
+}
+
+/** Search */
 let lastSearch = null;
 let lastSearchBody = null;
 let lastData = {
@@ -220,6 +267,10 @@ provide('animeItemFin', (unique_) => {
     }
 })
 
+provide('isFavorites', (unique_) => {
+    return favorites.value.includes(unique_)
+})
+
 /* api func */
 const research = () => {
     if (lastSearchBody) getSearch({ ...lastSearchBody, setupStep: false });
@@ -230,6 +281,7 @@ const firstLoading = ref(true);
 const loadOver = () => {
     if (firstLoading.value) {
         firstLoading.value = false;
+        getMatchers();
     }
 }
 
@@ -256,6 +308,7 @@ const getSearch = ({ season, search, setupStep = true }, callback) => {
         nextTick(() => {
             setupHighlight(search);
         })
+        getFavorites();
         loadOver();
     }, () => {
         lastSearch = null;
@@ -265,9 +318,42 @@ const getSearch = ({ season, search, setupStep = true }, callback) => {
 }
 
 const getMatchers = () => {
-    getApi().getMatchers(null, data => matchers.value = data)
-    getApi().getEpisodeMatchers?.(null, data => episodeMatchers.value = data);
+    if (authed.value) {
+        getApi().getMatchers(null, data => matchers.value = data)
+        getApi().getEpisodeMatchers?.();
+    }
 }
+
+const getFavorites = (callback) => {
+    if (authed.value) {
+        getApi('favorites').getFavorites?.(null, data => {
+            favorites.value = data ?? []
+            callback && callback()
+        }, () => callback && callback())
+    }
+}
+
+provide('addFavorites', (unique_) => {
+    if (!authed.value) return;
+    const { value: item } = edit.getItem(unique_);
+    if (item !== null) {
+        item.favoritesLoading = true;
+        getApi('favorites').addFavorites?.({ rssSubsId: unique_ },
+            () => getFavorites(() => item.favoritesLoading = false),
+            () => item.favoritesLoading = false)
+    }
+})
+
+provide('delFavorites', (unique_) => {
+    if (!authed.value) return;
+    const { value: item } = edit.getItem(unique_);
+    if (item !== null) {
+        item.favoritesLoading = true;
+        getApi('favorites').delFavorites?.({ rssSubsId: unique_ },
+            () => getFavorites(() => item.favoritesLoading = false),
+            () => item.favoritesLoading = false)
+    }
+})
 
 const updateChecked = (callback) => {
     updating.value = true;
@@ -425,11 +511,12 @@ onMounted(() => {
     nextTick(() => {
         setupDocumentHeight();
     })
-    getMatchers();
+    checkAuth();
 })
 
 onUnmounted(() => {
     window.removeEventListener('resize', setupDocumentHeight);
     setupBackgroundImage(false);
+    apiPlugin.unregisterInterceptor('authorization')
 })
 </script>
