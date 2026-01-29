@@ -22,6 +22,8 @@ const apis = {
     getSearch: {
         path: "/rss/v2/getSearch",
         handle: (data) => {
+            // uniqueIds
+            const uniqueIds = []
             // prepare to handle data.
             let list = Array.from(data);
             const listRef = {};
@@ -32,6 +34,7 @@ const apis = {
             const now = new Date();
             // group by day.
             for (const obj of list) {
+                uniqueIds.push(obj.U)
                 let cover = String(obj.C);
                 const d = obj.D + '';
                 const startDate = [d.substring(0, 4), d.substring(4, 6), d.substring(6, 8)];
@@ -123,7 +126,7 @@ const apis = {
             // sort web array.
             webArray = webArray.sort((a, b) => a.startDate.localeCompare(b.startDate));
             // setup data.
-            return { dayDictArray, webArray, nowDay, resultCount, listRef };
+            return { dayDictArray, webArray, nowDay, resultCount, listRef, uniqueIds };
         }
     },
     getResults: {

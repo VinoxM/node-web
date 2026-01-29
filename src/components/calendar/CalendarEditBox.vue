@@ -1,7 +1,7 @@
 <template>
     <div class="ani-edit-box">
         <div class="ani-edit-tools">
-            <div>
+            <div class="ani-edit-label">
                 <span>{{ checkedCount }}</span> / <span>{{ resultCount }}</span>
             </div>
             <Button size="small" icon="trash" type="danger" :disabled="checkedCount === 0" :loading="isUpdating"
@@ -131,5 +131,14 @@ const updateCheckedClicked = () => checkedCount > 0 && emitUpdateChecked()
 .ani-edit-tools button {
     height: var(--edit-box-height) !important;
     line-height: calc(var(--edit-box-height) - 2px) !important;
+}
+
+.ani-edit-label {
+    border-radius: 5px;
+    background-color: #909399;
+    color: #fff;
+    padding: 0 5px;
+    user-select: none;
+    font-size: 14px;
 }
 </style>

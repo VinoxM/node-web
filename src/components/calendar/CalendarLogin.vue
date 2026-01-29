@@ -75,6 +75,9 @@ const emitLoginSuccess = () => emits('loginSuccess')
     display: block;
     height: 18px;
     line-height: 18px;
+    font-size: 12px;
+    color: red;
+    padding: 0 5px;
 }
 
 .row {

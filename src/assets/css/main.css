@@ -767,7 +767,7 @@ span.limited-box {
   transition: all var(--item-hover-transition);
 }
 
-.ani-main:not(.edit-mode) .ani-item:hover .ani-item-title .limited-box.title-cn {
+.ani-main:not(.edit-mode) .ani-item:hover:not(:has(.ani-item-favorites:hover)) .ani-item-title .limited-box.title-cn {
   color: var(--color-blue-0);
   text-decoration: underline;
 }
@@ -804,6 +804,10 @@ span.limited-box.two-line {
   color: var(--color-gray-0);
   height: var(--item-title-height);
   display: inline-block;
+}
+
+.ani-item-favorites:hover span {
+  text-decoration: underline;
 }
 
 .ani-item-favorites.favorites-on span {

@@ -91,11 +91,12 @@ const weekDays = ref([
 const dataDict = ref(defaultDataDict());
 const webArr = ref([]);
 const unique = ref(0);
+const uniqueIds = ref([]);
 const rowStyle = ref({});
 const loading = ref(false);
 const updating = ref(false);
 const matchers = ref([]);
-const favorites = ref([])
+const favorites = ref(new Map());
 
 /** authorization */
 const authed = ref(false)
@@ -114,6 +115,7 @@ const loginSuccessed = () => {
     authed.value = true;
     loginVisible.value = false;
     getMatchers();
+    getFavorites();
 }
 
 const logout = () => {
@@ -268,7 +270,7 @@ provide('animeItemFin', (unique_) => {
 })
 
 provide('isFavorites', (unique_) => {
-    return favorites.value.includes(unique_)
+    return favorites.value.has(unique_)
 })
 
 /* api func */
@@ -294,7 +296,8 @@ const getSearch = ({ season, search, setupStep = true }, callback) => {
     lastSearch = getApi().getSearch({ season, name: search }, data => {
         lastSearch = null;
         lastSearchBody = { season, search };
-        const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef } = data;
+        const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef, uniqueIds: uniqueIds_ } = data;
+        uniqueIds.value = uniqueIds_ ?? []
         seasonResultCount.value = resultCount
         if (callback instanceof Function) callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0 });
         nowDay = nowDay_;
@@ -326,8 +329,8 @@ const getMatchers = () => {
 
 const getFavorites = (callback) => {
     if (authed.value) {
-        getApi('favorites').getFavorites?.(null, data => {
-            favorites.value = data ?? []
+        getApi('favorites').getFavorites?.({ subsIds: uniqueIds.value }, data => {
+            favorites.value = new Map(Array.from(data ?? []).map((v, i) => [v, i]))
             callback && callback()
         }, () => callback && callback())
     }

@@ -1,7 +1,6 @@
 const apis = {
     getFavorites: {
         path: '/favorites/getUserSubscriptions',
-        method: 'get',
         ignoreError: true
     },
     addFavorites: {
