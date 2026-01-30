@@ -44,16 +44,22 @@
                         <div class="subs-cast" v-html="subscribe.cast || '-'"></div>
                     </div>
                 </div>
-                <div class="results-box">
+                <div class="subs-tab-switch" v-if="authed">
+                    <Link :type="activeTab === tabDicts.results ? 'primary' : 'normal'"
+                        :active="activeTab === tabDicts.results" @click="activeTab = tabDicts.results">番剧结果</Link>
+                    <Link :type="activeTab === tabDicts.episode ? 'primary' : 'normal'"
+                        :active="activeTab === tabDicts.episode" @click="activeTab = tabDicts.episode">番剧剧集</Link>
+                </div>
+                <div class="results-box" v-show="activeTab === tabDicts.results">
                     <div class="results-scroll" v-if="subscribe.results.length > 0">
                         <div v-for="(val, key) of subscribe.results" :key="key" class="results-item"
                             @click.stop="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
                             <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
-                                <Button icon="feather" type="normal" border-less plain
-                                    @click.stop="openTorrent(val)"></Button>
-                                <Button icon="rss-squared" type="warning" border-less plain :loading="addTorrentLoading"
+                                <Button icon="feather" border-less plain @click.stop="openTorrent(val)"></Button>
+                                <Button v-if="authed" icon="rss-squared" type="warning" border-less plain
+                                    :disabled="val.downloaded" :loading="addTorrentLoading"
                                     @click.stop="uploadTorrent(val)"></Button>
                             </div>
                         </div>
@@ -62,19 +68,30 @@
                         <span>无结果</span>
                     </div>
                 </div>
+                <div class="episode-box" v-if="authed" v-show="activeTab === tabDicts.episode">
+                    <div class="episode-scroll" v-if="subscribe.episode?.length > 0">
+                        <Button v-for="(val, key) of subscribe.episode" :key="key" :type="episodeType(val)" plain
+                            border-less :disabled="episodeDisabled(val)" @click="episodeClicked(val)">
+                            {{ val.episode }}
+                        </Button>
+                    </div>
+                    <div class="episode-empty" v-else>
+                        <span>无剧集</span>
+                    </div>
+                </div>
             </div>
         </div>
     </Dialog>
 </template>
 
 <script setup>
-import { onMounted, watch, ref, useTemplateRef, computed } from 'vue';
+import { onMounted, watch, ref, useTemplateRef, computed, inject } from 'vue';
 import { getApi, cancel } from '@/api';
 import message from '@/message';
 import Dialog from '../common/Dialog.vue';
 import Image from '../common/Image.vue';
 import Button from '../common/Button.vue';
-import { getAnimeName } from '@/utils/rssUtils';
+import Link from '../common/Link.vue';
 
 const initSubscribe = () => {
     unique.value = 0;
@@ -84,8 +101,14 @@ const initSubscribe = () => {
         link: [],
         broadcast: [],
         copyright: [],
-        results: []
+        results: [],
+        episode: []
     }
+}
+
+const tabDicts = {
+    results: 'results',
+    episode: 'episode'
 }
 
 // data
@@ -97,6 +120,7 @@ const loading = ref(true);
 const viewSwitch = ref(true);
 const addTorrentLoading = ref(false);
 const touchable = ref(false);
+const activeTab = ref(tabDicts.results);
 
 let lastRequest = null;
 
@@ -121,10 +145,15 @@ watch(() => unique.value, (v) => {
             }
             const originType = (data.originType || '').split('-');
             const broadcast = (data.broadcast || '').split('-');
-            subscribe.value = { ...data, broadcast, originType, results, isResults: true };
+            subscribe.value = { ...data, broadcast, originType, results };
             lastRequest = null;
             loading.value = false;
             viewSwitch.value = results.length === 0;
+            if (authed && subscribe.value.episode?.length > 0) {
+                activeTab.value = tabDicts.episode;
+            } else {
+                activeTab.value = tabDicts.results;
+            }
         }, () => {
             setTimeout(close, 1000);
         })
@@ -145,17 +174,18 @@ const openTorrent = (res) => {
     dialog_.removeChild(a)
 }
 
-const copyTorrent = (res) => {
+const copySomething = (str, msg) => {
     const dialog_ = getDialogEl();
     const textarea = document.createElement("textarea");
-    textarea.value = res.torrent;
+    textarea.value = str;
     dialog_.appendChild(textarea);
     textarea.select();
     document.execCommand('copy');
     dialog_.removeChild(textarea);
-    message.success('已复制种子链接到剪贴板.', { duration: 2000, appendTo: dialog_ })
-    return
+    message.success(msg, { duration: 2000, appendTo: dialog_ })
 }
+
+const copyTorrent = (res) => copySomething(res.torrent, '已复制种子链接到剪贴板.')
 
 const show = () => {
     loading.value = true;
@@ -177,17 +207,14 @@ const closedCallback = () => {
 }
 
 const uploadTorrent = (val) => {
-    if (addTorrentLoading.value) {
-        return
-    }
+    if (!authed.value || val.downloaded || addTorrentLoading.value) return
     addTorrentLoading.value = true
     const dialog_ = getDialogEl();
-    const { title, torrent } = val;
     const params = {
-        torrent,
-        folder: getAnimeName(title)
+        rssSubsId: unique.value,
+        rssResultId: val.id
     }
-    getApi().addTorrent(params, () => {
+    getApi('task').addTask(params, () => {
         message.success('已上传至SER', { duration: 2000, appendTo: dialog_ })
         addTorrentLoading.value = false
     }, () => {
@@ -195,10 +222,29 @@ const uploadTorrent = (val) => {
     })
 }
 
+const episodeType = (val) => {
+    if (val.status === '1') {
+        return 'primary'
+    } else if (val.status === '2') {
+        return 'warning'
+    } else {
+        return 'info'
+    }
+}
+
+const episodeDisabled = (val) => val.status !== '1'
+
+const episodeClicked = (val) => {
+    if (episodeDisabled(val)) return
+    getApi('task').generateMinioLink({ episodeId: val.id }, link => copySomething(link, '已复制视频链接到剪贴板.'))
+}
+
 // computed
 const viewClass = computed(() => {
     return viewSwitch.value ? 'icon-eye' : 'icon-eye-off';
 })
+
+const authed = inject('authorization')
 
 onMounted(() => {
     touchable.value = 'ontouchstart' in document.documentElement
@@ -385,6 +431,15 @@ onMounted(() => {
     box-sizing: border-box;
 }
 
+/* Switch */
+.subs-tab-switch {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    font-size: 14px;
+    justify-content: center;
+}
+
 /* Results */
 .results-box {
     --results-item-height: var(--subs-header-height);
@@ -485,5 +540,45 @@ onMounted(() => {
 :deep(.dialog-close) {
     top: 3px;
     right: 3px;
+}
+
+/* episode */
+.episode-box {
+    --episode-button-height: var(--subs-header-height);
+    padding: 2px;
+    overflow: auto;
+    box-sizing: border-box;
+    flex-grow: 1;
+}
+
+.episode-scroll {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.episode-scroll button {
+    height: var(--episode-button-height);
+    line-height: var(--episode-button-height);
+    width: calc(var(--episode-button-height) * 1.5);
+    transition: all 0.2s;
+}
+
+.episode-empty {
+    height: var(--episode-button-height);
+    width: 100%;
+    border-radius: 4px;
+    background-color: #dee1e1;
+}
+
+.episode-empty span {
+    line-height: var(--episode-button-height);
+    font-size: var(--font-size-small);
+    display: block;
+    text-align: center;
+    padding: 0 4px;
+    user-select: none;
+    color: var(--color-black-0);
 }
 </style>
