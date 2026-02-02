@@ -33,10 +33,10 @@
                 </div>
             </div>
             <div class="subs-row center">
-                <Link :active="isResultsView" @click="changeResultsView">订阅结果</Link>
-                <Link :active="!isResultsView" @click="changeResultsView">番剧详情</Link>
+                <Link v-for="(val, key) of subTabs" :key="key" :active="subTabActive === val"
+                    @click="subTabClicked(key)">{{ val }}</Link>
             </div>
-            <div class="subs-column gap-4" v-show="isResultsView">
+            <div class="subs-column gap-4" v-show="subTabActive === subTabs[0]">
                 <div class="subs-row">
                     <RadioGroup class="flex-shrink" label="订阅网站" v-model="matcherIndex" :arr="matcherOps"></RadioGroup>
                     <InputBox class="flex-grow" label="关键词" v-model="subscribe.keyword"></InputBox>
@@ -56,18 +56,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="subs-column" v-loading="resultsLoading" loading-bg-color="rgba(0,0,0,0.6)" loading-mask-index="19">
+                <div class="subs-column" v-loading="resultsLoading" loading-bg-color="rgba(0,0,0,0.6)"
+                    loading-mask-index="19">
                     <div class="subs-row center">
-                        <Link :active="!isEditResult && !isCurrentResults" @click="resultsChange(0)">测试结果</Link>
-                        <Link :active="!isEditResult && isCurrentResults" @click="resultsChange(1)">当前结果</Link>
+                        <Link v-for="(val, key) of resultTabs" :key="key" :active="resultTabActive === val"
+                            @click="resultTabClicked(key)">{{ val }}</Link>
                     </div>
                     <div class="subs-results-container">
-                        <div class="subs-column gap-0" v-show="!isEditResult && !isCurrentResults">
+                        <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[0]">
                             <div class="subs-row center box-tools">
                                 <Link icon="spin3" type="normal" @click="getTestResults">刷新</Link>
                             </div>
                             <div class="results-box" v-if="testResults.length > 0">
-                                <div class="results-item" v-for="(val, k) of testResults" :key="k" :title="val.title" @click.right="copyTorrent(val)">
+                                <div class="results-item" v-for="(val, k) of testResults" :key="k" :title="val.title"
+                                    @click.right="copyTorrent(val)">
                                     <span>{{ val.title }}</span>
                                     <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
                                     <div class="results-btn-box">
@@ -79,7 +81,7 @@
                                 <span class="results-item empty">无数据</span>
                             </div>
                         </div>
-                        <div class="subs-column gap-0" v-show="!isEditResult && isCurrentResults">
+                        <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[1]">
                             <div class="subs-row center box-tools">
                                 <Link icon="spin3" type="normal" @click="getCurrentResults">刷新</Link>
                                 <Link icon="trash" type="danger" @click="delManyResults">清空</Link>
@@ -97,6 +99,30 @@
                                             @click="hideOneResult(val)"></Button>
                                         <Button icon="trash del" border-less type="danger" plain
                                             @click="delResult(val)"></Button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="results-box" v-else>
+                                <span class="results-item empty">无数据</span>
+                            </div>
+                        </div>
+                        <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[2]">
+                            <div class="results-box" v-if="tasks.length > 0">
+                                <div class="results-item" v-for="(val, k) of tasks" :key="k" :title="val.title"
+                                    :class="{ locked: val.hide === 1 }">
+                                    <span>{{ val.title || '---' }}</span>
+                                    <span>
+                                        [{{ val.episode || '-' }}] 上传时间: {{ val.pubDate || '-' }}
+                                        <i v-if="val.hide === 1" class="icon-lock"></i>
+                                    </span>
+                                    <span>{{ taskInfo(val) }}</span>
+                                    <div class="results-btn-box">
+                                        <Button v-if="['DOWNLOADING', 'STOPED'].includes(val.state)" border-less plain
+                                            @click="pauseOrResumeTask(val)">
+                                            <PauseResume></PauseResume>
+                                        </Button>
+                                        <Button icon="trash del" border-less type="danger" plain
+                                            @click="delTask(val)"></Button>
                                     </div>
                                 </div>
                             </div>
@@ -134,7 +160,7 @@
                     </div>
                 </div>
             </div>
-            <div class="subs-column gap-4" v-show="!isResultsView">
+            <div class="subs-column gap-4" v-show="subTabActive === subTabs[1]">
                 <div class="subs-row gap-0 border-radius-group">
                     <InputBox class="flex-shrink lt" ignore-input label="原作类型" width="56"></InputBox>
                     <Select class="flex-shrink ct" :options="originTypeOptions" v-model="subscribe.originType[0]"
@@ -153,8 +179,8 @@
                     <InputBox type="textarea" label="Cast" rows="6" v-model="subscribe.cast"></InputBox>
                 </div>
                 <div class="subs-row center">
-                    <Link :active="!isCopyrightDetail && !editDetail" @click="changeDetailView">相关链接</Link>
-                    <Link :active="isCopyrightDetail && !editDetail" @click="changeDetailView">番剧版权</Link>
+                    <Link v-for="(val, key) of detailTabs" :key="key" :active="detailTabActive === val"
+                        @click="detailTabClicked(key)">{{ val }}</Link>
                 </div>
                 <div class="subs-detail-container" v-loading="detailLoading" loading-bg-color="rgba(0,0,0,0.6)">
                     <div class="subs-column gap-0" v-if="!editDetail">
@@ -223,7 +249,7 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import Image from '../common/Image.vue';
 import RadioGroup from '../common/RadioGroup.vue';
 import Dialog from '../common/Dialog.vue';
@@ -238,17 +264,20 @@ import SelectableInput from '../common/SelectableInput.vue';
 import message from '@/message';
 import { handleEpisode } from '@/utils/rssUtils';
 import Select from '../common/Select.vue';
+import PauseResume from '../common/PauseResume.vue';
 
 const initSubscribe = () => {
     subscribe.value = null;
     unique.value = -1;
     testResults.value = [];
     currentResults.value = [];
-    isCurrentResults.value = false;
     resultsLoading.value = false;
     isEditResult.value = false;
     editResult.value = null;
-    isResultsView.value = true;
+    // tabs init
+    subTabActive.value = subTabs[0];
+    resultTabActive.value = resultTabs[0];
+    detailTabActive.value = detailTabs[0];
 }
 
 const emit = defineEmits(['research']);
@@ -260,6 +289,8 @@ const loading = ref(true);
 const unique = defineModel();
 const subscribe = ref(null);
 const subsCover = ref('');
+
+// matchers
 const matcherIndex = ref(-1);
 const { matchers } = defineProps({
     matchers: {
@@ -268,6 +299,8 @@ const { matchers } = defineProps({
     }
 })
 let matcherOps = [];
+
+// regex
 const regexArr = ref([]);
 const regexInput = ref('');
 const regexInputVisible = ref(false);
@@ -275,16 +308,17 @@ const regexInputRef = useTemplateRef('regexAdd');
 const regexHistory = ref([]);
 const regexHistoryLoading = ref(false);
 
-const isCurrentResults = ref(false);
+// results
 const testResults = ref([]);
 const currentResults = ref([]);
 const resultsLoading = ref(false);
 
+// result edit
 const isEditResult = ref(false);
 const editResult = ref(null);
 
-const isResultsView = ref(true);
-
+// details
+const detailLoading = ref(false);
 const seasonMonthOps = ref([{ label: '冬季', value: '01' }, { label: '春季', value: '04' }, { label: '夏季', value: '07' }, { label: '秋季', value: '10' }]);
 const animeTypeOps = ref([{ label: '季番', value: 1 }, { label: '网络放送', value: 2 }, { label: '剧场版', value: 3 }]);
 const inputValidator = {
@@ -304,13 +338,61 @@ const originTypeDict = {
     o: '未知'
 }
 const originTypeOptions = ref(Object.entries(originTypeDict).map(o => ({ value: o[0], label: o[1], customClass: `origin-type origin-type-${o[0]}` })));
-
-/* details */
-const isCopyrightDetail = ref(false);
-const detailLoading = ref(false);
 const editDetail = ref(null);
 
+// tasks
+const tasks = ref([])
+
+/* active tabs */
+// sub tabs
+const subTabs = ['订阅结果', '番剧详情']
+const subTabActive = ref(subTabs[0])
+const subTabClicked = (index) => {
+    subTabActive.value = subTabs[index]
+    clearEditResult();
+    clearEditDetail();
+}
+
+// result tabs
+const resultTabs = ['测试结果', '当前结果', '种子任务']
+const resultTabActive = ref(resultTabs[0])
+const resultTabClicked = (index) => {
+    resultTabActive.value = resultTabs[index]
+    clearEditResult();
+    taskInfoInterval.stop();
+    if (index === 1 && currentResults.value.length === 0) {
+        getCurrentResults();
+    }
+    if (index === 2) {
+        getTasks();
+    }
+}
+let resultTabStore = ''
+const clearResultTabActive = () => {
+    resultTabStore = resultTabActive.value
+    resultTabActive.value = ''
+}
+const restoreResultTabActibe = () => resultTabActive.value = resultTabStore
+
+// detail tabs
+const detailTabs = ['番剧版权', '相关链接']
+const detailTabActive = ref(detailTabs[0])
+const detailTabClicked = (index) => {
+    detailTabActive.value = detailTabs[index]
+    editDetail.value = null;
+}
+let detailTabStore = ''
+const clearDetailTabActive = () => {
+    detailTabStore = detailTabActive.value
+    detailTabActive.value = ''
+}
+const restoreDetailTabActibe = () => detailTabActive.value = detailTabStore
+const isCopyrightDetail = computed(() => detailTabActive.value === detailTabs[0]);
+
+// others
 let flushSearch = false;
+
+// watch
 let lastRequest = null;
 
 watch(() => unique.value, (v) => {
@@ -353,7 +435,7 @@ const submitSubscribe = () => {
         ...val
     }
     loading.value = true;
-    getApi().editOneSubs(body, () => (flushSearch = true, close()), ()=> loading.value = false);
+    getApi().editOneSubs(body, () => (flushSearch = true, close()), () => loading.value = false);
 }
 
 const getDialogEl = () => dialogRef.value.$el;
@@ -383,22 +465,6 @@ const getUrlFormKeyword = (keyword) => {
     if (match === '') return '';
     const reg = '#{keyword}';
     return encodeURI(match.replace(reg, keyword).replace(/\x20/g, "+"));
-}
-
-/* change active results label */
-const resultsChange = (toCurrent) => {
-    isEditResult.value = false;
-    editResult.value = null;
-    isCurrentResults.value = toCurrent === 1;
-    if (isCurrentResults.value && currentResults.value.length === 0) {
-        getCurrentResults();
-    }
-}
-
-const changeResultsView = () => {
-    isResultsView.value = !isResultsView.value;
-    cancelEditResult();
-    cancelEditDetail();
 }
 
 /* regex */
@@ -469,7 +535,7 @@ const getCurrentResults = () => {
 const delManyResults = () => {
     if (resultsLoading.value) return;
     resultsLoading.value = true;
-    getApi().delManyResults({pid: unique.value}, data => {
+    getApi().delManyResults({ pid: unique.value }, data => {
         resultsLoading.value = false;
         getCurrentResults()
     }, () => resultsLoading.value = false)
@@ -512,6 +578,7 @@ const toAddResult = (val) => {
         pubDate: val.pubDate
     }
     isEditResult.value = true;
+    clearResultTabActive();
 }
 
 const toEditResult = (val) => {
@@ -525,15 +592,21 @@ const toEditResult = (val) => {
         pubDate: val.pubDate
     }
     isEditResult.value = true;
+    clearResultTabActive();
 }
 
-const calcResultEpisode = () => {    
+const calcResultEpisode = () => {
     editResult.value.episode = handleEpisode(editResult.value.title)
 }
 
-const cancelEditResult = () => {
+const clearEditResult = () => {
     editResult.value = null;
     isEditResult.value = false;
+}
+
+const cancelEditResult = () => {
+    clearEditResult();
+    restoreResultTabActibe();
 }
 
 const submitEditResult = () => {
@@ -566,11 +639,6 @@ const delResult = (val) => {
 }
 
 /* subscribe details */
-const changeDetailView = () => {
-    isCopyrightDetail.value = !isCopyrightDetail.value;
-    editDetail.value = null;
-}
-
 const refreshDetail = (needReload) => {
     detailLoading.value = true;
     flushSearch = !!needReload;
@@ -602,10 +670,16 @@ const toEditDetail = (val) => {
             title: ''
         }
     }
+    clearDetailTabActive();
+}
+
+const clearEditDetail = () => {
+    editDetail.value = null;
 }
 
 const cancelEditDetail = () => {
-    editDetail.value = null;
+    clearEditDetail();
+    restoreDetailTabActibe();
 }
 
 const deleteDetail = (val) => {
@@ -620,7 +694,107 @@ const submitEditDetail = () => {
     const isEdit = (editDetail.value.id ?? 0) > 0;
     const isLink = 'title' in editDetail.value;
     const methodName = `${isEdit ? 'edit' : 'add'}One${isLink ? 'Link' : 'Copyright'}`;
-    getApi()[methodName](editDetail.value, () => (detailLoading.value = false, editDetail.value = null, refreshDetail(1)), () => detailLoading.value = false);
+    getApi()[methodName](editDetail.value, () => (detailLoading.value = false, cancelEditDetail(), refreshDetail(1)), () => detailLoading.value = false);
+}
+
+/* tasks */
+const getTasks = () => {
+    resultsLoading.value = true
+    getApi('task').getTasks({ rssSubsId: unique.value }, data => {
+        tasks.value = data
+        resultsLoading.value = false
+        taskInfoInterval.start()
+    }, () => resultsLoading.value = false)
+}
+
+const delTask = (val) => {
+    resultsLoading.value = true
+    getApi('task').deleteTask({ taskId: val.id }, () => {
+        resultsLoading.value = false
+        taskInfoInterval.stop();
+        getTasks();
+    }, () => resultsLoading.value = false)
+}
+
+const pauseOrResumeTask = (val) => {
+    resultsLoading.value = true
+    if (val.state === 'DOWNLOADING') {
+        getApi('task').pauseTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
+    } else if (val.state === 'STOPED') {
+        getApi('task').resumeTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
+    } else {
+        resultsLoading.value = false
+    }
+}
+
+const taskStatusMap = {
+    '0': '失败',
+    '1': '下载中',
+    '2': '解析中',
+    '3': '解析失败',
+    '4': '上传中',
+    '5': '完成',
+    '6': '部分完成'
+}
+
+const taskInfo = (val) => {
+    if (!val.id) return ''
+    let result = taskStatusMap[val.status] || 'UNKNOWN'
+    if (val.status === '1') {
+        result += `: [${val.state || 'UNKNOWN'}] ${val.percent || ''}`
+    }
+    return result
+}
+
+const getTaskInfo = (taskIds) => {
+    cancel(taskInfoInterval.lastRequest)
+    taskInfoInterval.lastRequest = getApi('task').taskInfo({ taskIds }, data => {
+        taskInfoInterval.lastRequest = null
+        if (!data || data.length === 0) return;
+        const results = tasks.value
+        Array.from(data).forEach(d => {
+            results.some(r => {
+                const b = r.id === d.id
+                if (b) {
+                    r.percent = d.percent
+                    r.state = d.state
+                }
+                return b
+            })
+        })
+        taskInfoInterval.next()
+    }, () => taskInfoInterval.stop())
+}
+
+const taskInfoInterval = {
+    lastRequest: null,
+    timeout: null,
+    delay: 2000,
+    started: false,
+    getTaskIds: () => {
+        const taskIds = []
+        tasks.value.forEach(r => r.id && r.status === '1' && taskIds.push(r.id))
+        return taskIds
+    },
+    start: () => {
+        if (taskInfoInterval.started) return
+        taskInfoInterval.started = true
+        taskInfoInterval.next()
+    },
+    next: () => {
+        const taskIds = taskInfoInterval.getTaskIds()
+        if (taskIds.length > 0) {
+            taskInfoInterval.timeout = setTimeout(() => getTaskInfo(taskIds), taskInfoInterval.delay)
+        }
+    },
+    stop: () => {
+        cancel(taskInfoInterval.lastRequest)
+        if (taskInfoInterval.timeout) {
+            clearTimeout(taskInfoInterval.timeout)
+            taskInfoInterval.timeout = null
+        }
+        taskInfoInterval.started = false
+    }
 }
 
 /* dialog visible handler */
@@ -637,6 +811,8 @@ const close = () => {
 const closed = () => {
     cancel(lastRequest);
     initSubscribe();
+    // stop task info interval
+    taskInfoInterval.stop();
     if (flushSearch) {
         emit('research');
     }
@@ -645,7 +821,6 @@ const closed = () => {
 
 onMounted(() => {
     matcherOps = matchers.map((o, i) => ({ label: o.name, value: i }));
-
 })
 
 </script>
@@ -882,7 +1057,7 @@ div.border-radius-group .rt {
     width: 100%;
     position: relative;
     cursor: pointer;
-    height: var(--results-item-height);
+    min-height: var(--results-item-height);
     box-sizing: border-box;
     transition: 0.3s;
 }
@@ -912,14 +1087,14 @@ div.border-radius-group .rt {
     font-size: var(--font-size-small);
 }
 
-.results-item>span:last-of-type {
+.results-item>span:not(:first-of-type) {
     color: grey;
     font-size: var(--font-size-small);
     line-height: var(--results-item-height-2);
 }
 
 .results-btn-box {
-    height: var(--results-item-height);
+    height: 100%;
     line-height: var(--results-item-height);
     position: absolute;
     right: var(--subs-gap);
@@ -984,7 +1159,7 @@ div.border-radius-group .rt {
     margin: var(--margin) 0;
     height: calc(var(--subs-row-height) - var(--margin) * 2);
     line-height: calc(var(--subs-row-height) - var(--margin) * 2);
-    width: calc(100% - 10px);    
+    width: calc(100% - 10px);
 }
 
 .subs-main :deep(.origin-type span) {

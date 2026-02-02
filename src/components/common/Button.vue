@@ -75,7 +75,7 @@ const needIcon = computed(() => loading || icon !== '')
 
 const iconClass = computed(() => loading ? 'icon-loading animate-spin' : `icon-${icon}`);
 
-const iconStyle = computed(() => height ? { '--ani-btn-height': Number(height.replace(/px/g, '')) + 'px'} : {});
+const iconStyle = computed(() => height ? { '--ani-btn-height': Number(height.replace(/px/g, '')) + 'px' } : {});
 </script>
 
 <style scoped>
@@ -330,5 +330,9 @@ button.ani-btn.disabled.plain.danger:focus {
 
 button.ani-btn.border-less {
     border: none !important;
+}
+
+button:deep(>svg) {
+    margin: 4px;
 }
 </style>

@@ -56,10 +56,11 @@
                             @click.stop="copyTorrent(val)">
                             <span :title="val.title">{{ val.title }}</span>
                             <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
+                            <span>{{ taskInfo(val) }}</span>
                             <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
                                 <Button icon="feather" border-less plain @click.stop="openTorrent(val)"></Button>
                                 <Button v-if="authed" icon="rss-squared" type="warning" border-less plain
-                                    :disabled="val.downloaded" :loading="addTorrentLoading"
+                                    :disabled="!!val.taskId" :loading="addTorrentLoading"
                                     @click.stop="uploadTorrent(val)"></Button>
                             </div>
                         </div>
@@ -111,6 +112,16 @@ const tabDicts = {
     episode: 'episode'
 }
 
+const taskStatusMap = {
+    '0': '失败',
+    '1': '下载中',
+    '2': '解析中',
+    '3': '解析失败',
+    '4': '上传中',
+    '5': '完成',
+    '6': '部分完成'
+}
+
 // data
 const unique = defineModel();
 const subscribe = ref(initSubscribe());
@@ -149,10 +160,10 @@ watch(() => unique.value, (v) => {
             lastRequest = null;
             loading.value = false;
             viewSwitch.value = results.length === 0;
-            if (authed && subscribe.value.episode?.length > 0) {
-                activeTab.value = tabDicts.episode;
-            } else {
+            if (!authed) {
                 activeTab.value = tabDicts.results;
+            } else {
+                torrentInfoInterval.start();
             }
         }, () => {
             setTimeout(close, 1000);
@@ -198,6 +209,7 @@ const close = () => {
 
 const closeCallback = () => {
     cancel(lastRequest);
+    torrentInfoInterval.stop();
     unique.value = 0;
 }
 
@@ -207,16 +219,19 @@ const closedCallback = () => {
 }
 
 const uploadTorrent = (val) => {
-    if (!authed.value || val.downloaded || addTorrentLoading.value) return
+    if (!authed.value || val.taskId || addTorrentLoading.value) return
     addTorrentLoading.value = true
     const dialog_ = getDialogEl();
     const params = {
         rssSubsId: unique.value,
         rssResultId: val.id
     }
-    getApi('task').addTask(params, () => {
+    getApi('task').addTask(params, taskInfo => {
         message.success('已上传至SER', { duration: 2000, appendTo: dialog_ })
         addTorrentLoading.value = false
+        val.taskId = taskInfo.id
+        val.taskStatus = taskInfo.status
+        torrentInfoInterval.start()
     }, () => {
         addTorrentLoading.value = false
     })
@@ -239,12 +254,73 @@ const episodeClicked = (val) => {
     getApi('task').generateMinioLink({ episodeId: val.id }, link => copySomething(link, '已复制视频链接到剪贴板.'))
 }
 
+const taskInfo = (val) => {
+    if (!val.taskId) return ''
+    let result = taskStatusMap[val.taskStatus] || 'UNKNOWN'
+    if (val.taskStatus === '1') {
+        result += `: [${val.taskState || 'UNKNOWN'}] ${val.taskPercent || ''}`
+    }
+    return result
+}
+
 // computed
 const viewClass = computed(() => {
     return viewSwitch.value ? 'icon-eye' : 'icon-eye-off';
 })
 
 const authed = inject('authorization')
+
+// torrent info
+const getTaskInfo = (taskIds) => {
+    cancel(torrentInfoInterval.lastRequest)
+    torrentInfoInterval.lastRequest = getApi('task').taskInfo({ taskIds }, data => {
+        torrentInfoInterval.lastRequest = null
+        if (!data || data.length === 0) return;
+        const results = subscribe.value.results
+        Array.from(data).forEach(d => {
+            results.some(r => {
+                const b = r.taskId === d.id
+                if (b) {
+                    r.taskPercent = d.percent
+                    r.taskState = d.state
+                }
+                return b
+            })
+        })
+        torrentInfoInterval.next()
+    }, () => torrentInfoInterval.stop())
+}
+
+const torrentInfoInterval = {
+    lastRequest: null,
+    timeout: null,
+    delay: 2000,
+    started: false,
+    getTaskIds: () => {
+        const taskIds = []
+        subscribe.value.results.forEach(r => r.taskId && r.taskStatus === '1' && taskIds.push(r.taskId))
+        return taskIds
+    },
+    start: () => {
+        if (torrentInfoInterval.started) return
+        torrentInfoInterval.started = true
+        torrentInfoInterval.next()
+    },
+    next: () => {
+        const taskIds = torrentInfoInterval.getTaskIds()
+        if (taskIds.length > 0) {
+            torrentInfoInterval.timeout = setTimeout(() => getTaskInfo(taskIds), torrentInfoInterval.delay)
+        }
+    },
+    stop: () => {
+        cancel(torrentInfoInterval.lastRequest)
+        if (torrentInfoInterval.timeout) {
+            clearTimeout(torrentInfoInterval.timeout)
+            torrentInfoInterval.timeout = null
+        }
+        torrentInfoInterval.started = false
+    }
+}
 
 onMounted(() => {
     touchable.value = 'ontouchstart' in document.documentElement
@@ -466,7 +542,7 @@ onMounted(() => {
     width: 100%;
     position: relative;
     cursor: pointer;
-    height: var(--results-item-height);
+    min-height: var(--results-item-height);
     box-sizing: border-box;
     transition: 0.3s;
 }
@@ -487,7 +563,7 @@ onMounted(() => {
     font-size: var(--font-size-small);
 }
 
-.results-item span:last-of-type {
+.results-item span:not(:first-of-type) {
     color: grey;
     font-size: var(--font-size-small);
     line-height: var(--results-item-height-2);

@@ -4,7 +4,23 @@ const apis = {
     },
     generateMinioLink: {
         path: "/rss/task/generateMinioLink"
+    },
+    taskInfo: {
+        path: '/rss/task/taskInfo'
+    },
+    getTasks: {
+        path: '/rss/task/getTasks'
+    },
+    deleteTask: {
+        path: '/rss/task/deleteTask'
+    },
+    pauseTask: {
+        path: '/rss/task/pauseTask'
+    },
+    resumeTask: {
+        path: '/rss/task/resumeTask'
     }
+
 }
 
 const defaultProp = {

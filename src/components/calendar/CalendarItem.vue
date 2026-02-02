@@ -1,6 +1,6 @@
 <template>
-    <div class="ani-item" :class="{ checked: props.checked }" v-click="() => itemClick(props.unique)">
-        <div class="ani-item-cover">
+    <div class="ani-item" :class="{ checked: props.checked }">
+        <div class="ani-item-cover" v-click="() => itemClick(props.unique)">
             <Image class="ani-item-cover-img" :src="props.cover"></Image>
         </div>
         <div class="ani-item-info">
