@@ -117,8 +117,9 @@
                                     </span>
                                     <span>{{ taskInfo(val) }}</span>
                                     <div class="results-btn-box">
-                                        <Button v-if="['DOWNLOADING', 'STOPED'].includes(val.state)" border-less plain
-                                            @click="pauseOrResumeTask(val)">
+                                        <Button
+                                            v-if="['DOWNLOADING', 'STOPED', 'SEEDING', 'COMPLETE'].includes(val.state)"
+                                            border-less plain @click="pauseOrResumeTask(val)">
                                             <PauseResume></PauseResume>
                                         </Button>
                                         <Button icon="trash del" border-less type="danger" plain
@@ -226,7 +227,7 @@
                     <div class="subs-column gap-0" v-else>
                         <span class="box-edit-title">{{ (editDetail.id > 0 ? '修改' : '新增') + (isCopyrightDetail ? '版权信息'
                             : '链接信息')
-                            }}</span>
+                        }}</span>
                         <div class="subs-detail-box edit">
                             <InputBox label="标题" v-if="'title' in editDetail" v-model="editDetail.title"></InputBox>
                             <InputBox label="地区" v-if="'area' in editDetail" v-model="editDetail.area"></InputBox>
@@ -718,9 +719,9 @@ const delTask = (val) => {
 
 const pauseOrResumeTask = (val) => {
     resultsLoading.value = true
-    if (val.state === 'DOWNLOADING') {
+    if (['DOWNLOADING', 'SEEDING'].includes(val.state)) {
         getApi('task').pauseTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
-    } else if (val.state === 'STOPED') {
+    } else if (['STOPED', 'COMPLETE'].includes(val.state)) {
         getApi('task').resumeTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
     } else {
         resultsLoading.value = false
