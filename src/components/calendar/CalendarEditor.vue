@@ -1060,6 +1060,8 @@ div.border-radius-group .rt {
     min-height: var(--results-item-height);
     box-sizing: border-box;
     transition: 0.3s;
+    flex-grow: 1;
+    flex-shrink: 0;
 }
 
 .results-item.empty {
