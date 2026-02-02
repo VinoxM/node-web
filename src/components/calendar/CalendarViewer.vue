@@ -570,11 +570,12 @@ onMounted(() => {
 }
 
 .results-btn-box {
-    height: var(--results-item-height);
+    height: 100%;
     line-height: var(--results-item-height);
     position: absolute;
     right: var(--subs-gap);
     top: 0;
+    bottom: 0;
     display: flex;
     flex-direction: row;
     align-items: center;

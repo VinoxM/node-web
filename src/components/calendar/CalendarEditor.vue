@@ -1057,11 +1057,8 @@ div.border-radius-group .rt {
     width: 100%;
     position: relative;
     cursor: pointer;
-    min-height: var(--results-item-height);
     box-sizing: border-box;
     transition: 0.3s;
-    flex-grow: 1;
-    flex-shrink: 0;
 }
 
 .results-item.empty {
