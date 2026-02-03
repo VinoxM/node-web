@@ -252,7 +252,7 @@ const episodeDisabled = (val) => val.status !== '1'
 
 const episodeClicked = (val) => {
     if (episodeDisabled(val)) return
-    getApi('task').generateMinioLink({ episodeId: val.id }, link => copySomething(link, '已复制视频链接到剪贴板.'))
+    getApi('episode').generateMinioLink({ episodeId: val.id }, link => copySomething(link, '已复制视频链接到剪贴板.'))
 }
 
 const taskInfo = (val) => {

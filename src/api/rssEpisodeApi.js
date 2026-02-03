@@ -1,4 +1,7 @@
 const apis = {
+    generateMinioLink: {
+        path: "/rss/episode/generateSharedLink"
+    },
     getEpisodes: {
         path: "/rss/episode/getEpisodes"
     },

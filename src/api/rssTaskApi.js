@@ -2,9 +2,6 @@ const apis = {
     addTask: {
         path: "/rss/task/addTask"
     },
-    generateMinioLink: {
-        path: "/rss/task/generateMinioLink"
-    },
     taskInfo: {
         path: '/rss/task/taskInfo'
     },
