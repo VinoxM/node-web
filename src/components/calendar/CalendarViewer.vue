@@ -231,6 +231,7 @@ const uploadTorrent = (val) => {
         addTorrentLoading.value = false
         val.taskId = taskInfo.id
         val.taskStatus = taskInfo.status
+        console.log(subscribe.value)
         torrentInfoInterval.start()
     }, () => {
         addTorrentLoading.value = false
@@ -310,6 +311,8 @@ const torrentInfoInterval = {
         const taskIds = torrentInfoInterval.getTaskIds()
         if (taskIds.length > 0) {
             torrentInfoInterval.timeout = setTimeout(() => getTaskInfo(taskIds), torrentInfoInterval.delay)
+        } else {
+            torrentInfoInterval.stop()
         }
     },
     stop: () => {

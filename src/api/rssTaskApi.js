@@ -19,6 +19,9 @@ const apis = {
     },
     resumeTask: {
         path: '/rss/task/resumeTask'
+    },
+    updateTaskStatus: {
+        path: '/rss/task/updateTaskStatus'
     }
 
 }

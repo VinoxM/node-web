@@ -130,7 +130,6 @@ const checkAuth = () => {
     if (token) {
         getApi('authorization')?.checkAuth?.(null, () => authed.value = true, () => {
             authed.value = false
-            localStorage.removeItem('token')
             editMode.value = false
         })
     }

@@ -107,8 +107,8 @@
                             </div>
                         </div>
                         <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[2]">
-                            <div class="results-box" v-if="tasks.length > 0">
-                                <div class="results-item" v-for="(val, k) of tasks" :key="k" :title="val.title"
+                            <div class="results-box" v-if="taskResults.length > 0">
+                                <div class="results-item" v-for="(val, k) of taskResults" :key="k" :title="val.title"
                                     :class="{ locked: val.hide === 1 }">
                                     <span>{{ val.title || '---' }}</span>
                                     <span>
@@ -122,8 +122,46 @@
                                             border-less plain @click="pauseOrResumeTask(val)">
                                             <PauseResume></PauseResume>
                                         </Button>
+                                        <Button v-if="['6'].includes(val.status)" icon="check" border-less plain
+                                            type="success" @click="completeTask(val)">
+                                        </Button>
+                                        <Button v-if="['0', '1', '3', '5'].includes(val.status)" icon="trash del"
+                                            border-less type="danger" plain @click="delTask(val)"></Button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="results-box" v-else>
+                                <span class="results-item empty">无数据</span>
+                            </div>
+                        </div>
+                        <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[3]">
+                            <div class="results-box" v-if="episodeResults.length > 0">
+                                <div class="results-item" v-for="(val, k) of episodeResults" :key="k" :title="val.link">
+                                    <span>
+                                        [{{ val.episode || '-' }}] {{ val.link || '---' }}
+                                    </span>
+                                    <span>{{ episodeInfo(val) }}</span>
+                                    <div class="results-btn-box">
                                         <Button icon="trash del" border-less type="danger" plain
-                                            @click="delTask(val)"></Button>
+                                            @click="delEpisode(val)"></Button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="results-box" v-else>
+                                <span class="results-item empty">无数据</span>
+                            </div>
+                        </div>
+                        <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[4]">
+                            <div class="results-box" v-if="failedEpisodeResults.length > 0">
+                                <div class="results-item" v-for="(val, k) of failedEpisodeResults" :key="k"
+                                    :title="val.link">
+                                    <span>[{{ val.episode || '-' }}] :{{ failedEpisodeReason(val) }}</span>
+                                    <span>{{ failedEpisodeInfo(val) }}</span>
+                                    <div class="results-btn-box">
+                                        <Button icon="spin3" border-less plain
+                                            @click="retryFailedEpisode(val)"></Button>
+                                        <Button icon="trash del" border-less type="danger" plain
+                                            @click="delFailedEpisode(val)"></Button>
                                     </div>
                                 </div>
                             </div>
@@ -225,9 +263,9 @@
                         </div>
                     </div>
                     <div class="subs-column gap-0" v-else>
-                        <span class="box-edit-title">{{ (editDetail.id > 0 ? '修改' : '新增') + (isCopyrightDetail ? '版权信息'
-                            : '链接信息')
-                        }}</span>
+                        <span class="box-edit-title">
+                            {{ (editDetail.id > 0 ? '修改' : '新增') + (isCopyrightDetail ? '版权信息' : '链接信息') }}
+                        </span>
                         <div class="subs-detail-box edit">
                             <InputBox label="标题" v-if="'title' in editDetail" v-model="editDetail.title"></InputBox>
                             <InputBox label="地区" v-if="'area' in editDetail" v-model="editDetail.area"></InputBox>
@@ -342,7 +380,11 @@ const originTypeOptions = ref(Object.entries(originTypeDict).map(o => ({ value: 
 const editDetail = ref(null);
 
 // tasks
-const tasks = ref([])
+const taskResults = ref([])
+
+// episode
+const episodeResults = ref([])
+const failedEpisodeResults = ref([])
 
 /* active tabs */
 // sub tabs
@@ -355,7 +397,7 @@ const subTabClicked = (index) => {
 }
 
 // result tabs
-const resultTabs = ['测试结果', '当前结果', '种子任务']
+const resultTabs = ['测试结果', '当前结果', '种子任务', '剧集结果', '失败剧集']
 const resultTabActive = ref(resultTabs[0])
 const resultTabClicked = (index) => {
     resultTabActive.value = resultTabs[index]
@@ -366,6 +408,12 @@ const resultTabClicked = (index) => {
     }
     if (index === 2) {
         getTasks();
+    }
+    if (index === 3) {
+        getEpisodes();
+    }
+    if (index === 4) {
+        getFailedEpisodes();
     }
 }
 let resultTabStore = ''
@@ -702,7 +750,7 @@ const submitEditDetail = () => {
 const getTasks = () => {
     resultsLoading.value = true
     getApi('task').getTasks({ rssSubsId: unique.value }, data => {
-        tasks.value = data
+        taskResults.value = data
         resultsLoading.value = false
         taskInfoInterval.start()
     }, () => resultsLoading.value = false)
@@ -723,6 +771,15 @@ const pauseOrResumeTask = (val) => {
         getApi('task').pauseTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
     } else if (['STOPED', 'COMPLETE'].includes(val.state)) {
         getApi('task').resumeTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
+    } else {
+        resultsLoading.value = false
+    }
+}
+
+const completeTask = (val) => {
+    resultsLoading.value = true
+    if (['6'].includes(val.status)) {
+        getApi('task').updateTaskStatus({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
     } else {
         resultsLoading.value = false
     }
@@ -752,7 +809,7 @@ const getTaskInfo = (taskIds) => {
     taskInfoInterval.lastRequest = getApi('task').taskInfo({ taskIds }, data => {
         taskInfoInterval.lastRequest = null
         if (!data || data.length === 0) return;
-        const results = tasks.value
+        const results = taskResults.value
         Array.from(data).forEach(d => {
             results.some(r => {
                 const b = r.id === d.id
@@ -774,7 +831,7 @@ const taskInfoInterval = {
     started: false,
     getTaskIds: () => {
         const taskIds = []
-        tasks.value.forEach(r => r.id && r.status === '1' && taskIds.push(r.id))
+        taskResults.value.forEach(r => r.id && r.status === '1' && taskIds.push(r.id))
         return taskIds
     },
     start: () => {
@@ -786,6 +843,8 @@ const taskInfoInterval = {
         const taskIds = taskInfoInterval.getTaskIds()
         if (taskIds.length > 0) {
             taskInfoInterval.timeout = setTimeout(() => getTaskInfo(taskIds), taskInfoInterval.delay)
+        } else {
+            taskInfoInterval.stop()
         }
     },
     stop: () => {
@@ -796,6 +855,65 @@ const taskInfoInterval = {
         }
         taskInfoInterval.started = false
     }
+}
+
+/* episode */
+const getEpisodes = () => {
+    resultsLoading.value = true
+    getApi('episode').getEpisodes({ rssSubsId: unique.value }, data => {
+        episodeResults.value = data
+        resultsLoading.value = false
+    }, () => resultsLoading.value = false)
+}
+
+const delEpisode = (val) => {
+    resultsLoading.value = true
+    getApi('episode').deleteEpisode({ episodeId: val.id }, () => getEpisodes(), () => resultsLoading.value = false)
+}
+
+const episodeStatusMap = {
+    '0': '准备中',
+    '1': '完成',
+    '2': '失败'
+}
+
+const episodeInfo = (val) => {
+    const result = episodeStatusMap[val.status] || 'UNKNOWN'
+    const taskResult = taskStatusMap[val.taskStatus] || 'UNKNOWN'
+    return `剧集状态: ${result} 任务状态: ${taskResult}`
+}
+
+/* failed episode */
+const getFailedEpisodes = () => {
+    resultsLoading.value = true
+    getApi('episode').getFailedEpisodes({ rssSubsId: unique.value }, data => {
+        failedEpisodeResults.value = data
+        resultsLoading.value = false
+    }, () => resultsLoading.value = false)
+}
+
+const retryFailedEpisode = (val) => {
+    resultsLoading.value = true
+    getApi('episode').retryFailedEpisode({ failedEpisodeId: val.id }, () => getFailedEpisodes(), () => resultsLoading.value = false)
+}
+
+const delFailedEpisode = (val) => {
+    resultsLoading.value = true
+    getApi('episode').deleteFailedEpisode({ failedEpisodeId: val.id }, () => getFailedEpisodes(), () => resultsLoading.value = false)
+}
+
+const failedEpisodeReasonMap = {
+    '0': 'UNKNOWN',
+    '1': '解析失败',
+    '2': '剧集已存在',
+    '3': '成功'
+}
+
+const failedEpisodeReason = (val) => failedEpisodeReasonMap[val.reason] || 'UNKNOWN'
+
+const failedEpisodeInfo = (val) => {
+    const taskResult = taskStatusMap[val.taskStatus] || 'UNKNOWN'
+    return `任务状态: ${taskResult} ${val.createTime}`
 }
 
 /* dialog visible handler */
