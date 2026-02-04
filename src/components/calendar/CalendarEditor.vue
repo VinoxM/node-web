@@ -863,7 +863,7 @@ const pauseOrResumeTask = (val) => {
 const completeTask = (val) => {
     resultsLoading.value = true
     if (['6'].includes(val.status)) {
-        getApi('task').updateTaskStatus({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
+        getApi('task').completeTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
     } else {
         resultsLoading.value = false
     }
