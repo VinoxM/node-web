@@ -17,12 +17,13 @@ const defaultHeaders = {
 }
 
 const http = {
-    get: (url, params, headers, cancelToken) => {
+    get: (url, params, headers, cancelToken, options = {}) => {
         return new Promise((resolve, reject) => {
             axios.get(url, {
                 params,
                 headers,
-                cancelToken
+                cancelToken,
+                ...options
             }).then(response => {
                 const res = response.data;
                 if (res.code === 0) {
@@ -38,9 +39,9 @@ const http = {
             })
         })
     },
-    post: (url, data, headers, cancelToken) => {
+    post: (url, data, headers, cancelToken, options = {}) => {
         return new Promise((resolve, reject) => {
-            axios.post(url, data, { headers, cancelToken }).then(response => {
+            axios.post(url, data ?? {}, { headers, cancelToken, ...options }).then(response => {
                 const res = response.data;
                 if (res.code === 0) {
                     resolve(res.data);
@@ -73,7 +74,7 @@ const apiPlugin = {
             const module = await files[key]();
             const configs = module.default || module;
             for (const m in configs) {
-                let { basePath: base, method, path, preHandle, handle, headers, ignoreError, label = 'default' } = configs[m];
+                let { basePath: base, method, path, preHandle, handle, headers, ignoreError, label = 'default', options = {} } = configs[m];
                 if (!method) {
                     method = 'get';
                 }
@@ -92,19 +93,18 @@ const apiPlugin = {
                                         (base ?? basePath) + path,
                                         opts_?.data ?? data,
                                         opts_?.headers ?? headers_,
-                                        source.token
-                                    ).then(data => {
-                                        if (resolve instanceof Function) {
-                                            if (handle && handle instanceof Function) {
-                                                const res = handle(data)
-                                                if (res instanceof Promise) {
-                                                    res.then(resolve)
-                                                } else {
-                                                    resolve(res)
-                                                }
+                                        source.token,
+                                        options
+                                    ).then(data => {                                        
+                                        if (handle && handle instanceof Function) {
+                                            const res = handle(data)
+                                            if (res instanceof Promise) {
+                                                res.then(resolve)
                                             } else {
-                                                resolve(data)
+                                                resolve?.(res)
                                             }
+                                        } else {
+                                            resolve?.(data)
                                         }
                                     })
                                 }).catch(e => {

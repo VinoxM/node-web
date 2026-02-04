@@ -38,7 +38,7 @@ const apis = {
         path: '/rss/result/getEpisodeMatchers',
         method: 'get',
         ignoreError: true,
-        handle(data) {
+        handle: (data) => {
             localStorage.setItem('episodeMatchers', JSON.stringify(data))
             return data
         }

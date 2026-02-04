@@ -12,10 +12,16 @@ const apis = {
         path: '/rss/episode/getFailedEpisodes'
     },
     retryFailedEpisode: {
-        path: '/rss/episode/retryFailedEpisode'
+        path: '/rss/episode/retryFailedEpisode',
+        options: {
+            timeout: 120000
+        }
     },
     deleteFailedEpisode: {
         path: '/rss/episode/deleteFailedEpisode'
+    },
+    updateFailedEpisode: {
+        path: '/rss/episode/updateFailedEpisode'
     }
 }
 

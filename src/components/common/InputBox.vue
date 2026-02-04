@@ -2,9 +2,10 @@
     <div class="input-box" :style="widthStyle" :class="inputClass">
         <span class="prepend" :class="{ float: type === 'textarea' }" v-if="needLabel">{{ label }}</span>
         <input class="input" :type="type" :class="inputAlign" v-if="!ignoreInput && type !== 'textarea'" v-model="model"
-            @focus="inputFocus" spellcheck="false" ref="input" @change="changed" @keyup.enter="enterPress" />
+            :readonly="readonly" @focus="inputFocus" spellcheck="false" ref="input" @change="changed"
+            @keyup.enter="enterPress" />
         <textarea class="textarea" v-if="type === 'textarea'" v-model="model" :rows="rows" spellcheck="false"
-            @focus="inputFocus" @change="changed"></textarea>
+            :readonly="readonly" @focus="inputFocus" @change="changed"></textarea>
         <slot name="append"></slot>
     </div>
 </template>
@@ -18,7 +19,7 @@ const emit = defineEmits(['change', 'enter-press']);
 
 let oldVal = '';
 
-const { label, width, ignoreInput, inputAlign, type, autoSelect, validator, rows, size } = defineProps({
+const { label, width, ignoreInput, inputAlign, type, autoSelect, validator, rows, size, readonly } = defineProps({
     label: {
         type: [String, Boolean],
         required: false,
@@ -61,6 +62,10 @@ const { label, width, ignoreInput, inputAlign, type, autoSelect, validator, rows
         type: String,
         required: false,
         default: 'normal'
+    },
+    readonly: {
+        type: Boolean,
+        default: false
     }
 })
 

@@ -107,6 +107,9 @@
                             </div>
                         </div>
                         <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[2]">
+                            <div class="subs-row center box-tools">
+                                <Link icon="spin3" type="normal" @click="getTasks">刷新</Link>
+                            </div>
                             <div class="results-box" v-if="taskResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of taskResults" :key="k" :title="val.title"
                                     :class="{ locked: val.hide === 1 }">
@@ -135,6 +138,9 @@
                             </div>
                         </div>
                         <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[3]">
+                            <div class="subs-row center box-tools">
+                                <Link icon="spin3" type="normal" @click="getEpisodes">刷新</Link>
+                            </div>
                             <div class="results-box" v-if="episodeResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of episodeResults" :key="k" :title="val.link">
                                     <span>
@@ -142,7 +148,7 @@
                                     </span>
                                     <span>{{ episodeInfo(val) }}</span>
                                     <div class="results-btn-box">
-                                        <Button icon="trash del" border-less type="danger" plain
+                                        <Button v-if="!val.taskStatus" icon="trash del" border-less type="danger" plain
                                             @click="delEpisode(val)"></Button>
                                     </div>
                                 </div>
@@ -152,15 +158,20 @@
                             </div>
                         </div>
                         <div class="subs-column gap-0" v-show="resultTabActive === resultTabs[4]">
+                            <div class="subs-row center box-tools">
+                                <Link icon="spin3" type="normal" @click="getFailedEpisodes">刷新</Link>
+                            </div>
                             <div class="results-box" v-if="failedEpisodeResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of failedEpisodeResults" :key="k"
-                                    :title="val.link">
-                                    <span>[{{ val.episode || '-' }}] :{{ failedEpisodeReason(val) }}</span>
+                                    :title="val.fileName">
+                                    <span>[{{ val.episode || '-' }}] {{ val.fileName }}</span>
                                     <span>{{ failedEpisodeInfo(val) }}</span>
                                     <div class="results-btn-box">
-                                        <Button icon="spin3" border-less plain
+                                        <Button v-if="'3' !== val.reason" icon="edit" border-less plain
+                                            @click="toEditFailedEpisode(val)"></Button>
+                                        <Button v-if="'3' !== val.reason" icon="spin3" border-less plain
                                             @click="retryFailedEpisode(val)"></Button>
-                                        <Button icon="trash del" border-less type="danger" plain
+                                        <Button v-if="!val.taskStatus" icon="trash del" border-less type="danger" plain
                                             @click="delFailedEpisode(val)"></Button>
                                     </div>
                                 </div>
@@ -194,6 +205,34 @@
                             <div class="subs-row center box-edit-footer">
                                 <Link icon="cancel" @click="cancelEditResult">取消</Link>
                                 <Link icon="check" type="primary" @click="submitEditResult">保存</Link>
+                            </div>
+                        </div>
+                        <div class="subs-column gap-6" v-if="isEditFailedEpisode">
+                            <span class="box-edit-title">修改失败剧集信息</span>
+                            <div class="subs-row padding-5-lr">
+                                <InputBox label="文件路径" v-model="editFailedEpisode.rootPath"></InputBox>
+                            </div>
+                            <div class="subs-row padding-5-lr">
+                                <InputBox label="文件名称" v-model="editFailedEpisode.fileName"></InputBox>
+                            </div>
+                            <div class="subs-row gap-4 padding-5-lr">
+                                <InputBox label="Minio链接" v-model="editFailedEpisode.link"></InputBox>
+                            </div>
+                            <div class="subs-row gap-4 padding-5-lr">
+                                <InputBox label="剧集" v-model="editFailedEpisode.episode" width="100"
+                                    input-align="center" auto-select>
+                                    <template #append>
+                                        <Button class="episode-calc" icon="calc" border-less plain
+                                            @click="calcFailedEpisode"></Button>
+                                    </template>
+                                </InputBox>
+                            </div>
+                            <div class="subs-row padding-5-lr">
+                                <span class="row-span">{{ failedEpisodeInfo(editFailedEpisode) }}</span>
+                            </div>
+                            <div class="subs-row center box-edit-footer">
+                                <Link icon="cancel" @click="cancelEditFailedEpisode">取消</Link>
+                                <Link icon="check" type="primary" @click="submitEditFailedEpisode">保存</Link>
                             </div>
                         </div>
                     </div>
@@ -304,15 +343,21 @@ import message from '@/message';
 import { handleEpisode } from '@/utils/rssUtils';
 import Select from '../common/Select.vue';
 import PauseResume from '../common/PauseResume.vue';
+import { pubDateFormat } from '@/utils/dateUtils';
 
 const initSubscribe = () => {
     subscribe.value = null;
     unique.value = -1;
+    resultsLoading.value = false;
+    // clear results
     testResults.value = [];
     currentResults.value = [];
-    resultsLoading.value = false;
-    isEditResult.value = false;
-    editResult.value = null;
+    taskResults.value = [];
+    episodeResults.value = [];
+    failedEpisodeResults.value = [];
+    // clear edit
+    clearEditResult();
+    clearEditFailedEpisode();
     // tabs init
     subTabActive.value = subTabs[0];
     resultTabActive.value = resultTabs[0];
@@ -385,6 +430,8 @@ const taskResults = ref([])
 // episode
 const episodeResults = ref([])
 const failedEpisodeResults = ref([])
+const isEditFailedEpisode = ref(false)
+const editFailedEpisode = ref(null)
 
 /* active tabs */
 // sub tabs
@@ -406,13 +453,13 @@ const resultTabClicked = (index) => {
     if (index === 1 && currentResults.value.length === 0) {
         getCurrentResults();
     }
-    if (index === 2) {
+    if (index === 2 && taskResults.value.length === 0) {
         getTasks();
     }
-    if (index === 3) {
+    if (index === 3 && episodeResults.value.length === 0) {
         getEpisodes();
     }
-    if (index === 4) {
+    if (index === 4 && failedEpisodeResults.value.length === 0) {
         getFailedEpisodes();
     }
 }
@@ -878,9 +925,9 @@ const episodeStatusMap = {
 }
 
 const episodeInfo = (val) => {
-    const result = episodeStatusMap[val.status] || 'UNKNOWN'
-    const taskResult = taskStatusMap[val.taskStatus] || 'UNKNOWN'
-    return `剧集状态: ${result} 任务状态: ${taskResult}`
+    const result = episodeStatusMap[val.status] || '未知'
+    const taskResult = taskStatusMap[val.taskStatus] || '未知'
+    return `[${result}] 种子任务[${taskResult}]`
 }
 
 /* failed episode */
@@ -903,17 +950,52 @@ const delFailedEpisode = (val) => {
 }
 
 const failedEpisodeReasonMap = {
-    '0': 'UNKNOWN',
+    '0': '未知错误',
     '1': '解析失败',
-    '2': '剧集已存在',
-    '3': '成功'
+    '2': '剧集已存在'
 }
 
-const failedEpisodeReason = (val) => failedEpisodeReasonMap[val.reason] || 'UNKNOWN'
-
 const failedEpisodeInfo = (val) => {
-    const taskResult = taskStatusMap[val.taskStatus] || 'UNKNOWN'
-    return `任务状态: ${taskResult} ${val.createTime}`
+    const reasonInfo = val.reason === '3' ? '成功 ' : `[${failedEpisodeReasonMap[val.reason] || '未知'}] `
+    const taskResult = taskStatusMap[val.taskStatus] || '未知'
+    return `${reasonInfo}种子任务[${taskResult}] 创建时间: ${pubDateFormat(val.createTime)}`
+}
+
+const toEditFailedEpisode = val => {
+    editFailedEpisode.value = { ...val }
+    clearResultTabActive()
+    isEditFailedEpisode.value = true
+}
+
+const clearEditFailedEpisode = () => {
+    editFailedEpisode.value = null
+    isEditFailedEpisode.value = false
+}
+
+const cancelEditFailedEpisode = () => {
+    clearEditFailedEpisode()
+    restoreResultTabActibe()
+}
+
+const calcFailedEpisode = () => {
+    const episode = handleEpisode(editFailedEpisode.value.fileName)
+    editFailedEpisode.value.episode = episode === '-' ? null : episode
+}
+
+const submitEditFailedEpisode = () => {
+    resultsLoading.value = true
+    const data = {
+        id: editFailedEpisode.value.id,
+        rootPath: editFailedEpisode.value.rootPath,
+        fileName: editFailedEpisode.value.fileName,
+        episode: editFailedEpisode.value.episode,
+        link: editFailedEpisode.value.link
+    }
+    getApi('episode').updateFailedEpisode(data, () => {
+        resultsLoading.value = false
+        cancelEditFailedEpisode()
+        getFailedEpisodes()
+    }, () => resultsLoading.value = false)
 }
 
 /* dialog visible handler */
@@ -1043,6 +1125,10 @@ div.border-radius-group .rt {
 
 .subs-row.center {
     justify-content: center;
+}
+
+.subs-row span.row-span {
+    line-height: var(--subs-row-height);
 }
 
 .flex-grow {
@@ -1248,9 +1334,9 @@ div.border-radius-group .rt {
     background-color: #eee;
 }
 
-.episode-calc,
-.episode-calc :deep(i),
-.episode-calc :deep(i:before) {
+button.episode-calc,
+button.episode-calc :deep(i),
+button.episode-calc :deep(i:before) {
     height: var(--input-box-height);
     line-height: var(--input-box-height);
     margin: 0;
