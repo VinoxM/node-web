@@ -148,7 +148,7 @@
                                     </span>
                                     <span>{{ episodeInfo(val) }}</span>
                                     <div class="results-btn-box">
-                                        <Button v-if="!val.taskStatus" icon="trash del" border-less type="danger" plain
+                                        <Button icon="trash del" border-less type="danger" plain
                                             @click="delEpisode(val)"></Button>
                                     </div>
                                 </div>
