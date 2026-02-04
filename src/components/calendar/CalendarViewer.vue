@@ -624,7 +624,6 @@ onMounted(() => {
 
 /* episode */
 .episode-box {
-    --episode-button-height: var(--subs-header-height);
     padding: 2px;
     overflow: auto;
     box-sizing: border-box;

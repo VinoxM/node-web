@@ -102,6 +102,8 @@
     --header-min-height: calc(var(--main-gap) + var(--season-year-height) + var(--season-btn-height));
     /* holder */
     --holder-height: 0px;
+    /* episode */
+    --episode-button-height: 47px;
 }
 
 body {
@@ -203,6 +205,7 @@ input[type='number'] {
         --subs-header-height: 46px;
         --subs-header-height-1: 26px;
         --subs-row-height: 22px;
+        --episode-button-height: 43px;
     }
 
     div.season-btn-container {
