@@ -14,6 +14,9 @@ const apis = {
     },
     deleteManySubs: {
         path: '/rss/subscribe/delMany'
+    },
+    addOneSubs: {
+        path: '/rss/subscribe/addOne'
     }
 }
 

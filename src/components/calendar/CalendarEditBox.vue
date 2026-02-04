@@ -8,6 +8,7 @@
                 @click="deleteCheckedClicked">删除选中</Button>
             <Button size="small" icon="spin3" type="success" :disabled="checkedCount === 0" :loading="isUpdating"
                 @click="updateCheckedClicked">更新选中</Button>
+            <Button size="small" icon="plus-squared" type="success" :loading="isUpdating" @click="toAddSubscribe">新增订阅</Button>
         </div>
         <div class="ani-edit-icon" @click="emitEdit">
             <span>编辑模式</span>
@@ -28,7 +29,7 @@ const { editMode, resultCount, checkedCount } = defineProps({
 const isUpdating = ref(false)
 
 // emit
-const emit = defineEmits(['update:editMode', 'updateChecked', 'deleteChecked'])
+const emit = defineEmits(['update:editMode', 'updateChecked', 'deleteChecked', 'toAddSubscribe'])
 
 const emitEdit = () => {
     emit('update:editMode', !editMode);
@@ -47,6 +48,8 @@ const emitDeleteChecked = () => {
 const deleteCheckedClicked = () => checkedCount > 0 && emitDeleteChecked()
 
 const updateCheckedClicked = () => checkedCount > 0 && emitUpdateChecked()
+
+const toAddSubscribe = () => emit('toAddSubscribe');
 </script>
 
 <style scoped>

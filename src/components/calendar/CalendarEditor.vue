@@ -32,11 +32,11 @@
                     </div>
                 </div>
             </div>
-            <div class="subs-row center">
+            <div v-if="!isAddSubscribe" class="subs-row center">
                 <Link v-for="(val, key) of subTabs" :key="key" :active="subTabActive === val"
                     @click="subTabClicked(key)">{{ val }}</Link>
             </div>
-            <div class="subs-column gap-4" v-show="subTabActive === subTabs[0]">
+            <div v-if="!isAddSubscribe" class="subs-column gap-4" v-show="subTabActive === subTabs[0]">
                 <div class="subs-row">
                     <RadioGroup class="flex-shrink" label="订阅网站" v-model="matcherIndex" :arr="matcherOps"></RadioGroup>
                     <InputBox class="flex-grow" label="关键词" v-model="subscribe.keyword"></InputBox>
@@ -343,11 +343,11 @@ import message from '@/message';
 import { handleEpisode } from '@/utils/rssUtils';
 import Select from '../common/Select.vue';
 import PauseResume from '../common/PauseResume.vue';
-import { pubDateFormat } from '@/utils/dateUtils';
+import { getCurSeason, pubDateFormat } from '@/utils/dateUtils';
 
 const initSubscribe = () => {
     subscribe.value = null;
-    unique.value = -1;
+    unique.value = 0;
     resultsLoading.value = false;
     // clear results
     testResults.value = [];
@@ -355,6 +355,8 @@ const initSubscribe = () => {
     taskResults.value = [];
     episodeResults.value = [];
     failedEpisodeResults.value = [];
+    // clear regex
+    regexArr.value = [];
     // clear edit
     clearEditResult();
     clearEditFailedEpisode();
@@ -362,6 +364,8 @@ const initSubscribe = () => {
     subTabActive.value = subTabs[0];
     resultTabActive.value = resultTabs[0];
     detailTabActive.value = detailTabs[0];
+    // stop task info interval
+    taskInfoInterval.stop();
 }
 
 const emit = defineEmits(['research']);
@@ -514,8 +518,37 @@ watch(() => unique.value, (v) => {
         }, () => {
             setTimeout(close, 1000);
         })
+    } else if (v === -1) {
+        cancel(lastRequest);
+        show();
+        subTabActive.value = subTabs[1]
+        const season = getCurSeason()
+        subscribe.value = {
+            name: '',
+            nameJP: '',
+            url: '',
+            regex: '',
+            season: season,
+            startTime: `${season[0]}-${season[1]}-01 00:00:00`,
+            cover: '',
+            fin: 'N',
+            isShort: false,
+            animeType: '',
+            goon: false,
+            staff: '',
+            cast: '',
+            originType: ['', ''],
+            typeTag: '',
+            broadcast: ['', ''],
+            keyword: '',
+            link: [],
+            copyright: []
+        }
+        loading.value = false;
     }
 })
+
+const isAddSubscribe = computed(() => unique.value === -1)
 
 /* subscribe save */
 const submitSubscribe = () => {
@@ -531,7 +564,11 @@ const submitSubscribe = () => {
         ...val
     }
     loading.value = true;
-    getApi().editOneSubs(body, () => (flushSearch = true, close()), () => loading.value = false);
+    if (isAddSubscribe.value) {
+        getApi().addOneSubs(body, () => (flushSearch = true, close()), () => loading.value = false);
+    } else {
+        getApi().editOneSubs(body, () => (flushSearch = true, close()), () => loading.value = false);
+    }
 }
 
 const getDialogEl = () => dialogRef.value.$el;
@@ -1012,8 +1049,6 @@ const close = () => {
 const closed = () => {
     cancel(lastRequest);
     initSubscribe();
-    // stop task info interval
-    taskInfoInterval.stop();
     if (flushSearch) {
         emit('research');
     }

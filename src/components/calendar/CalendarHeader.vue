@@ -52,6 +52,7 @@ import { onMounted, ref, useTemplateRef, nextTick } from 'vue';
 import { getApi } from '@/api';
 import message from '@/message';
 import Button from '../common/Button.vue';
+import { getCurSeason } from '@/utils/dateUtils';
 
 // data
 const season = ref([]);
@@ -107,13 +108,7 @@ const emitSearch = ({ season, search, searchAll }) => {
 // methods
 const initCurSeason = () => {
     if (seasonYear.value !== '') return
-    let now = new Date();
-    if (now.getHours() < 6) {
-        now.setDate(now.getDate() - 1);
-    }
-    let month = now.getMonth() + 1;
-    month = (Math.ceil(month / 3) - 1) * 3 + 1;
-    season.value = [now.getFullYear() + '', String(month).padStart(2, '0')];
+    season.value = getCurSeason()
     seasonYear.value = season.value[0];
     seasonMonth.value = season.value[1];
 }

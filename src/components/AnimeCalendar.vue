@@ -25,7 +25,7 @@
         </CalendarEditor>
         <CalendarViewer v-else v-model="unique"></CalendarViewer>
         <CalendarUserBox @click="userClicked"></CalendarUserBox>
-        <CalendarEditBox v-if="authed" @update-checked="updateChecked" @delete-checked="deleteChecked"
+        <CalendarEditBox v-if="authed" @update-checked="updateChecked" @delete-checked="deleteChecked" @to-add-subscribe="toAddSubscribe"
             v-model:edit-mode="editMode" :checked-count="checkedCount" :result-count="seasonResultCount">
         </CalendarEditBox>
         <CalendarLogin v-model="loginVisible" @login-success="loginSuccessed"></CalendarLogin>
@@ -382,6 +382,8 @@ const deleteChecked = (callback) => {
         updating.value = false;
     })
 }
+
+const toAddSubscribe = () => unique.value = -1
 
 /* search highlight */
 const setupHighlight = (str) => {
