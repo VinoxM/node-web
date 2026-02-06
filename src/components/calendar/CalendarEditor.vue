@@ -113,12 +113,15 @@
                             <div class="results-box" v-if="taskResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of taskResults" :key="k" :title="val.title"
                                     :class="{ locked: val.hide === 1 }">
-                                    <span>{{ val.title || '---' }}</span>
-                                    <span>
-                                        [{{ val.episode || '-' }}] 上传时间: {{ val.pubDate || '-' }}
-                                        <i v-if="val.hide === 1" class="icon-lock"></i>
-                                    </span>
-                                    <span>{{ taskInfo(val) }}</span>
+                                    <span class="results-item-title">{{ val.title || '---' }}</span>
+                                    <div class="results-item-subs">
+                                        <span>
+                                            [{{ val.episode }}] 上传时间: {{ val.pubDate || '-' }}
+                                            <i v-if="val.hide === 1" class="icon-lock"></i>
+                                        </span>
+                                        <span>{{ taskInfo(val) }}</span>
+                                    </div>
+                                    <span class="results-item-subs">{{ torrentStatus(val) }}</span>
                                     <div class="results-btn-box">
                                         <Button
                                             v-if="['DOWNLOADING', 'STOPED', 'SEEDING', 'COMPLETE'].includes(val.state)"
@@ -881,11 +884,11 @@ const taskStatusMap = {
 
 const taskInfo = (val) => {
     if (!val.id) return ''
-    let result = taskStatusMap[val.status] || 'UNKNOWN'
-    if (val.status === '1') {
-        result += `: [${val.state || 'UNKNOWN'}] ${val.percent || ''}`
-    }
-    return result
+    return taskStatusMap[val.status] || 'UNKNOWN'
+}
+
+const torrentStatus = (val) => {
+    return !val.id || val.status !== '1' ? '' : `[${val.state || 'UNKNOWN'}] ${val.percent || ''}`
 }
 
 const getTaskInfo = (taskIds) => {
@@ -1314,7 +1317,7 @@ div.border-radius-group .rt {
     background-color: #c1c1c1;
 }
 
-.results-item>span {
+/* .results-item>span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1330,6 +1333,31 @@ div.border-radius-group .rt {
     color: grey;
     font-size: var(--font-size-small);
     line-height: var(--results-item-height-2);
+} */
+
+.results-item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    padding: 0 4px;
+    display: block;
+}
+
+.results-item-title {
+    line-height: var(--results-item-height-1);
+    font-size: var(--font-size-small);
+}
+
+.results-item-subs {
+    color: grey;
+    font-size: var(--font-size-small);
+    line-height: var(--results-item-height-2);
+}
+
+div.results-item-subs {
+    display: flex;
+    justify-content: space-between;
 }
 
 .results-btn-box {

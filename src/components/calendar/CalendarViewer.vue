@@ -54,9 +54,12 @@
                     <div class="results-scroll" v-if="subscribe.results.length > 0">
                         <div v-for="(val, key) of subscribe.results" :key="key" class="results-item"
                             @click.stop="copyTorrent(val)">
-                            <span :title="val.title">{{ val.title }}</span>
-                            <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
-                            <span>{{ taskInfo(val) }}</span>
+                            <span class="results-item-title" :title="val.title">{{ val.title }}</span>
+                            <div class="results-item-subs">
+                                <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }} </span>
+                                <span>{{ taskInfo(val) }}</span>
+                            </div>
+                            <span class="results-item-subs">{{ torrentStatus(val) }}</span>
                             <div class="results-btn-box" :class="{ touchable }" v-if="!val.copyAll">
                                 <Button icon="feather" border-less plain @click.stop="openTorrent(val)"></Button>
                                 <Button v-if="authed" icon="rss-squared" type="warning" border-less plain
@@ -257,11 +260,11 @@ const episodeClicked = (val) => {
 
 const taskInfo = (val) => {
     if (!val.taskId) return ''
-    let result = taskStatusMap[val.taskStatus] || 'UNKNOWN'
-    if (val.taskStatus === '1') {
-        result += `: [${val.taskState || 'UNKNOWN'}] ${val.taskPercent || ''}`
-    }
-    return result
+    return taskStatusMap[val.taskStatus] || 'UNKNOWN'
+}
+
+const torrentStatus = (val) => {
+    return !val.taskId || val.taskStatus !== '1' ? '' : `[${val.taskState || 'UNKNOWN'}] ${val.taskPercent || ''}`
 }
 
 // computed
@@ -561,15 +564,22 @@ onMounted(() => {
     box-sizing: border-box;
     padding: 0 4px;
     display: block;
-    width: 100%;
+}
+
+.results-item-title {
     line-height: var(--results-item-height-1);
     font-size: var(--font-size-small);
 }
 
-.results-item span:not(:first-of-type) {
+.results-item-subs {
     color: grey;
     font-size: var(--font-size-small);
     line-height: var(--results-item-height-2);
+}
+
+div.results-item-subs {
+    display: flex;
+    justify-content: space-between;
 }
 
 .results-btn-box {
