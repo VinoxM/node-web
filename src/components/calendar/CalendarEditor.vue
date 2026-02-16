@@ -70,8 +70,8 @@
                             <div class="results-box" v-if="testResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of testResults" :key="k" :title="val.title"
                                     @click.right="copyTorrent(val)">
-                                    <span>{{ val.title }}</span>
-                                    <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
+                                    <span class="results-item-title">{{ val.title }}</span>
+                                    <span class="results-item-subs">[{{ val.episode }}] 上传时间: {{ val.pubDate }}</span>
                                     <div class="results-btn-box">
                                         <Button icon="plus-squared" border-less @click="toAddResult(val)"></Button>
                                     </div>
@@ -89,9 +89,11 @@
                             <div class="results-box" v-if="currentResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of currentResults" :key="k" :title="val.title"
                                     :class="{ locked: val.hide === 1 }">
-                                    <span>{{ val.title }}</span>
-                                    <span>[{{ val.episode }}] 上传时间: {{ val.pubDate }} <i v-if="val.hide === 1"
-                                            class="icon-lock"></i></span>
+                                    <span class="results-item-title">{{ val.title }}</span>
+                                    <span class="results-item-subs">
+                                        [{{ val.episode }}] 上传时间: {{ val.pubDate }}
+                                        <i v-if="val.hide === 1" class="icon-lock"></i>
+                                    </span>
                                     <div class="results-btn-box">
                                         <Button icon="edit" border-less plain @click="toEditResult(val)"></Button>
                                         <Button :icon="'lock' + (val.hide === 1 ? '-open' : '')" border-less plain
@@ -146,10 +148,10 @@
                             </div>
                             <div class="results-box" v-if="episodeResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of episodeResults" :key="k" :title="val.link">
-                                    <span>
+                                    <span class="results-item-title">
                                         [{{ val.episode || '-' }}] {{ val.link || '---' }}
                                     </span>
-                                    <span>{{ episodeInfo(val) }}</span>
+                                    <span class="results-item-subs">{{ episodeInfo(val) }}</span>
                                     <div class="results-btn-box">
                                         <Button icon="trash del" border-less type="danger" plain
                                             @click="delEpisode(val)"></Button>
@@ -167,8 +169,8 @@
                             <div class="results-box" v-if="failedEpisodeResults.length > 0">
                                 <div class="results-item" v-for="(val, k) of failedEpisodeResults" :key="k"
                                     :title="val.fileName">
-                                    <span>[{{ val.episode || '-' }}] {{ val.fileName }}</span>
-                                    <span>{{ failedEpisodeInfo(val) }}</span>
+                                    <span class="results-item-title">[{{ val.episode || '-' }}] {{ val.fileName }}</span>
+                                    <span class="results-item-subs">{{ failedEpisodeInfo(val) }}</span>
                                     <div class="results-btn-box">
                                         <Button v-if="'3' !== val.reason" icon="edit" border-less plain
                                             @click="toEditFailedEpisode(val)"></Button>

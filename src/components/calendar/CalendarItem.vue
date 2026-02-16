@@ -126,7 +126,7 @@ const startDate = computed(() => {
 const favorites = computed(() => isFavorites(props.unique))
 
 const favoritesLabel = computed(() => {
-    return isFavorites(props.unique) ? '已收藏' : '收藏'
+    return isFavorites(props.unique) ? '已订阅' : '订阅'
 })
 
 const favoritesClicked = (val) => isFavorites(props.unique) ? delFavorites(val) : addFavorites(val)

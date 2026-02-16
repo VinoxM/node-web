@@ -787,14 +787,16 @@ span.limited-box.two-line {
   font-size: var(--font-size-mini);
   user-select: none;
   height: var(--item-title-height);
+  line-height: var(--item-title-height);
   display: flex;
-  gap: 2px;
   justify-self: start;
   cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.4s;
 }
 
 .ani-item-favorites .favorites-svg {
-  --height:  var(--item-title-height);
+  --height: var(--item-title-height);
   height: var(--height);
   width: var(--item-title-height);
   padding: 2px;
@@ -803,19 +805,24 @@ span.limited-box.two-line {
 }
 
 .ani-item-favorites span {
-  line-height: var(--item-title-height);
-  color: var(--color-gray-0);
   height: var(--item-title-height);
   display: inline-block;
+  padding: 0 3px;
+}
+
+.ani-item-favorites:not(.favorites-on) span {
+  color: var(--color-gray-0);
 }
 
 .ani-item-favorites:hover span {
   text-decoration: underline;
 }
 
-.ani-item-favorites.favorites-on span {
-  color: var(--color-yellow-0);
+.ani-item-favorites.favorites-on {
+  color: var(--color-pink-0);
+  /* color: white; */
 }
+
 .ani-item-is-goon {
   font-size: var(--font-size-mini);
   user-select: none;
@@ -832,7 +839,7 @@ span.limited-box.two-line {
 
 .ani-item-is-goon span {
   line-height: var(--item-title-height);
-  color: var(--color-pink-1);
+  color: var(--color-blue-0);
   height: var(--item-title-height);
   display: inline-block;
 }
