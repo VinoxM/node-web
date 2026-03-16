@@ -185,7 +185,7 @@ onMounted(() => {
     border-radius: 8px;
     overflow: hidden;
     max-width: 100%;
-    background-color: #fff;
+    background-color: var(--dialog-bg-color, #fff);
 }
 
 dialog.modaless {
@@ -218,7 +218,7 @@ dialog.dialog:focus-visible {
 
 .dialog-container {
     width: var(--dialog-width);
-    background-color: #fff;
+    background-color: var(--dialog-container-bg-color, #fff);
     position: relative;
 }
 
@@ -226,7 +226,7 @@ dialog.dialog:focus-visible {
     display: block;
     width: var(--dialog-width);
     position: relative;
-    background-color: #fff;
+    background-color: var(--dialog-loading-bg-color, #fff);
 }
 
 dialog.modaless .dialog-container,

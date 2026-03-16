@@ -1,6 +1,6 @@
 <template>
     <Dialog v-model:visible="visible" title="false" destroy-on-close ref="dialog" @close="closeCallback"
-        @closed="closedCallback" :loading="loading" :min-height="554" close-on-click-modal close-on-press-esc>
+        @closed="closedCallback" :loading="loading" :min-height="554" close-on-click-modal>
         <div class="subs-header">
             <div class="subs-type">
                 <span class="subs-origin-type limited-box one-line"
@@ -85,6 +85,7 @@
                 </div>
             </div>
         </div>
+        <CalendarPlayer v-model="activeEpisodeId"></CalendarPlayer>
     </Dialog>
 </template>
 
@@ -96,6 +97,7 @@ import Dialog from '../common/Dialog.vue';
 import Image from '../common/Image.vue';
 import Button from '../common/Button.vue';
 import Link from '../common/Link.vue';
+import CalendarPlayer from './CalendarPlayer.vue';
 
 const initSubscribe = () => {
     unique.value = 0;
@@ -135,6 +137,7 @@ const viewSwitch = ref(true);
 const addTorrentLoading = ref(false);
 const touchable = ref(false);
 const activeTab = ref(tabDicts.results);
+const activeEpisodeId = ref(null);
 
 let lastRequest = null;
 
@@ -255,7 +258,8 @@ const episodeDisabled = (val) => val.status !== '1'
 
 const episodeClicked = (val) => {
     if (episodeDisabled(val)) return
-    getApi('episode').generateMinioLink({ episodeId: val.id }, link => copySomething(link, '已复制视频链接到剪贴板.'))
+    // getApi('episode').generateMinioLink({ episodeId: val.id }, link => copySomething(link, '已复制视频链接到剪贴板.'))
+    activeEpisodeId.value = val.id
 }
 
 const taskInfo = (val) => {
