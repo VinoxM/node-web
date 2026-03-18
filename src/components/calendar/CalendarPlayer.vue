@@ -28,12 +28,14 @@ const loading = ref(true)
 
 let lastRequest = null;
 
+const getSourceSrc = source => `https://minio-api.vinoxm.name${source}`
+
 watch(() => episodeId.value, v => {
     if (v > 0) {
         cancel(lastRequest);
         show();
         lastRequest = getApi('episode').generateMinioLink({ episodeId: episodeId.value }, link => {
-            source.value = link;
+            source.value = getSourceSrc(link);
             loading.value = false;
             lastRequest = null;
         }, () => {
