@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { nextTick, ref, useTemplateRef, watch } from 'vue';
+import { inject, nextTick, ref, useTemplateRef, watch } from 'vue';
 import Dialog from '../common/Dialog.vue';
 import message from '@/message';
 import { getApi, cancel } from '@/api';
@@ -28,7 +28,7 @@ const loading = ref(true)
 
 let lastRequest = null;
 
-const getSourceSrc = source => `https://minio-api.vinoxm.name${source}`
+const getSourceSrc = inject('getMinioSourceSrc')
 
 watch(() => episodeId.value, v => {
     if (v > 0) {

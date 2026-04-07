@@ -25,10 +25,11 @@
         </CalendarEditor>
         <CalendarViewer v-else v-model="unique"></CalendarViewer>
         <CalendarUserBox @click="userClicked"></CalendarUserBox>
-        <CalendarEditBox v-if="authed" @update-checked="updateChecked" @delete-checked="deleteChecked" @to-add-subscribe="toAddSubscribe"
-            v-model:edit-mode="editMode" :checked-count="checkedCount" :result-count="seasonResultCount">
+        <CalendarEditBox v-if="authed" @update-checked="updateChecked" @delete-checked="deleteChecked"
+            @to-add-subscribe="toAddSubscribe" v-model:edit-mode="editMode" :checked-count="checkedCount"
+            :result-count="seasonResultCount">
         </CalendarEditBox>
-        <CalendarLogin v-model="loginVisible" @login-success="loginSuccessed"></CalendarLogin>
+        <CalendarLogin v-model="loginVisible" @login-success="loginSuccess"></CalendarLogin>
     </div>
     <AnimeFooter></AnimeFooter>
 </template>
@@ -97,6 +98,26 @@ const loading = ref(false);
 const updating = ref(false);
 const matchers = ref([]);
 const favorites = ref(new Map());
+const clientMatchers = ref({});
+
+/** Client matchers */
+const fetchClientMatchers = async () => {
+    getApi('media').getClientMatchers(null, data => clientMatchers.value = data)
+};
+
+const getSourceSrc = (source) => {
+    for (const label in clientMatchers.value) {
+        const { matcher, hostname } = clientMatchers.value[label];
+        try {
+            if (new RegExp(matcher).test(source)) {
+                return `https://${hostname}${source}`;
+            }
+        } catch (ex) { /* ignore */ }
+    }
+    return `https://minio-api-media.vinoxm.name${source}`;
+};
+
+provide("getMinioSourceSrc", getSourceSrc);
 
 /** authorization */
 const authed = ref(false)
@@ -111,7 +132,7 @@ const toLogin = () => {
     }
 }
 
-const loginSuccessed = () => {
+const loginSuccess = () => {
     authed.value = true;
     loginVisible.value = false;
     getMatchers();
@@ -516,6 +537,7 @@ onMounted(() => {
         setupDocumentHeight();
     })
     checkAuth();
+    fetchClientMatchers();
 })
 
 onUnmounted(() => {
