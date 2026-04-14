@@ -82,6 +82,10 @@ const apiPlugin = {
                     const func = (data, resolve, reject) => {
                         const source = axios.CancelToken.source();
                         const headers_ = { ...defaultHeaders, ...headers };
+                        const secret = headers_.secret
+                        if (secret) {
+                            headers_.secret = btoa(secret)
+                        }
                         interceptors.reduce((prev, { func }) => prev.then(func), Promise.resolve({ headers: headers_, data }))
                             .then(opts => {
                                 let todo = Promise.resolve(opts)

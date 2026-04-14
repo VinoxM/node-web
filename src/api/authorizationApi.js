@@ -25,7 +25,7 @@ const apis = {
     },
     logout: {
         path: '/auth/logout',
-        hanlde(d) {
+        handle(d) {
             localStorage.removeItem('token')
             return d
         }
