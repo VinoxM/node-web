@@ -73,7 +73,12 @@ const apiPlugin = {
                 if (supportMethod.includes((method + '').toLocaleLowerCase())) {
                     api_[m] = (data, resolve, reject) => {
                         const source = axios.CancelToken.source();
-                        http[method](basePath + path, data, { ...defaultHeaders, ...headers }, source.token).then(data => {
+                        const headers_ = { ...defaultHeaders, ...headers }
+                        const secret = headers_.secret
+                        if (secret) {
+                            headers_.secret = btoa(secret)
+                        }
+                        http[method](basePath + path, data, headers_, source.token).then(data => {
                             if (resolve instanceof Function) resolve(handle ? handle(data) : data)
                         }).catch(e => {
                             if (!ignoreError && typeof e === 'string') {
