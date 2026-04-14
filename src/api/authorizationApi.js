@@ -36,7 +36,9 @@ const defaultProp = {
     label: 'authorization',
     method: 'post',
     headers: {
-        secret: 'mAou5820.authorization'
+        secret: 'mAou5820.authorization',
+        'client-id': 'client-anime',
+        'client-secret': btoa('mAou.client.anime')
     }
 }
 
