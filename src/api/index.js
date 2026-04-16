@@ -13,7 +13,9 @@ if (import.meta.env.DEV) {
 
 const defaultHeaders = {
     'content-type': 'application/json;charset=UTF-8',
-    'secret': "mAou5820"
+    'secret': "mAou5820",
+    'client-id': 'client-anime',
+    'client-secret': btoa('mAou.client.anime')
 }
 
 const http = {

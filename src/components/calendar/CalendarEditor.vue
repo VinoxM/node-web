@@ -126,7 +126,7 @@
                                     <span class="results-item-subs">{{ torrentStatus(val) }}</span>
                                     <div class="results-btn-box">
                                         <Button
-                                            v-if="['DOWNLOADING', 'STOPED', 'SEEDING', 'COMPLETE'].includes(val.state)"
+                                            v-if="['DOWNLOADING', 'STOPPED', 'SEEDING', 'COMPLETE'].includes(val.state)"
                                             border-less plain @click="pauseOrResumeTask(val)">
                                             <PauseResume></PauseResume>
                                         </Button>
@@ -477,7 +477,7 @@ const clearResultTabActive = () => {
     resultTabStore = resultTabActive.value
     resultTabActive.value = ''
 }
-const restoreResultTabActibe = () => resultTabActive.value = resultTabStore
+const restoreResultTabActive = () => resultTabActive.value = resultTabStore
 
 // detail tabs
 const detailTabs = ['番剧版权', '相关链接']
@@ -491,7 +491,7 @@ const clearDetailTabActive = () => {
     detailTabStore = detailTabActive.value
     detailTabActive.value = ''
 }
-const restoreDetailTabActibe = () => detailTabActive.value = detailTabStore
+const restoreDetailTabActive = () => detailTabActive.value = detailTabStore
 const isCopyrightDetail = computed(() => detailTabActive.value === detailTabs[0]);
 
 // others
@@ -744,7 +744,7 @@ const clearEditResult = () => {
 
 const cancelEditResult = () => {
     clearEditResult();
-    restoreResultTabActibe();
+    restoreResultTabActive();
 }
 
 const submitEditResult = () => {
@@ -817,7 +817,7 @@ const clearEditDetail = () => {
 
 const cancelEditDetail = () => {
     clearEditDetail();
-    restoreDetailTabActibe();
+    restoreDetailTabActive();
 }
 
 const deleteDetail = (val) => {
@@ -858,7 +858,7 @@ const pauseOrResumeTask = (val) => {
     resultsLoading.value = true
     if (['DOWNLOADING', 'SEEDING'].includes(val.state)) {
         getApi('task').pauseTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
-    } else if (['STOPED', 'COMPLETE'].includes(val.state)) {
+    } else if (['STOPPED', 'COMPLETE'].includes(val.state)) {
         getApi('task').resumeTask({ taskId: val.id }, () => resultsLoading.value = false, () => resultsLoading.value = false)
     } else {
         resultsLoading.value = false
@@ -1016,7 +1016,7 @@ const clearEditFailedEpisode = () => {
 
 const cancelEditFailedEpisode = () => {
     clearEditFailedEpisode()
-    restoreResultTabActibe()
+    restoreResultTabActive()
 }
 
 const calcFailedEpisode = () => {
