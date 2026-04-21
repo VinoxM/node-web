@@ -73,7 +73,7 @@ const apiPlugin = {
         const files = import.meta.glob('./*.js', { eager: true });
         const supportMethod = Object.keys(http);
         Object.keys(files).forEach(key => {
-            const module = files[key]();
+            const module = files[key];
             const configs = module.default || module;
             for (const m in configs) {
                 let { basePath: base, method, path, preHandle, handle, headers, ignoreError, label = 'default', options = {} } = configs[m];
