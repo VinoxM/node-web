@@ -70,10 +70,10 @@ const apiPlugin = {
         api = new Map();
         const api_ = {}
         api.set('default', api_)
-        const files = import.meta.glob('./*.js');
+        const files = import.meta.glob('./*.js', { eager: true });
         const supportMethod = Object.keys(http);
-        Object.keys(files).forEach(async key => {
-            const module = await files[key]();
+        Object.keys(files).forEach(key => {
+            const module = files[key]();
             const configs = module.default || module;
             for (const m in configs) {
                 let { basePath: base, method, path, preHandle, handle, headers, ignoreError, label = 'default', options = {} } = configs[m];
@@ -101,7 +101,7 @@ const apiPlugin = {
                                         opts_?.headers ?? headers_,
                                         source.token,
                                         options
-                                    ).then(data => {                                        
+                                    ).then(data => {
                                         if (handle && handle instanceof Function) {
                                             const res = handle(data)
                                             if (res instanceof Promise) {
