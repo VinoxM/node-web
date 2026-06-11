@@ -260,7 +260,7 @@ const episodeClicked = (val) => {
     if (episodeDisabled(val)) return
     // getApi('episode').generateMinioLink({ episodeId: val.id }, link => copySomething(link, '已复制视频链接到剪贴板.'))
     // activeEpisodeId.value = val.id
-    window.open(`https://anime-player.vinoxm.name?rssSubsId=${val.rssSubsId}&episode=${val.episode}`)
+    window.open(`https://anime-player.vinoxm.art?rssSubsId=${val.rssSubsId}&episode=${val.episode}`)
 }
 
 const taskInfo = (val) => {
