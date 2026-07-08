@@ -526,7 +526,7 @@ const setupBackgroundImage = (install = true) => {
 const setupDocumentHeight = () => {
     let vh = window.innerHeight;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
-    setupTransForStep();
+    // setupTransForStep();
 }
 
 /* mounted */
