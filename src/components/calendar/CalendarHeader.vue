@@ -1,19 +1,22 @@
 <template>
     <div class="ani-header card-panel" ref="searchBox">
         <div class="season-search-box" :class="{ 'has-results': !isSearching && searchCount > 0 }" @click="toSearching">
-            <i class="icon-search"></i>
+            <!-- <i class="icon-search" @click="searchTypeToggle"></i> -->
+            <Search v-if="!similaritySearch" class="search-button" @click="searchTypeToggle"></Search>
+            <SimilaritySearch v-else class="search-button" @click="searchTypeToggle"></SimilaritySearch>
             <span v-if="!isSearching && searchCount > 0" class="search-result">{{ searchCount }}</span>
-            <input v-show="isSearching" class="search-input" ref="searchInput" placeholder="番剧名搜索" v-model="search"
-                @keypress.enter.prevent.stop="searchBtnClicked(false)" />
-            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(false)">搜当季</Button>
-            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(true)">搜全部</Button>
+            <input v-show="isSearching" class="search-input" ref="searchInput" :placeholder="searchPlaceholder"
+                v-model="search" @keypress.enter.prevent.stop="searchBtnClicked(false)" />
+            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(false)">当季</Button>
+            <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(true)">全部</Button>
         </div>
         <div class="season-year-box">
             <div class="ani-arrow-box">
                 <i class="icon-angle-double-left" @click="setupSeasonYearStep(-1)"></i>
                 <i class="icon-angle-double-right" @click="setupSeasonYearStep(1)"></i>
             </div>
-            <input v-if="seasonVisible" ref="seasonInput" class="season-input" v-model="seasonYearTemp" @blur="hideSeason" />
+            <input v-if="seasonVisible" ref="seasonInput" class="season-input" v-model="seasonYearTemp"
+                @blur="hideSeason" />
             <div v-else class="season-year" @click="showSeason">
                 <span>{{ seasonYear }}</span>
             </div>
@@ -48,11 +51,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, useTemplateRef, nextTick } from 'vue';
+import { onMounted, ref, useTemplateRef, nextTick, computed } from 'vue';
 import { getApi } from '@/api';
 import message from '@/message';
 import Button from '../common/Button.vue';
 import { getCurSeason } from '@/utils/dateUtils';
+import Search from "../common/Search.vue";
+import SimilaritySearch from '../common/SimilaritySearch.vue';
 
 // data
 const season = ref([]);
@@ -70,6 +75,9 @@ const searchRef = useTemplateRef('searchInput');
 const isSearching = ref(false);
 
 const searchCount = ref(0);
+
+const similaritySearch = ref(false);
+const searchPlaceholder = computed(() => similaritySearch.value ? '番剧名语义搜索' : '番剧名模糊搜索')
 
 const searchStore = {
     year: '',
@@ -101,6 +109,9 @@ const emitSearch = ({ season, search, searchAll }) => {
     }
     if (season === '' && search === '') {
         return;
+    }
+    if (similaritySearch.value) {
+        params.similarity = true
     }
     emit('search', params, searchCallback);
 }
@@ -162,6 +173,13 @@ const monthClicked = (month) => {
         seasonMonth.value = month;
         season.value = [seasonYear.value, seasonMonth.value];
         setupSeasonBtnArray();
+    }
+}
+
+const searchTypeToggle = () => {
+    if (isSearching.value) {
+        similaritySearch.value = !similaritySearch.value
+        nextTick(() => searchRef.value?.focus())
     }
 }
 

@@ -8,6 +8,10 @@
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
+            <div class="ani-item-similarity" v-if="props.similarity" title="搜索结果相似度">
+                <Similarity class="similarity-svg"></Similarity>
+                <span :style="similarityColor">{{ similarityLabel }}</span>
+            </div>
             <div v-if="authorized" class="ani-item-favorites" :class="{ 'favorites-on': favorites }"
                 v-click.stop="() => favoritesClicked(props.unique)">
                 <Favorites class="favorites-svg" :on="favorites" :loading="favoritesLoading"></Favorites>
@@ -51,6 +55,7 @@ import Link from '../common/Link.vue';
 import Image from '../common/Image.vue';
 import CheerLeading from '../common/CheerLeading.vue';
 import Favorites from '../common/Favorites.vue';
+import Similarity from '../common/Similarity.vue';
 
 const props = defineProps({
     titleCN: String,
@@ -82,7 +87,8 @@ const props = defineProps({
     epCount: Number,
     checked: Boolean,
     finLoading: { type: Boolean, default: false },
-    favoritesLoading: { type: Boolean, default: false }
+    favoritesLoading: { type: Boolean, default: false },
+    similarity: { type: Number, default: null }
 });
 
 const episode = computed(() => {
@@ -127,6 +133,35 @@ const favorites = computed(() => isFavorites(props.unique))
 
 const favoritesLabel = computed(() => {
     return isFavorites(props.unique) ? '已订阅' : '订阅'
+})
+
+const similarityLabel = computed(() => {
+    if (props.similarity) {
+        const s = (Number.parseFloat(props.similarity) * 100).toFixed(2)
+        return `${s}%`
+    }
+    return null;
+})
+
+const similarityColor = computed(() => {
+    if (!props.similarity) {
+        return ''
+    }
+    if (props.similarity >= 0 && props.similarity < 0.3) {
+        return 'color: #C0C4CC'
+    }
+    if (props.similarity >= 0.3 && props.similarity < 0.55) {
+        return 'color: #5B8FF9'
+    }
+    if (props.similarity >= 0.55 && props.similarity < 0.75) {
+        return 'color: #5DC5A8'
+    }
+    if (props.similarity >= 0.75 && props.similarity < 0.9) {
+        return 'color: #F5A623'
+    }
+    if (props.similarity >= 0.9 && props.similarity < 1) {
+        return 'color: #F56A4A'
+    }
 })
 
 const favoritesClicked = (val) => isFavorites(props.unique) ? delFavorites(val) : addFavorites(val)

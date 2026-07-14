@@ -74,6 +74,24 @@ div.season-search-box>i {
   margin-left: calc((var(--search-height) - 16px) / 2);
 }
 
+div.season-search-box>.search-button {
+  --search-button-margin: 6px;
+  --search-button-height: calc(var(--search-height) - var(--search-button-margin) * 2);
+  height: var(--search-button-height);
+  width: var(--search-button-height);
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  flex-shrink: 0;
+  margin: var(--search-button-margin) 0 var(--search-button-margin) calc((var(--search-height) - 16px) / 2);
+  line-height: var(--search-height);
+  transition: all 0.2s;
+}
+
+.ani-header:not(.searching) div.season-search-box.has-results>.search-button {
+  margin: var(--search-button-margin) 0;
+}
+
 .ani-header.searching div.season-search-box>i,
 .ani-header:not(.searching) div.season-search-box:not(.has-results)>i {
   width: var(--search-height);
@@ -87,6 +105,7 @@ div.season-search-box>i::before {
 }
 
 div.season-search-box i:has(~.search-input:focus),
+div.season-search-box .search-button:has(~.search-input:focus),
 .ani-header:not(.searching) div.season-search-box:hover {
   color: var(--color-blue-0);
 }
@@ -781,6 +800,33 @@ span.limited-box.one-line {
 span.limited-box.two-line {
   line-clamp: 2;
   -webkit-line-clamp: 2;
+}
+
+.ani-item-similarity {
+  font-size: var(--font-size-mini);
+  user-select: none;
+  height: var(--item-title-height);
+  line-height: var(--item-title-height);
+  display: flex;
+  justify-self: start;
+  cursor: default;
+  border-radius: 4px;
+  transition: all 0.4s;
+}
+
+.ani-item-similarity .similarity-svg {
+  --height: var(--item-title-height);
+  height: var(--height);
+  width: var(--item-title-height);
+  padding: 2px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.ani-item-similarity span {
+  height: var(--item-title-height);
+  display: inline-block;
+  padding: 0 3px;
 }
 
 .ani-item-favorites {

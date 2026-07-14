@@ -307,13 +307,13 @@ const loadOver = () => {
     }
 }
 
-const getSearch = ({ season, search, setupStep = true }, callback) => {
+const getSearch = ({ season, search, setupStep = true, similarity = false }, callback) => {
     cancel(lastSearch);
     lastData.store();
     dataDict.value = defaultDataDict();
     webArr.value = [];
     loading.value = true;
-    lastSearch = getApi().getSearch({ season, name: search }, data => {
+    lastSearch = getApi()[similarity ? 'getSemanticSearch' : 'getSearch']({ season, name: search }, data => {
         lastSearch = null;
         lastSearchBody = { season, search };
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef, uniqueIds: uniqueIds_ } = data;
