@@ -86,13 +86,13 @@ let lastData = {
 }
 
 /* api func */
-const getSearch = ({ season, search }, callback) => {
+const getSearch = ({ season, search, similarity = false }, callback) => {
     cancel(lastSearch);
     lastData.store();
     dataDict.value = defaultDataDict();
     webArr.value = [];
     loading.value = true;
-    lastSearch = getApi().getSearch({ season, name: search }, data => {
+    lastSearch = getApi()[similarity && search ? 'getSemanticSearch' : 'getSearch']({ season, name: search }, data => {
         lastSearch = null;
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount } = data;
         if (callback instanceof Function) callback({ step: 0, season: season?.split("-") || ['', ''] }, { searchResultCount: search ? resultCount : 0 });

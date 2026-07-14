@@ -15,100 +15,109 @@ const initDataDict = (nowDay) => {
     ];
 }
 
+function handleSearchData(data) {
+    {
+        // prepare to handle data.
+        let list = Array.from(data);
+        const resultCount = list.length;
+        const nowDay = getNowDay();
+        let dayDictArray = initDataDict(nowDay);
+        let webArray = [];
+        const now = new Date();
+        // group by day.
+        for (const obj of list) {
+            let cover = String(obj.C);
+            const d = obj.D + '';
+            const startDate = [d.substring(0, 4), d.substring(4, 6), d.substring(6, 8)];
+            const updateTime = [d.substring(8, 10), d.substring(10, 12)];
+            let day = Number(d.substring(12, 13));
+            const val = {
+                titleCN: obj.Z,
+                titleJP: obj.J,
+                startDate: startDate.join('/'),
+                cover,
+                type: obj.T,
+                status: obj.S,
+                latestEp: obj.E,
+                hasNew: obj.N,
+                unique: obj.U,
+                epCount: obj.R,
+                similarity: obj.SI ?? null
+            }
+            if (val.type.split("")[1] === '1') {
+                webArray.push(val);
+                continue;
+            }
+            day = day - 1;
+            if (day < 0) day = 6;
+            dayDictArray[day].timeline.push({ ...val, updateTime: updateTime.join(":") });
+        }
+        // sort day dict.
+        for (const dayDict of dayDictArray) {
+            const arr = dayDict.timeline;
+            const timeline = {};
+            for (const val of arr) {
+                const { updateTime, ...newVal } = val;
+                if (updateTime in timeline) {
+                    timeline[updateTime].push(newVal);
+                } else {
+                    timeline[updateTime] = [newVal];
+                }
+            }
+            dayDict.timeline = Object.keys(timeline).map(key => ({
+                time: key,
+                list: timeline[key]
+            })).sort((a, b) => a.time.localeCompare(b.time));
+            // handle published and timer.
+            if (dayDict.isToday) {
+                let hours = now.getHours();
+                if (hours < 6) {
+                    hours += 24;
+                }
+                const minutes = now.getMinutes();
+                const nowMinutes = minutes + hours * 60;
+                let index = -1;
+                dayDict.timeline.some((obj, i) => {
+                    const timeSplit = String(obj.time).split(":");
+                    const objMinutes = Number(timeSplit[0]) * 60 + Number(timeSplit[1]);
+                    if (nowMinutes < objMinutes) {
+                        return true;
+                    }
+                    index = i;
+                    obj.published = true;
+                    return false;
+                })
+                if (index === -1) continue;
+                const obj = {
+                    time: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`,
+                    list: [],
+                    isTimer: true
+                }
+                if (index === dayDict.timeline.length) {
+                    dayDict.timeline.push(obj);
+                } else {
+                    dayDict.timeline.splice(index + 1, 0, obj);
+                }
+            }
+        }
+        // sort web array.
+        webArray = webArray.sort((a, b) => a.startDate.localeCompare(b.startDate));
+        // setup data.
+        return { dayDictArray, webArray, nowDay, resultCount };
+    }
+}
+
 export default {
     getSeason: {
         path: "/rss/v2/getSeason"
     },
     getSearch: {
         path: "/rss/v2/getSearch",
-        handle: (data) => {
-            // prepare to handle data.
-            let list = Array.from(data);
-            const resultCount = list.length;
-            const nowDay = getNowDay();
-            let dayDictArray = initDataDict(nowDay);
-            let webArray = [];
-            const now = new Date();
-            // group by day.
-            for (const obj of list) {
-                let cover = String(obj.C);
-                const d = obj.D + '';
-                const startDate = [d.substring(0, 4), d.substring(4, 6), d.substring(6, 8)];
-                const updateTime = [d.substring(8, 10), d.substring(10, 12)];
-                let day = Number(d.substring(12, 13));
-                const val = {
-                    titleCN: obj.Z,
-                    titleJP: obj.J,
-                    startDate: startDate.join('/'),
-                    cover,
-                    type: obj.T,
-                    status: obj.S,
-                    latestEp: obj.E,
-                    hasNew: obj.N,
-                    unique: obj.U,
-                    epCount: obj.R
-                }
-                if (val.type.split("")[1] === '1') {
-                    webArray.push(val);
-                    continue;
-                }
-                day = day - 1;
-                if (day < 0) day = 6;
-                dayDictArray[day].timeline.push({ ...val, updateTime: updateTime.join(":") });
-            }
-            // sort day dict.
-            for (const dayDict of dayDictArray) {
-                const arr = dayDict.timeline;
-                const timeline = {};
-                for (const val of arr) {
-                    const { updateTime, ...newVal } = val;
-                    if (updateTime in timeline) {
-                        timeline[updateTime].push(newVal);
-                    } else {
-                        timeline[updateTime] = [newVal];
-                    }
-                }
-                dayDict.timeline = Object.keys(timeline).map(key => ({
-                    time: key,
-                    list: timeline[key]
-                })).sort((a, b) => a.time.localeCompare(b.time));
-                // handle published and timer.
-                if (dayDict.isToday) {
-                    let hours = now.getHours();
-                    if (hours < 6) {
-                        hours += 24;
-                    }
-                    const minutes = now.getMinutes();
-                    const nowMinutes = minutes + hours * 60;
-                    let index = -1;
-                    dayDict.timeline.some((obj, i) => {
-                        const timeSplit = String(obj.time).split(":");
-                        const objMinutes = Number(timeSplit[0]) * 60 + Number(timeSplit[1]);
-                        if (nowMinutes < objMinutes) {
-                            return true;
-                        }
-                        index = i;
-                        obj.published = true;
-                        return false;
-                    })
-                    if (index === -1) continue;
-                    const obj = {
-                        time: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`,
-                        list: [],
-                        isTimer: true
-                    }
-                    if (index === dayDict.timeline.length) {
-                        dayDict.timeline.push(obj);
-                    } else {
-                        dayDict.timeline.splice(index + 1, 0, obj);
-                    }
-                }
-            }
-            // sort web array.
-            webArray = webArray.sort((a, b) => a.startDate.localeCompare(b.startDate));
-            // setup data.
-            return { dayDictArray, webArray, nowDay, resultCount };
-        }
+        handle: (data) => handleSearchData(data)
+    },
+    getSemanticSearch: {
+        path: "/rss/v2/getSearch.semantic",
+        handle: (data) => handleSearchData(data)
     },
     getResults: {
         path: '/rss/v2/getOne.detail'

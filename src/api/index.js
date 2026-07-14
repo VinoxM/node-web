@@ -3,10 +3,13 @@ import message from '@/message';
 
 axios.defaults.timeout = 5 * 1000;
 
-const serverHost = location.host.replace('anime', 'server')
-
-let basePath = `https://${serverHost}`;
-// basePath = "https://www.vinoxm.fun/server";
+let basePath = "https://server.vinoxm.art";
+if (import.meta.env.DEV) {
+    basePath = `https://server.vinoxm.cloud`;
+    // basePath = `https://28000--main--code-server--maou864--coder.vinoxm.cloud`;
+} else {
+    basePath = `${location.protocol}//server.${location.host.split(".").slice(-2).join('.')}`;
+}
 const defaultHeaders = {
     'content-type': 'application/json;charset=UTF-8',
     'secret': "mAou5820"

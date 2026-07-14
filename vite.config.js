@@ -10,7 +10,17 @@ export default defineConfig({
   base: './',
   server: {
     // accept remote host access.
-    host: true
+    allowedHosts: [
+      "5173--main--code-cli--maou864--coder.vinoxm.cloud",
+      "5173--main--code-cli--maou864--coder.vinoxm.art"
+    ],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   },
   plugins: [
     vue(),

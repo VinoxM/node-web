@@ -8,6 +8,14 @@
                 <span class="title-cn limited-box one-line" :title="props.titleCN">{{ props.titleCN }}</span>
                 <span class="title-jp limited-box one-line" :title="props.titleJP">{{ props.titleJP }}</span>
             </div>
+            <div class="ani-item-similarity" v-if="props.similarity" title="搜索结果相似度">
+                <Similarity class="similarity-svg"></Similarity>
+                <span :style="similarityColor">{{ similarityLabel }}</span>
+            </div>
+            <div class="ani-item-is-goon" v-if="goon === 1">
+                <CheerLeading class="goon-svg"></CheerLeading>
+                <span class="is-goon">续播</span>
+            </div>
             <div class="ani-item-noodle" v-if="isShort">
                 <Noodle class="noodle-svg"></Noodle>
                 <span>泡面番</span>
@@ -27,6 +35,8 @@
 import { computed, inject } from 'vue';
 import Noodle from '../common/Noodle.vue';
 import Image from '../common/Image.vue';
+import CheerLeading from '../common/CheerLeading.vue';
+import Similarity from '../common/Similarity.vue';
 
 const props = defineProps({
     titleCN: String,
@@ -48,17 +58,23 @@ const props = defineProps({
         required: false,
         default: null
     },
+    goon: {
+        type: Number,
+        required: false,
+        default: 0
+    },
     hasNew: Number,
     unique: Number,
-    epCount: Number
+    epCount: Number,
+    similarity: { type: Number, default: null }
 });
 
 const episode = computed(() => {
-    if (props.latestEp !== null) {
-        return `更新至<span>${props.latestEp}</span>`;
-    }
     if (props.status === 2) {
         return `已完结, 共<span>${props.epCount}</span>结果`;
+    }
+    if (props.latestEp !== null) {
+        return `更新至<span>${props.latestEp}</span>`;
     }
     if (props.status === 0) {
         return '未开播';
@@ -84,7 +100,36 @@ const isShort = computed(() => {
 })
 
 const startDate = computed(() => {
-    return props.startDate === '-' ? '-' : (props.startDate + '~');
+    return props.startDate === '-' ? '-' : (props.startDate + `${props.goon === 0 ? '~' : '+'}`);
+})
+
+const similarityLabel = computed(() => {
+    if (props.similarity) {
+        const s = (Number.parseFloat(props.similarity) * 100).toFixed(2)
+        return `${s}%`
+    }
+    return null;
+})
+
+const similarityColor = computed(() => {
+    if (!props.similarity) {
+        return ''
+    }
+    if (props.similarity >= 0 && props.similarity < 0.3) {
+        return 'color: #C0C4CC'
+    }
+    if (props.similarity >= 0.3 && props.similarity < 0.55) {
+        return 'color: #5B8FF9'
+    }
+    if (props.similarity >= 0.55 && props.similarity < 0.75) {
+        return 'color: #5DC5A8'
+    }
+    if (props.similarity >= 0.75 && props.similarity < 0.9) {
+        return 'color: #F5A623'
+    }
+    if (props.similarity >= 0.9 && props.similarity < 1) {
+        return 'color: #F56A4A'
+    }
 })
 
 const itemClick = inject('animeItemClick')

@@ -1,10 +1,12 @@
 <template>
     <div class="ani-header card-panel" ref="searchBox">
         <div class="season-search-box" :class="{ 'has-results': !isSearching && searchCount > 0 }" @click="toSearching">
-            <i class="icon-search"></i>
+            <!-- <i class="icon-search"></i> -->
+            <Search v-if="!similaritySearch" class="search-button" @click="searchTypeToggle"></Search>
+            <SimilaritySearch v-else class="search-button" @click="searchTypeToggle"></SimilaritySearch>
             <span v-if="!isSearching && searchCount > 0" class="search-result">{{ searchCount }}</span>
-            <input v-show="isSearching" class="search-input" ref="searchInput" placeholder="番剧名搜索" v-model="search"
-                @keypress.enter.prevent.stop="searchBtnClicked(false)" />
+            <input v-show="isSearching" class="search-input" ref="searchInput" :placeholder="searchPlaceholder"
+                v-model="search" @keypress.enter.prevent.stop="searchBtnClicked(false)" />
             <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(false)">搜当季</Button>
             <Button v-show="isSearching" size="small" @click.stop="searchBtnClicked(true)">搜全部</Button>
         </div>
@@ -49,10 +51,12 @@
 </template>
 
 <script setup>
-import { onMounted, ref, useTemplateRef, nextTick } from 'vue';
+import { onMounted, ref, useTemplateRef, nextTick, computed } from 'vue';
 import { getApi } from '@/api';
 import message from '@/message';
 import Button from '../common/Button.vue';
+import Search from "../common/Search.vue";
+import SimilaritySearch from '../common/SimilaritySearch.vue';
 
 // data
 const season = ref([]);
@@ -70,6 +74,9 @@ const searchRef = useTemplateRef('searchInput');
 const isSearching = ref(false);
 
 const searchCount = ref(0);
+
+const similaritySearch = ref(false);
+const searchPlaceholder = computed(() => similaritySearch.value ? '番剧名语义搜索' : '番剧名模糊搜索')
 
 const searchStore = {
     year: '',
@@ -98,9 +105,14 @@ const emitSearch = ({ season, search, searchAll }) => {
     }
     if (search && search !== '') {
         params.search = search;
+    } else {
+        similaritySearch.value = false;
     }
     if (season === '' && search === '') {
         return;
+    }
+    if (similaritySearch.value) {
+        params.similarity = true
     }
     emit('search', params, searchCallback);
 }
@@ -160,12 +172,6 @@ const setupSeasonBtnArray = () => {
     seasonBtnArray.value = result;
 }
 
-const updateCheckedClicked = () => {
-    if (checkedCount > 0) {
-        emitUpdateChecked()
-    }
-}
-
 const monthClicked = (month) => {
     if (!isSearching.value) {
         initCurSeason();
@@ -174,6 +180,13 @@ const monthClicked = (month) => {
         seasonMonth.value = month;
         season.value = [seasonYear.value, seasonMonth.value];
         setupSeasonBtnArray();
+    }
+}
+
+const searchTypeToggle = () => {
+    if (isSearching.value) {
+        similaritySearch.value = !similaritySearch.value
+        nextTick(() => searchRef.value?.focus())
     }
 }
 
