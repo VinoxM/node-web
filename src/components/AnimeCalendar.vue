@@ -313,7 +313,7 @@ const getSearch = ({ season, search, setupStep = true, similarity = false }, cal
     dataDict.value = defaultDataDict();
     webArr.value = [];
     loading.value = true;
-    lastSearch = getApi()[similarity ? 'getSemanticSearch' : 'getSearch']({ season, name: search }, data => {
+    lastSearch = getApi()[similarity && search ? 'getSemanticSearch' : 'getSearch']({ season, name: search }, data => {
         lastSearch = null;
         lastSearchBody = { season, search };
         const { dayDictArray, webArray, nowDay: nowDay_, resultCount, listRef, uniqueIds: uniqueIds_ } = data;

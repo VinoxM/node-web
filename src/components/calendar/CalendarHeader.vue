@@ -106,6 +106,8 @@ const emitSearch = ({ season, search, searchAll }) => {
     }
     if (search && search !== '') {
         params.search = search;
+    } else {
+        similaritySearch.value = false;
     }
     if (season === '' && search === '') {
         return;
