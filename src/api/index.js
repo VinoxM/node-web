@@ -5,8 +5,8 @@ axios.defaults.timeout = 5 * 1000;
 
 let basePath = "https://server.vinoxm.art";
 if (import.meta.env.DEV) {
-    basePath = `https://server.vinoxm.cloud`;
-    // basePath = `https://28000--main--code-server--maou864--coder.vinoxm.cloud`;
+    // basePath = `https://server.vinoxm.cloud`;
+    basePath = `https://28000--main--code-cli--maou864--coder.vinoxm.cloud`;
 } else {
     basePath = `${location.protocol}//server.${location.host.split(".").slice(-2).join('.')}`;
 }
