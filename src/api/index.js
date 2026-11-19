@@ -3,10 +3,10 @@ import message from '@/message';
 
 axios.defaults.timeout = 10 * 1000;
 
-let basePath = "https://server.vinoxm.art";
+let basePath = "https://server.vinoxm.top";
 if (import.meta.env.DEV) {
-    basePath = `https://server.vinoxm.cloud`;
-    // basePath = `https://28000--main--code-server--maou864--coder.vinoxm.cloud`;
+    basePath = `https://server.vinoxm.top`;
+    // basePath = `https://28000--main--code-server--maou864--coder.vinoxm.top`;
 } else {
     basePath = `${location.protocol}//server.${location.host.split(".").slice(-2).join('.')}`;
 }
